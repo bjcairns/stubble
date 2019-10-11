@@ -1,0 +1,161 @@
+#' @export
+col_gen <- function(col, nrows, ...) {
+
+  tryCatch(
+    {syn_col <- col_gen_(col, nrows, ctrl = col_gen_control(...))},
+    error = function(err) {
+      warning("Could not generate data for ", class(col), "; returning NAs" )
+    }
+  )
+
+  if (!exists("syn_col")) {
+    syn_col <- rep(NA, nrows)
+  }
+
+  invisible(syn_col)
+
+}
+
+
+col_gen_ <- function(col, nrows, ctrl) {
+  UseMethod("col_gen_", col)
+}
+
+
+col_gen_.numeric <- function(col, nrows, ctrl) {
+
+  stats::runif(
+    nrows,
+    ctrl$dbl_min[1],
+    ctrl$dbl_max[1]
+  )
+
+}
+
+
+col_gen_.integer <- function(col, nrows, ctrl) {
+
+  ceiling(stats::runif(
+    nrows,
+    as.integer(ctrl$int_min[1]),
+    as.integer(ctrl$int_max[1])
+  ))
+
+}
+
+
+col_gen_.character <- function(col, nrows, ctrl) {
+
+  char_lengths <- col_gen_.integer(
+    col, nrows,
+    col_gen_control(int_min = ctrl$chr_min, int_max = ctrl$chr_max)
+  )
+  sapply(
+    sapply(char_lengths, resample, x = ctrl$chr_sym, replace = TRUE),
+    paste0, collapse = "", simplify = TRUE
+  )
+
+}
+
+
+col_gen_.factor <- function(col, nrows, ctrl) {
+
+  as.factor(
+    col_gen_.character(
+      col, nrows,
+      col_gen_control(
+        chr_min = 1L, chr_max = 1L,
+        chr_sym = as.character(ctrl$fct_lvls)
+      )
+    )
+  )
+
+}
+
+
+col_gen_.logical <- function(col, nrows, ctrl) {
+
+  as.logical(
+    col_gen_.integer(
+      col, nrows,
+      col_gen_control(int_min = 0L, int_max = 1L)
+    )
+  )
+
+}
+
+
+col_gen_.POSIXct <- function(col, nrows, ctrl) {
+
+  as.POSIXct(
+    col_gen_.numeric(
+      col, nrows,
+      col_gen_control(dbl_min = 0, dbl_max = as.numeric(ctrl$dttm_max))
+    ),
+    tz = ctrl$dttm_tz,
+    origin = ctrl$date_origin
+  )
+
+}
+
+
+col_gen_.Date <- function(col, nrows, ctrl) {
+
+  as.Date(
+    col_gen_.integer(
+      col, nrows,
+      col_gen_control(dbl_min = 0L, dbl_max = as.integer(ctrl$date_max))
+    ),
+    tz = ctrl$dttm_tz,
+    origin = ctrl$date_origin
+  )
+
+}
+
+
+col_gen_.list <- function(col, nrows, ctrl) {
+
+  as.list(rep(NA, nrows))
+
+}
+
+
+col_gen_control <- function(
+  int_min = 0L, int_max = 100L,
+  dbl_min = 0, dbl_max = 100,
+  chr_min = 0L, chr_max = 10L,
+  chr_sym = c(
+    letters, LETTERS, as.character(0:9),
+    unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
+  ),
+  fct_lvls = letters[1:4],
+  lgl_vals = c(TRUE, FALSE),
+  date_origin = "1970-01-01",
+  date_max = Sys.Date(),
+  dttm_max = Sys.time(),
+  dttm_tz = "UTC",
+  ...
+) {
+
+  args <- as.list(sys.frame(sys.nframe()))
+  cargs <- as.list(match.call())[-1L]
+
+  all_args <- c(args, cargs[!(names(cargs) %in% names(args))])
+
+  # Sort so the defaults are last
+  all_args <- all_args[
+    c(
+      names(cargs)[!(names(cargs) %in% names(args))],
+      names(args)
+    )
+  ]
+
+  invisible(all_args)
+
+}
+
+
+resample <- function(size, x, replace = FALSE, prob = NULL) {
+  base::sample(x, size, replace, prob)
+}
+

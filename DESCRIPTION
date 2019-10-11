@@ -1,0 +1,21 @@
+Package: stubble
+Type: Package
+Title: Simple synthetic data from tibbles
+Version: 0.1.0
+Authors@R: c(
+      person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"), 
+        email = "ben.cairns@ndph.ox.ac.uk", 
+        comment = c(ORCID = "0000-0001-7994-8213")),
+      person("University of Oxford", role = "cph")
+    )
+Maintainer: Benjamin J. Cairns <ben.cairns@ndph.ox.ac.uk>
+Description: stubble takes a tibble as input and returns a tibble containing randomly generated (synthetic/simulated) data consistent with the original column types.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    tibble,
+    stats
+Suggests: 
+    usethis
+RoxygenNote: 6.1.1
