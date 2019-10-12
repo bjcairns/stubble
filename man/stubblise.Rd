@@ -25,9 +25,8 @@ not the original vector class.
 }
 \description{
 `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
-simulated) data to match the structure of a given tibble. Currently
-supported column classes are `numeric`, `integer`, `character`, `factor`,
-`logical`, `POSIXct` and `Date`.
+simulated) data to match the structure of a given tibble. See also
+[col_gen()].
 }
 \details{
 One intened use of `stubblise()` is in generating simple test data

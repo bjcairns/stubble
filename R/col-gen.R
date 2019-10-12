@@ -1,15 +1,34 @@
+#' Generate simple synthetic data from an R vector
+#'
+#' `col_gen()` does the work for [stubblise()]. Currently supported column
+#' classes are `numeric`, `integer`, `character`, `factor`, `logical`,
+#' `POSIXct` and `Date`. There is limited support for `list` (returns a list
+#' with all `NA`s).
+#'
+#' @param col the vector from which the class of the synthetic data is taken.
+#' @param nrows the number of elements to generate.
+#'
+#' @return Returns a vector of the same class as `col` with `nrows` elements.
+#'
+#' @examples
+#' \dontrun{
+#' library(stubble)
+#' }
+#' col_gen(iris$Sepal.length)
+#' col_gen(iris$Species)
+#'
 #' @export
 col_gen <- function(col, nrows, ...) {
 
   tryCatch(
-    {syn_col <- col_gen_(col, nrows, ctrl = col_gen_control(...))},
+    syn_col <- col_gen_(col, nrows, ctrl = col_gen_control(...)),
     error = function(err) {
       warning("Could not generate data for ", class(col), "; returning NAs" )
     }
   )
 
   if (!exists("syn_col")) {
-    syn_col <- rep(NA, nrows)
+    syn_col <- col_gen_.default(col, nrows, ctrl = col_gen_control(...))
   }
 
   invisible(syn_col)
@@ -19,6 +38,14 @@ col_gen <- function(col, nrows, ...) {
 
 col_gen_ <- function(col, nrows, ctrl) {
   UseMethod("col_gen_", col)
+}
+
+
+col_gen_.default <- function(col, nrows, ctrl) {
+
+  # Note, no user control over class of vector in this case
+  as.numeric(rep(NA, nrows))
+
 }
 
 
@@ -134,6 +161,7 @@ col_gen_control <- function(
   date_max = Sys.Date(),
   dttm_max = Sys.time(),
   dttm_tz = "UTC",
+  def_class = "numeric",
   ...
 ) {
 

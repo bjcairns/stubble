@@ -1,9 +1,8 @@
 #' Create simple simulated data from a tibble
 #'
 #' `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
-#' simulated) data to match the structure of a given tibble. Currently
-#' supported column classes are `numeric`, `integer`, `character`, `factor`,
-#' `logical`, `POSIXct` and `Date`.
+#' simulated) data to match the structure of a given tibble. See also
+#' [col_gen()].
 #'
 #' @param tbbl the tibble to emulate. Can have 0 rows.
 #' @param nrows the number of simulated rows to generate.
