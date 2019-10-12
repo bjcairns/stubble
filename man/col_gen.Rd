@@ -10,12 +10,15 @@ col_gen(col, nrows, ...)
 \item{col}{the vector from which the class of the synthetic data is taken.}
 
 \item{nrows}{the number of elements to generate.}
+
+\item{...}{control parameters for ranges and valid levels/characters in the
+synthetic data. See [stubble::control].}
 }
 \value{
 Returns a vector of the same class as `col` with `nrows` elements.
 }
 \description{
-`col_gen()` does the work for [stubblise()]. Currently supported column
+`col_gen()` does the real work for [stubblise()]. Currently supported column
 classes are `numeric`, `integer`, `character`, `factor`, `logical`,
 `POSIXct` and `Date`. There is limited support for `list` (returns a list
 with all `NA`s).

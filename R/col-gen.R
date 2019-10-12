@@ -1,12 +1,14 @@
 #' Generate simple synthetic data from an R vector
 #'
-#' `col_gen()` does the work for [stubblise()]. Currently supported column
+#' `col_gen()` does the real work for [stubblise()]. Currently supported column
 #' classes are `numeric`, `integer`, `character`, `factor`, `logical`,
 #' `POSIXct` and `Date`. There is limited support for `list` (returns a list
 #' with all `NA`s).
 #'
 #' @param col the vector from which the class of the synthetic data is taken.
 #' @param nrows the number of elements to generate.
+#' @param ... control parameters for ranges and valid levels/characters in the
+#' synthetic data. See [stubble::control].
 #'
 #' @return Returns a vector of the same class as `col` with `nrows` elements.
 #'
@@ -143,42 +145,6 @@ col_gen_.Date <- function(col, nrows, ctrl) {
 col_gen_.list <- function(col, nrows, ctrl) {
 
   as.list(rep(NA, nrows))
-
-}
-
-
-col_gen_control <- function(
-  int_min = 0L, int_max = 100L,
-  dbl_min = 0, dbl_max = 100,
-  chr_min = 0L, chr_max = 10L,
-  chr_sym = c(
-    letters, LETTERS, as.character(0:9),
-    unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
-  ),
-  fct_lvls = letters[1:4],
-  lgl_vals = c(TRUE, FALSE),
-  date_origin = "1970-01-01",
-  date_max = Sys.Date(),
-  dttm_max = Sys.time(),
-  dttm_tz = "UTC",
-  def_class = "numeric",
-  ...
-) {
-
-  args <- as.list(sys.frame(sys.nframe()))
-  cargs <- as.list(match.call())[-1L]
-
-  all_args <- c(args, cargs[!(names(cargs) %in% names(args))])
-
-  # Sort so the defaults are last
-  all_args <- all_args[
-    c(
-      names(cargs)[!(names(cargs) %in% names(args))],
-      names(args)
-    )
-  ]
-
-  invisible(all_args)
 
 }
 

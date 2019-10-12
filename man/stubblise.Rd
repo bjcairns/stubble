@@ -26,7 +26,8 @@ not the original vector class.
 \description{
 `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
 simulated) data to match the structure of a given tibble. See also
-[col_gen()].
+[col_gen()], which does most of the work, and [control] for information on
+user-modifiable parameters.
 }
 \details{
 One intened use of `stubblise()` is in generating simple test data

@@ -2,7 +2,8 @@
 #'
 #' `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
 #' simulated) data to match the structure of a given tibble. See also
-#' [col_gen()].
+#' [col_gen()], which does most of the work, and [control] for information on
+#' user-modifiable parameters.
 #'
 #' @param tbbl the tibble to emulate. Can have 0 rows.
 #' @param nrows the number of simulated rows to generate.
