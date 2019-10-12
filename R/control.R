@@ -1,4 +1,4 @@
-#' Control parameters for col_gen()
+#' Control parameters for gen_col()
 #'
 #' This help file describes the available parameters to control the output of
 #' [stubblise()].
@@ -22,17 +22,17 @@
 #'   \item{\code{dttm_max}}{Max value for generated date-times.}
 #'   \item{\code{dttm_tz}}{Timezone for generated date-times.}
 #'   \item{\code{def_class}}{A default vector class to return when all else fails. Currently not used.}
-#'   \item{\code{...}}{Further control parameters permitting extension of the `col_gen_` S3 class.}
+#'   \item{\code{...}}{Further control parameters permitting extension of the `gen_col_` S3 class.}
 #' }
 #'
-#' These parameters are exposed directly via [stubblise()] and [col_gen()], and
+#' These parameters are exposed directly via [stubblise()] and [gen_col()], and
 #' may be passed as arguments with the names given above to either function.
 #'
 #' @name control
 NULL
 
 # Do not export
-col_gen_control <- function(
+gen_col_control <- function(
   int_min = 0L, int_max = 100L,
   dbl_min = 0, dbl_max = 100,
   chr_min = 0L, chr_max = 10L,
