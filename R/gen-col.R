@@ -64,11 +64,13 @@ gen_col_.numeric <- function(col, nrows, ctrl) {
 
 gen_col_.integer <- function(col, nrows, ctrl) {
 
-  ceiling(stats::runif(
-    nrows,
-    as.integer(ctrl$int_min[1]),
-    as.integer(ctrl$int_max[1])
-  ))
+  as.integer(
+    ceiling(stats::runif(
+      nrows,
+      as.integer(ctrl$int_min[1]),
+      as.integer(ctrl$int_max[1])
+    ))
+  )
 
 }
 
