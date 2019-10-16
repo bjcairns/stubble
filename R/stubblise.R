@@ -46,7 +46,7 @@
 #' stubblise(iris, fct_lvls = levels(iris$Species))
 #'
 #' @export
-stubblise <- function(tbbl, nrows = 10, ...) {
+stubblise <- function(tbbl, rows = 10L, ...) {
 
   tryCatch(
     tbbl <- tibble::as_tibble(tbbl),
@@ -54,7 +54,7 @@ stubblise <- function(tbbl, nrows = 10, ...) {
     warning = function(warn) warning(warn)
   )
 
-  tibble::as_tibble(lapply(tbbl, gen_col, nrows = nrows, ...))
+  tibble::as_tibble(lapply(tbbl, gen_col, elements = rows, ...))
 
 }
 
