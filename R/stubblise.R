@@ -2,17 +2,17 @@
 #'
 #' `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
 #' simulated) data to match the structure of a given tibble. See also
-#' [gen_col()], which does the work, and [control] for information on
+#' [gen_col], which does the work, and [control] for information on
 #' user-modifiable parameters.
 #'
 #' @param tbbl the tibble to emulate. Can have 0 rows.
-#' @param nrows the number of simulated rows to generate.
-#' @param ... additional arguments to control the data format. See
-#' [stubblise_control].
+#' @param rows the number of simulated rows to generate.
+#' @param ... control parameters for ranges and valid levels/characters in the
+#' synthetic data. See [control].
 #'
-#' @details One intended use of `stubblise()` is in generating simple test data
-#' for R package development. The function can create very simple synthetic
-#' data from most tibbles where columns have standard R vector types. Currently
+#' @details One intended use of `stubblise()` is in generating test data for R
+#' package development. The function can create very simple synthetic data from
+#' most tibbles where columns have standard R vector types. Currently
 #' list-columns are not fully supported, and this and any other unsupported
 #' types will return a column of `NA`s (for unsupported types, the resulting
 #' column of `NA`s will have type `numeric`).
@@ -22,23 +22,24 @@
 #' parameters controlling this sampling can be modified by the user. At
 #' present, the same parameters apply to all columns, and there is no attempt
 #' to make the synthetic data look anything like the original data in `tbbl`.
+#' Consequently, `stubblise()` outputs will contain no sensitive data,
+#' *unless the column names and types are themselves sensitive*.
 #'
 #' Note that although `tbbl` can have 0 rows, there is no benefit to passing
 #' `stubblise()` an empty tibble. The computation time is not dependent on
 #' the number of rows in `tbbl` (thanks to the magic of S3 methods and lazy
 #' evaluation).  Computation time does increase, approximately linearly, with
 #' the number of columns in `tbbl` and with the number of rows required in the
-#' result (`nrows`).
+#' result (`rows`).
 #'
 #' The function `stubblize()` is a synonym for `stubblise()`.
 #'
 #' @return A tibble, with the same structure as `tbbl`, but containing random
 #' data. Any columns which are not recognised as being of a standard vector
-#' class will have `NA` for all rows and the column type will be `logical`,
-#' not the original vector class.
+#' type will have `NA` for all rows and the column type will be `numeric`,
+#' not the original vector type.
 #'
 #' @examples
-#'
 #' \dontrun{
 #' library(stubble)
 #' }

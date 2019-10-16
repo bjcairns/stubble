@@ -4,24 +4,24 @@
 \alias{gen_col}
 \title{Generate simple synthetic data from an R vector}
 \usage{
-gen_col(col, nrows, ...)
+gen_col(col, elements = 10L, ...)
 }
 \arguments{
 \item{col}{the vector from which the class of the synthetic data is taken.}
 
-\item{nrows}{the number of elements to generate.}
+\item{elements}{the number of elements to generate.}
 
 \item{...}{control parameters for ranges and valid levels/characters in the
-synthetic data. See [stubble::control].}
+synthetic data. See \link[stubble:control]{stubble::control}.}
 }
 \value{
-Returns a vector of the same class as `col` with `nrows` elements.
+Returns a vector of the same class as \code{col} with \code{elements} elements.
 }
 \description{
-`gen_col()` does the real work for [stubblise()]. Currently supported column
-classes are `numeric`, `integer`, `character`, `factor`, `logical`,
-`POSIXct` and `Date`. There is limited support for `list` (returns a list
-with all `NA`s).
+\code{gen_col()} does the real work for \code{\link[=stubblise]{stubblise()}}. Currently supported column
+classes are \code{numeric}, \code{integer}, \code{character}, \code{factor}, \code{logical},
+\code{POSIXct} and \code{Date}. There is limited support for \code{list} (returns a list
+with all \code{NA}s).
 }
 \examples{
 \dontrun{

@@ -6,11 +6,11 @@
 #' with all `NA`s).
 #'
 #' @param col the vector from which the class of the synthetic data is taken.
-#' @param nrows the number of elements to generate.
+#' @param elements the number of elements to generate.
 #' @param ... control parameters for ranges and valid levels/characters in the
 #' synthetic data. See [stubble::control].
 #'
-#' @return Returns a vector of the same class as `col` with `nrows` elements.
+#' @return Returns a vector of the same class as `col` with `elements` elements.
 #'
 #' @examples
 #' \dontrun{
