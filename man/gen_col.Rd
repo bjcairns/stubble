@@ -7,12 +7,12 @@
 gen_col(col, elements = 10L, ...)
 }
 \arguments{
-\item{col}{the vector from which the class of the synthetic data is taken.}
+\item{col}{the vector from which the type of the synthetic data is taken.}
 
 \item{elements}{the number of elements to generate.}
 
 \item{...}{control parameters for ranges and valid levels/characters in the
-synthetic data. See \link[stubble:control]{stubble::control}.}
+synthetic data. See \link{control}.}
 }
 \value{
 Returns a vector of the same class as \code{col} with \code{elements} elements.
