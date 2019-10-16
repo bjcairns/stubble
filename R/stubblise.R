@@ -2,7 +2,7 @@
 #'
 #' `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
 #' simulated) data to match the structure of a given tibble. See also
-#' [gen_col()], which does most of the work, and [control] for information on
+#' [gen_col()], which does the work, and [control] for information on
 #' user-modifiable parameters.
 #'
 #' @param tbbl the tibble to emulate. Can have 0 rows.
@@ -23,8 +23,14 @@
 #' present, the same parameters apply to all columns, and there is no attempt
 #' to make the synthetic data look anything like the original data in `tbbl`.
 #'
-#' The function `stubblize()` is a synonym for `stubblise()` for those who
-#' find the "z" more natural or convenient.
+#' Note that although `tbbl` can have 0 rows, there is no benefit to passing
+#' `stubblise()` an empty tibble. The computation time is not dependent on
+#' the number of rows in `tbbl` (thanks to the magic of S3 methods and lazy
+#' evaluation).  Computation time does increase, approximately linearly, with
+#' the number of columns in `tbbl` and with the number of rows required in the
+#' result (`nrows`).
+#'
+#' The function `stubblize()` is a synonym for `stubblise()`.
 #'
 #' @return A tibble, with the same structure as `tbbl`, but containing random
 #' data. Any columns which are not recognised as being of a standard vector
@@ -44,7 +50,7 @@ stubblise <- function(tbbl, nrows = 10, ...) {
 
   tryCatch(
     tbbl <- tibble::as_tibble(tbbl),
-    error = function(err) stop("Cannot coerce argument 'tbl' to tibble"),
+    error = function(err) stop("Cannot coerce argument 'tbbl' to tibble"),
     warning = function(warn) warning(warn)
   )
 

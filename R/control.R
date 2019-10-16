@@ -3,9 +3,10 @@
 #' This help file describes the available parameters to control the output of
 #' [stubblise()].
 #'
-#' @details Generation of synthetic data in stubble is very simple. Numbers, dates and
-#' times are sampled uniformly within a range, while strings and factors are
-#' constructed from lists of symbols or levels sampled with equal probability.
+#' @details Generation of synthetic data in stubble is very simple. Numbers,
+#' dates and times are sampled uniformly within a range, while strings and
+#' factors are constructed from lists of symbols or levels sampled with equal
+#' probability.
 #'
 #' Various control parameters allow some user influence over the sets of
 #' allowed values. The parameters are:
