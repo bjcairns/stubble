@@ -4,7 +4,7 @@
 \alias{gen_col}
 \title{Generate simple synthetic data from an R vector}
 \usage{
-gen_col(col, elements = 10L, ...)
+gen_col(col, elements = 10L, index = 1L, ...)
 }
 \arguments{
 \item{col}{the vector from which the type of the synthetic data is taken.}

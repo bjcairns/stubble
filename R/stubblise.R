@@ -7,6 +7,8 @@
 #'
 #' @param tbbl the tibble to emulate. Can have 0 rows.
 #' @param rows the number of simulated rows to generate.
+#' @param unique whether values should be unique within a column. Replicated or
+#' truncated to the number of columns in `tbbl` as required.
 #' @param ... control parameters for ranges and valid levels/characters in the
 #' synthetic data. See [control].
 #'
@@ -48,14 +50,36 @@
 #' values of the [control] parameters have been changed and are themselves
 #' derived from sensitive data. It is recommended to leave these parameters
 #' at their default values in any circumstance that involves sensitive data
-#' (e.g. personal data of any sort).
+#' (e.g. personal data of any sort), or otherwise to ensure that they are set
+#' to non-informative values.
 #'
 #' @examples
 #' \dontrun{
 #' library(stubble)
 #' }
-#' stubblise(iris)
-#' stubblise(iris, fct_lvls = levels(iris$Species))
+#'
+#' # A simple examples producing nonsense data
+#' syn_iris_0 <- stubblise(iris)
+#'
+#' # Example with Species factor levels
+#' syn_iris_1 <- stubblise(
+#'   iris,
+#'   fct_lvls = list(levels(iris$Species))
+#' )
+#'
+#' # Example producing data more comparable to the real iris
+#' mins <- as.numeric(dplyr::summarise_if(iris, is.numeric, min))
+#' maxs <- as.numeric(dplyr::summarise_if(iris, is.numeric, max))
+#' lvls <- levels(iris$Species)
+#' rows <- dplyr::count(iris, Species)$n
+#' syn_iris_2 <- purrr::map2_dfr(
+#'   rows, lvls,
+#'   ~ stubblise(
+#'     iris, rows = .x,
+#'     dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
+#'     fct_lvls = list(lvls), fct_use_lvls = list(.y)
+#'   )
+#' )
 #'
 #' @export
 stubblise <- function(tbbl, rows = 10L, ...) {
@@ -66,7 +90,16 @@ stubblise <- function(tbbl, rows = 10L, ...) {
     warning = function(warn) warning(warn)
   )
 
-  tibble::as_tibble(lapply(tbbl, gen_col, elements = rows, ...))
+  index <- 1:ncol(tbbl)
+
+  tibble::as_tibble(
+    mapply(
+      gen_col, tbbl, index,
+      MoreArgs = list(elements = rows, ...),
+      SIMPLIFY = FALSE,
+      USE.NAMES = TRUE
+    )
+  )
 
 }
 
