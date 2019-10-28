@@ -7,8 +7,6 @@
 #'
 #' @param tbbl the tibble to emulate. Can have 0 rows.
 #' @param rows the number of simulated rows to generate.
-#' @param unique whether values should be unique within a column. Replicated or
-#' truncated to the number of columns in `tbbl` as required.
 #' @param ... control parameters for ranges and valid levels/characters in the
 #' synthetic data. See [control].
 #'
@@ -54,10 +52,6 @@
 #' to non-informative values.
 #'
 #' @examples
-#' \dontrun{
-#' library(stubble)
-#' }
-#'
 #' # A simple examples producing nonsense data
 #' syn_iris_0 <- stubblise(iris)
 #'

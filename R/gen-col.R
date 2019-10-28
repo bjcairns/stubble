@@ -15,9 +15,6 @@
 #' @return Returns a vector of the same class as `col` with `elements` elements.
 #'
 #' @examples
-#' \dontrun{
-#' library(stubble)
-#' }
 #' gen_col(iris$Sepal.length)
 #' gen_col(iris$Species)
 #'

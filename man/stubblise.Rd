@@ -17,9 +17,6 @@ stubblize(tbbl, rows = 10L, ...)
 
 \item{...}{control parameters for ranges and valid levels/characters in the
 synthetic data. See \link{control}.}
-
-\item{unique}{whether values should be unique within a column. Replicated or
-truncated to the number of columns in \code{tbbl} as required.}
 }
 \value{
 A tibble, with the same structure as \code{tbbl}, but containing random
@@ -73,19 +70,18 @@ to non-informative values.
 }
 
 \examples{
-\dontrun{
-library(stubble)
-}
-
 # A simple examples producing nonsense data
 syn_iris_0 <- stubblise(iris)
 
-# Slightly more involved example with Species factor levels
-syn_iris_1 <- stubblise(iris, fct_lvls = list(levels(iris$Species)))
+# Example with Species factor levels
+syn_iris_1 <- stubblise(
+  iris,
+  fct_lvls = list(levels(iris$Species))
+)
 
-# A more involved example producing somewhat more realistic data
-mins <- purrr::map_dbl(iris, ~ ifelse(!is.factor(.x), min(.x), NA))
-maxs <- purrr::map_dbl(iris, ~ ifelse(!is.factor(.x), max(.x), NA))
+# Example producing data more comparable to the real iris
+mins <- as.numeric(dplyr::summarise_if(iris, is.numeric, min))
+maxs <- as.numeric(dplyr::summarise_if(iris, is.numeric, max))
 lvls <- levels(iris$Species)
 rows <- dplyr::count(iris, Species)$n
 syn_iris_2 <- purrr::map2_dfr(

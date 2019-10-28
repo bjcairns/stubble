@@ -11,6 +11,9 @@ gen_col(col, elements = 10L, index = 1L, ...)
 
 \item{elements}{the number of elements to generate.}
 
+\item{index}{the index of the column for the purposes of extracting control
+parameters.}
+
 \item{...}{control parameters for ranges and valid levels/characters in the
 synthetic data. See \link{control}.}
 }
@@ -24,9 +27,6 @@ classes are \code{numeric}, \code{integer}, \code{character}, \code{factor}, \co
 with all \code{NA}s).
 }
 \examples{
-\dontrun{
-library(stubble)
-}
 gen_col(iris$Sepal.length)
 gen_col(iris$Species)
 
