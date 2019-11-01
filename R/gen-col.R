@@ -58,18 +58,17 @@ gen_col_.default <- function(col, elements, index, ctrl) {
 gen_col_.numeric <- function(col, elements, ctrl) {
 
   old_kind = RNGkind()[1]
+  on.exit(RNGkind(kind = old_kind))
   RNGkind(kind = ctrl$dbl_rng_kind)
 
   syn_col <- stats::runif(elements, ctrl$dbl_min, ctrl$dbl_max)
-
-  RNGkind(kind = old_kind)
 
   if (!is.na(ctrl$dbl_round))
     syn_col <- round(syn_col, digits = ctrl$dbl_round)
   if (!is.na(ctrl$dbl_signif))
     syn_col <- signif(syn_col, digits = ctrl$dbl_signif)
 
-  syn_col
+  return(syn_col)
 
 }
 
@@ -79,12 +78,18 @@ gen_col_.integer <- function(col, elements, ctrl) {
   # Enforce types
   int_min <- as.integer(ctrl$int_min)
   int_max <- as.integer(ctrl$int_max)
-  unique <- as.logical(ctrl$unique)
+  uniq <- as.logical(ctrl$unique)
+
+  if (int_max - int_min + 1 < elements & uniq)
+    stop(
+      "Number of possible values must be at least `elements`.",
+      "Use `int_max` and `int_min`."
+    )
 
   int_min - 1L + sample.int(
     int_max - int_min + 1L,
     size = as.integer(elements),
-    replace = !unique
+    replace = !uniq
   )
 
 }
@@ -95,16 +100,58 @@ gen_col_.character <- function(col, elements, ctrl) {
   # Enforce types
   chr_min <- as.integer(ctrl$chr_min)
   chr_max <- as.integer(ctrl$chr_max)
-  unique <- as.logical(ctrl$unique)
+  uniq <- as.logical(ctrl$unique)
+  force_uniq <- as.logical(ctrl$chr_force_unique)
+
+  if (length(ctrl$chr_sym) ^ chr_min < elements & uniq)
+    warning(
+      "Small symbol set and/or minimum number of characters suggests ",
+      "risk of non-unique synthetic values. ",
+      "See ?control for `chr_sym` and `chr_min`."
+    )
+
+  if (length(ctrl$chr_sym) ^ chr_max < elements & uniq & force_uniq)
+    error(
+      "Small symbol set and/or maximum number of characters implies ",
+      "non-unique synthetic values. See ?control for `chr_sym` and `chr_max`."
+    )
 
   char_lengths <- gen_col_.integer(
     col, elements,
     gen_col_control(int_min = chr_min, int_max = chr_max, old_ctrl = ctrl)
   )
-  sapply(
-    sapply(char_lengths, resample, x = ctrl$chr_sym, replace = !unique),
+
+  syn_col <- sapply(
+    sapply(char_lengths, resample, x = ctrl$chr_sym),
     paste0, collapse = "", simplify = TRUE
   )
+
+  if (anyDuplicated(syn_col) & uniq) {
+
+    if (ctrl$chr_force_unique_attempts <= 0 | !force_uniq) {
+
+      warning(
+        "Duplicate values required but not generated. ",
+        "See ?control for `chr_force_unique` and `chr_force_unique_attempts`."
+      )
+      return(syn_col)
+
+    } else if (force_uniq) {
+
+      syn_col <- gen_col_.character(
+        col,
+        elements,
+        ctrl = gen_col_control(
+          chr_force_unique_attempts = ctrl$chr_force_unique_attempts - 1,
+          old_ctrl = ctrl
+        )
+      )
+
+    }
+
+  }
+
+  return(syn_col)
 
 }
 
@@ -114,6 +161,7 @@ gen_col_.factor <- function(col, elements, ctrl) {
   # Enforce types
   fct_lvls <- as.character(unlist(ctrl$fct_lvls))
   fct_use_lvls <- unlist(ctrl$fct_use_lvls)
+
   if (is.null(fct_use_lvls)) fct_use_lvls <- fct_lvls
   fct_use_lvls <- as.character(fct_use_lvls)
   if (!all(fct_use_lvls %in% fct_lvls))

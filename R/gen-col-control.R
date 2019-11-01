@@ -14,6 +14,8 @@
 #' @param chr_min The minimum number of characters in a generated string.
 #' @param chr_max The maximum number of characters in a generated string.
 #' @param chr_sym A character vector of allowed symbols for generated strings.
+#' @param chr_force_unique Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate the vector. If `TRUE`, there will be `chr_force_unique_attempts` attempts.
+#' @param chr_force_unique_attempts Number of attempts to make to generate a unique synthetic character vector.
 #' @param fct_lvls Levels attribute for synthetic factors. Should always be a list with character vectors as elements.
 #' @param fct_use_lvls Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of `fct_use_lvls` should be a subset of the corresponding element of `fct_lvls`.
 #' @param lgl_vals Allowed values of generated logicals.
@@ -49,6 +51,8 @@ gen_col_control <- function(
     letters, LETTERS, as.character(0:9),
     unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
   ),
+  chr_force_unique = FALSE,
+  chr_forc_unique_attempts = 10L,
   fct_lvls = list(letters[1:4]),
   fct_use_lvls = list(NULL),
   lgl_vals = c(TRUE, FALSE),

@@ -22,3 +22,76 @@ test_that("gen_col can return a length-0 vector", {
     0L
   )
 })
+
+test_that("gen_col_ methods support alternative RNG algorithms", {
+  # Currently only methods for numeric vectors support this
+  RNGkind(kind = "Mersenne-Twister")
+  set.seed(8972345)
+  num1 <- gen_col(
+    as.numeric(c()),
+    elements = 10L,
+    dbl_rng_kind = "Mersenne-Twister"
+  )
+  set.seed(8972345)
+  num2 <- gen_col(
+    as.numeric(c()),
+    elements = 10L,
+    dbl_rng_kind = "L'Ecuyer-CMRG"
+  )
+  expect_false(identical(num1, num2))
+  expect_equal("Mersenne-Twister", RNGkind()[1])
+})
+
+test_that("synthetic integer and numeric columns are unique as required", {
+
+  int1 <- gen_col(as.integer(c()), elements = 500000L, unique = TRUE)
+  expect_equal(anyDuplicated(int1), 0)
+
+  # numerics should always be unique by construction
+  num1 <- gen_col(as.numeric(c()), elements = 500000L)
+  expect_equal(anyDuplicated(num1), 0)
+
+})
+
+test_that("synthetic character columns are unique as required", {
+
+  # Warn when there is a *risk* of duplication
+  expect_warning(
+    gen_col(
+      as.character(c()),
+      elements = 10L,
+      unique = TRUE,
+      chr_min = 1,
+      chr_max = 2,
+      chr_sym = LETTERS[1:4]
+    )
+  )
+
+  # Error when duplication is certain
+  expect_error(
+    gen_col(
+      as.character(c()),
+      elements = 10L,
+      unique = TRUE,
+      chr_min = 1,
+      chr_max = 2,
+      chr_sym = LETTERS[1:2]
+    )
+  )
+
+  # Expect warning when there is duplication but uniqueness is not enforced
+  expect_warning(
+
+    gen_col(
+      as.character(c()),
+      elements = 10L,
+      unique = TRUE,
+      chr_min = 1,
+      chr_max = 2,
+      chr_sym = LETTERS[1:2]
+    )
+  )
+
+  expect_equal(anyDuplicated(char1), 0)
+
+})
