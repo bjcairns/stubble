@@ -10,10 +10,11 @@ gen_col_control(unique = FALSE, int_min = 0L, int_max = 100L,
   dbl_round = NA, dbl_signif = NA, chr_min = 0L, chr_max = 10L,
   chr_sym = c(letters, LETTERS, as.character(0:9),
   unlist(strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", ""))),
-  fct_lvls = list(letters[1:4]), fct_use_lvls = list(NULL),
-  lgl_vals = c(TRUE, FALSE), date_origin = "1970-01-01",
-  date_max = Sys.Date(), dttm_max = Sys.time(), dttm_tz = "UTC",
-  def_class = "numeric", old_ctrl = as.list(NULL), ...)
+  chr_force_unique = FALSE, chr_force_unique_attempts = 10L,
+  fct_lvls = letters[1:4], fct_use_lvls = NULL, lgl_vals = c(TRUE,
+  FALSE), date_origin = "1970-01-01", date_max = Sys.Date(),
+  dttm_max = Sys.time(), dttm_tz = "UTC", def_class = "numeric",
+  old_ctrl = as.list(NULL), index = NA, ...)
 }
 \arguments{
 \item{unique}{Single logical value or logical vector indicating whether synthetic values should be unique within the column. When a vector, the relevant element is chosen by the \code{index} argument to \link{gen_col}.}
@@ -55,6 +56,8 @@ gen_col_control(unique = FALSE, int_min = 0L, int_max = 100L,
 \item{def_class}{A default vector class to return when all else fails. Currently not used.}
 
 \item{old_ctrl}{A set of control parameters to inherit unless explicitly overwritten in the current call.}
+
+\item{index}{Default \code{NA}. If not \code{NA}, the function will return list in which elements apply to a single column (i.e. elements are not necessarily lists). Mostly for internal use to handle passing control parameters between \code{gen_col_} S3 methods.}
 
 \item{...}{Further control parameters permitting extension of the \code{gen_col_} S3 methods.}
 }

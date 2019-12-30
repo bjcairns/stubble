@@ -21,15 +21,9 @@
 #' @export
 gen_col <- function(col, elements = 10L, index = 1L, ...) {
 
-  ctrl <- gen_col_control(...)
-  this_ctrl <- lapply(ctrl, get_ctrl_element, index = index)
+  this_ctrl <- gen_col_control(..., index = index)
 
-  tryCatch(
-    syn_col <- gen_col_(col, elements = elements, ctrl = this_ctrl),
-    error = function(err) {
-      warning("Could not generate data for ", class(col), "; returning NAs" )
-    }
-  )
+  syn_col <- gen_col_(col, elements = elements, ctrl = this_ctrl)
 
   if (!exists("syn_col")) {
     syn_col <- gen_col_.default(
@@ -103,26 +97,32 @@ gen_col_.character <- function(col, elements, ctrl) {
   uniq <- as.logical(ctrl$unique)
   force_uniq <- as.logical(ctrl$chr_force_unique)
 
-  if (length(ctrl$chr_sym) ^ chr_min < elements & uniq)
+  if ((length(ctrl$chr_sym) ^ chr_max < elements) & uniq & force_uniq)
+    stop(
+      "Small symbol set and/or maximum number of characters implies ",
+      "non-unique synthetic values. See ?control for `chr_sym` and `chr_max`."
+    )
+
+  if ((length(ctrl$chr_sym) ^ chr_min < elements) & uniq)
     warning(
       "Small symbol set and/or minimum number of characters suggests ",
       "risk of non-unique synthetic values. ",
       "See ?control for `chr_sym` and `chr_min`."
     )
 
-  if (length(ctrl$chr_sym) ^ chr_max < elements & uniq & force_uniq)
-    error(
-      "Small symbol set and/or maximum number of characters implies ",
-      "non-unique synthetic values. See ?control for `chr_sym` and `chr_max`."
-    )
-
   char_lengths <- gen_col_.integer(
     col, elements,
-    gen_col_control(int_min = chr_min, int_max = chr_max, old_ctrl = ctrl)
+    gen_col_control(
+      int_min = chr_min, int_max = chr_max,
+      old_ctrl = ctrl,
+      unique = FALSE,
+      index = 1L
+    )
   )
 
+  # Sample symbols the number of times given by char_lengths
   syn_col <- sapply(
-    sapply(char_lengths, resample, x = ctrl$chr_sym),
+    sapply(char_lengths, resample, x = ctrl$chr_sym, replace = TRUE),
     paste0, collapse = "", simplify = TRUE
   )
 
@@ -130,11 +130,10 @@ gen_col_.character <- function(col, elements, ctrl) {
 
     if (ctrl$chr_force_unique_attempts <= 0 | !force_uniq) {
 
-      warning(
+      stop(
         "Duplicate values required but not generated. ",
         "See ?control for `chr_force_unique` and `chr_force_unique_attempts`."
       )
-      return(syn_col)
 
     } else if (force_uniq) {
 
@@ -143,7 +142,8 @@ gen_col_.character <- function(col, elements, ctrl) {
         elements,
         ctrl = gen_col_control(
           chr_force_unique_attempts = ctrl$chr_force_unique_attempts - 1,
-          old_ctrl = ctrl
+          old_ctrl = ctrl,
+          index = 1L
         )
       )
 
@@ -172,7 +172,8 @@ gen_col_.factor <- function(col, elements, ctrl) {
     gen_col_control(
       chr_min = 1L, chr_max = 1L,
       chr_sym = fct_use_lvls,
-      old_ctrl = ctrl
+      old_ctrl = ctrl,
+      index = 1L
     )
   )
 
@@ -186,7 +187,7 @@ gen_col_.logical <- function(col, elements, ctrl) {
   as.logical(
     gen_col_.integer(
       col, elements,
-      gen_col_control(int_min = 0L, int_max = 1L, old_ctrl = ctrl)
+      gen_col_control(int_min = 0L, int_max = 1L, old_ctrl = ctrl, index = 1L)
     )
   )
 
@@ -199,7 +200,8 @@ gen_col_.POSIXct <- function(col, elements, ctrl) {
     col, elements,
     gen_col_control(
       dbl_min = 0, dbl_max = as.numeric(ctrl$dttm_max),
-      old_ctrl = ctrl
+      old_ctrl = ctrl,
+      index = 1L
     )
   )
 
@@ -219,7 +221,8 @@ gen_col_.Date <- function(col, elements, ctrl) {
       col, elements,
       gen_col_control(
         dbl_min = 0L, dbl_max = as.integer(ctrl$date_max),
-        old_ctrl = ctrl
+        old_ctrl = ctrl,
+        index = 1L
       )
     ),
     tz = ctrl$dttm_tz,

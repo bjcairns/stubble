@@ -25,6 +25,7 @@
 #' @param dttm_tz Timezone for generated date-times.
 #' @param def_class A default vector class to return when all else fails. Currently not used.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly overwritten in the current call.
+#' @param index Default `NA`. If not `NA`, the function will return list in which elements apply to a single column (i.e. elements are not necessarily lists). Mostly for internal use to handle passing control parameters between `gen_col_` S3 methods.
 #' @param ... Further control parameters permitting extension of the `gen_col_` S3 methods.
 #'
 #' @details Generation of synthetic data in stubble is very simple. Numbers,
@@ -52,9 +53,9 @@ gen_col_control <- function(
     unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
   ),
   chr_force_unique = FALSE,
-  chr_forc_unique_attempts = 10L,
-  fct_lvls = list(letters[1:4]),
-  fct_use_lvls = list(NULL),
+  chr_force_unique_attempts = 10L,
+  fct_lvls = letters[1:4],
+  fct_use_lvls = NULL,
   lgl_vals = c(TRUE, FALSE),
   date_origin = "1970-01-01",
   date_max = Sys.Date(),
@@ -62,6 +63,7 @@ gen_col_control <- function(
   dttm_tz = "UTC",
   def_class = "numeric",
   old_ctrl = as.list(NULL),
+  index = NA,
   ...
 ) {
 
@@ -69,15 +71,22 @@ gen_col_control <- function(
 
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())
+  args <- lapply(args, list)
 
   cargs <- as.list(match.call())[-1L]
   cargs <- lapply(cargs, eval, parent.frame())
+  cargs <- lapply(cargs, list)
 
   args[["old_ctrl"]] <- NULL
   cargs[["old_ctrl"]] <- NULL
 
   all_args <- append(old_ctrl, args[!(names(args) %in% names(old_ctrl))])
   all_args <- append(cargs, all_args[!(names(all_args) %in% names(cargs))])
+
+  # Return control parameters for a single column if required
+  if (!is.na(index)) {
+    all_args <- lapply(all_args, get_ctrl_element, index = index)
+  }
 
   invisible(all_args)
 
@@ -87,3 +96,13 @@ gen_col_control <- function(
 #' @rdname gen_col_control
 #' @name control
 NULL
+
+
+get_ctrl_element <- function(item, index) {
+  item_base <- length(item)
+  item_idx <- index %% item_base
+  item_idx <- ifelse(item_idx == 0, item_base, item_idx)
+  elem <- item[[item_idx]]
+  return(elem)
+}
+
