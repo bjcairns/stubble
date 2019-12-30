@@ -14,12 +14,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    tibble,
     stats
 Suggests: 
     usethis,
     testthat (>= 2.1.0),
     purrr,
-    dplyr
-RoxygenNote: 6.1.1
+    dplyr,
+    data.table,
+    tibble
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
