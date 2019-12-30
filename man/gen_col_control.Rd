@@ -5,16 +5,33 @@
 \alias{control}
 \title{Control parameters for gen_col()}
 \usage{
-gen_col_control(unique = FALSE, int_min = 0L, int_max = 100L,
-  dbl_min = 0, dbl_max = 100, dbl_rng_kind = "Wichmann-Hill",
-  dbl_round = NA, dbl_signif = NA, chr_min = 0L, chr_max = 10L,
-  chr_sym = c(letters, LETTERS, as.character(0:9),
-  unlist(strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", ""))),
-  chr_force_unique = FALSE, chr_force_unique_attempts = 10L,
-  fct_lvls = letters[1:4], fct_use_lvls = NULL, lgl_vals = c(TRUE,
-  FALSE), date_origin = "1970-01-01", date_max = Sys.Date(),
-  dttm_max = Sys.time(), dttm_tz = "UTC", def_class = "numeric",
-  old_ctrl = as.list(NULL), index = NA, ...)
+gen_col_control(
+  unique = FALSE,
+  int_min = 0L,
+  int_max = 100L,
+  dbl_min = 0,
+  dbl_max = 100,
+  dbl_rng_kind = "Wichmann-Hill",
+  dbl_round = NA,
+  dbl_signif = NA,
+  chr_min = 0L,
+  chr_max = 10L,
+  chr_sym = list(c(letters, LETTERS, as.character(0:9),
+    unlist(strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", "")))),
+  chr_force_unique = FALSE,
+  chr_force_unique_attempts = 10L,
+  fct_lvls = list(letters[1:4]),
+  fct_use_lvls = NULL,
+  lgl_vals = list(c(TRUE, FALSE)),
+  date_origin = "1970-01-01",
+  date_max = Sys.Date(),
+  dttm_max = Sys.time(),
+  dttm_tz = "UTC",
+  def_class = "numeric",
+  old_ctrl = as.list(NULL),
+  index = NA,
+  ...
+)
 }
 \arguments{
 \item{unique}{Single logical value or logical vector indicating whether synthetic values should be unique within the column. When a vector, the relevant element is chosen by the \code{index} argument to \link{gen_col}.}
@@ -49,7 +66,7 @@ gen_col_control(unique = FALSE, int_min = 0L, int_max = 100L,
 
 \item{lgl_vals}{Allowed values of generated logicals.}
 
-\item{date_origin}{The reference data for generated dates and times.}
+\item{date_origin}{The reference date for generated dates and times.}
 
 \item{date_max}{Max value for generated dates.}
 
@@ -76,9 +93,22 @@ factors are constructed from lists of symbols or levels sampled with equal
 probability.
 
 Various control parameters allow some user influence over the sets of
-allowed values. Available parameters are listed and described above.
+allowed values. Available parameters are listed and described above. In
+addition to \code{gen_col_control()}, these parameters are exposed directly via
+\code{\link[=stubblise]{stubblise()}} and \code{\link[=gen_col]{gen_col()}}, and may be passed as arguments with the names
+given above to either function.
 
-In addition to \code{gen_col_control()}, these parameters are exposed directly
-via \code{\link[=stubblise]{stubblise()}} and \code{\link[=gen_col]{gen_col()}}, and may be passed as arguments with the
-names given above to either function.
+Control parameters may be common to all or may be specified per-column.
+Arguments passed to \code{gen_col_control()} or directly via \code{stubblise()} or
+\code{gen_col()} are interpreted according to type:
+\itemize{
+\item \emph{Single-element vectors} (i.e. scalars) mean that the same parameter
+value applies to each column;
+\item \emph{Multi-element vectors} mean that each element is matched (with
+recycling) as the parameter for the corresponding column;
+}
+To pass vector parameter for a column, such as a vector of allowed factor
+levels, wrap the vector in a list, e.g. \code{list(letters[1:4])}. (Internally,
+all arguments passed to \code{gen_col_control()}, whether directly or indirectly,
+are sanitised with \code{as.list()}.)
 }
