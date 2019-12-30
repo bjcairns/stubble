@@ -19,7 +19,7 @@
 #' @param fct_lvls Levels attribute for synthetic factors. Should always be a list with character vectors as elements.
 #' @param fct_use_lvls Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of `fct_use_lvls` should be a subset of the corresponding element of `fct_lvls`.
 #' @param lgl_vals Allowed values of generated logicals.
-#' @param date_origin The reference data for generated dates and times.
+#' @param date_origin The reference date for generated dates and times.
 #' @param date_max Max value for generated dates.
 #' @param dttm_max Max value for generated date-times.
 #' @param dttm_tz Timezone for generated date-times.
@@ -34,11 +34,24 @@
 #' probability.
 #'
 #' Various control parameters allow some user influence over the sets of
-#' allowed values. Available parameters are listed and described above.
+#' allowed values. Available parameters are listed and described above. In
+#' addition to `gen_col_control()`, these parameters are exposed directly via
+#' [stubblise()] and [gen_col()], and may be passed as arguments with the names
+#' given above to either function.
 #'
-#' In addition to `gen_col_control()`, these parameters are exposed directly
-#' via [stubblise()] and [gen_col()], and may be passed as arguments with the
-#' names given above to either function.
+#' Control parameters may be common to all or may be specified per-column.
+#' Arguments passed to `gen_col_control()` or directly via `stubblise()` or
+#' `gen_col()` are interpreted according to type:
+#' \itemize{
+#'   \item *Single-element vectors* mean that the same parameter value applies
+#'   to each column;
+#'   \item *Multi-element vectors* mean that each element is matched (with
+#'   recycling) as the parameter for the corresponding column;
+#' }
+#' To pass a vector parameter for a column, such as a vector of allowed factor
+#' levels, wrap the vector in a list, e.g. `list(letters[1:4])`. (Internally,
+#' all arguments passed to `gen_col_control()`, whether directly or indirectly,
+#' are sanitised with `as.list()`.)
 #'
 #' @export
 gen_col_control <- function(
@@ -48,15 +61,15 @@ gen_col_control <- function(
   dbl_rng_kind = "Wichmann-Hill",
   dbl_round = NA, dbl_signif = NA,
   chr_min = 0L, chr_max = 10L,
-  chr_sym = c(
+  chr_sym = list(c(
     letters, LETTERS, as.character(0:9),
     unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
-  ),
+  )),
   chr_force_unique = FALSE,
   chr_force_unique_attempts = 10L,
-  fct_lvls = letters[1:4],
+  fct_lvls = list(letters[1:4]),
   fct_use_lvls = NULL,
-  lgl_vals = c(TRUE, FALSE),
+  lgl_vals = list(c(TRUE, FALSE)),
   date_origin = "1970-01-01",
   date_max = Sys.Date(),
   dttm_max = Sys.time(),
@@ -71,11 +84,11 @@ gen_col_control <- function(
 
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())
-  args <- lapply(args, list)
+  args <- lapply(args, as.list)
 
   cargs <- as.list(match.call())[-1L]
   cargs <- lapply(cargs, eval, parent.frame())
-  cargs <- lapply(cargs, list)
+  cargs <- lapply(cargs, as.list)
 
   args[["old_ctrl"]] <- NULL
   cargs[["old_ctrl"]] <- NULL

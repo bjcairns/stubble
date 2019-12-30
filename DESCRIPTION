@@ -1,7 +1,7 @@
 Package: stubble
 Type: Package
-Title: Simple synthetic data from tibbles
-Version: 0.1.0
+Title: Simple synthetic data from data frames, tibbles, and data.tables
+Version: 0.2.0
 Authors@R: c(
       person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"), 
         email = "ben.cairns@ndph.ox.ac.uk", 
@@ -9,17 +9,18 @@ Authors@R: c(
       person("University of Oxford", role = "cph")
     )
 Maintainer: Benjamin J. Cairns <ben.cairns@ndph.ox.ac.uk>
-Description: stubble takes a tibble as input and returns a tibble containing randomly generated (synthetic/simulated) data consistent with the original column types.
+Description: stubble takes a data frame-like object as input and returns an object of the same class containing randomly generated (synthetic/simulated) data consistent with the original column types.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    tibble,
     stats
 Suggests: 
     usethis,
     testthat (>= 2.1.0),
     purrr,
-    dplyr
-RoxygenNote: 6.1.1
+    dplyr,
+    data.table,
+    tibble
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)

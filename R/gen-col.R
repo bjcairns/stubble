@@ -36,11 +36,12 @@ gen_col <- function(col, elements = 10L, index = 1L, ...) {
 }
 
 
-gen_col_ <- function(col, elements, index, ctrl) {
+gen_col_ <- function(col, ...) {
   UseMethod("gen_col_", col)
 }
 
 
+#' @export
 gen_col_.default <- function(col, elements, index, ctrl) {
 
   # Note, no user control over class of vector in this case
@@ -50,6 +51,7 @@ gen_col_.default <- function(col, elements, index, ctrl) {
 }
 
 
+#' @export
 gen_col_.numeric <- function(col, elements, ctrl) {
 
   uniq <- as.logical(ctrl$unique)
@@ -87,6 +89,7 @@ gen_col_.numeric <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.integer <- function(col, elements, ctrl) {
 
   # Enforce types
@@ -110,6 +113,7 @@ gen_col_.integer <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.character <- function(col, elements, ctrl) {
 
   # Enforce types
@@ -177,6 +181,7 @@ gen_col_.character <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.factor <- function(col, elements, ctrl) {
 
   # Enforce types
@@ -203,6 +208,7 @@ gen_col_.factor <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.logical <- function(col, elements, ctrl) {
 
   as.logical(
@@ -215,6 +221,7 @@ gen_col_.logical <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.POSIXct <- function(col, elements, ctrl) {
 
   dbl_date = gen_col_.numeric(
@@ -235,6 +242,7 @@ gen_col_.POSIXct <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.Date <- function(col, elements, ctrl) {
 
   as.Date(
@@ -253,6 +261,7 @@ gen_col_.Date <- function(col, elements, ctrl) {
 }
 
 
+#' @export
 gen_col_.list <- function(col, elements, ctrl) {
 
   as.list(rep(NA, elements))

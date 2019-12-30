@@ -22,7 +22,7 @@ test_that("gen_col_control() handles vector parameters", {
     NA
   )
 
-  expect_equal(ctrl1$int_min, list(c(-1L, -2L)))  # Vector parameter stored
+  expect_equal(ctrl1$int_min, as.list(c(-1L, -2L)))  # Vector parameter stored
   expect_equal(ctrl1$int_max, list(99L))          # Non-vector parameter stored
 
 })

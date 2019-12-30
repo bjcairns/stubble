@@ -23,6 +23,33 @@ test_that("stubblise can return a tibble with 0 rows",{
 
 })
 
+test_that("stubblise handles a range of data frame-like classes", {
+
+  # Standard data frame-like objects
+  iris_tbl_df <- tibble::as_tibble(iris)
+  iris_dt <- data.table::as.data.table(iris)
+  iris_list <- as.list(iris)
+
+  # List of vectors without identical lengths
+  iris_list_uneven <- iris_list
+  iris_list_uneven[[2]] <- iris_list_uneven[[2]][1:10]
+
+  # Synthesise the reference data.frame
+  use_seed <- 237892342L
+  set.seed(use_seed)
+  iris_stbl <- stubblise(iris, rows = 100L)
+
+  # Compare all classes of iris data to the reference
+  purrr::map(
+    list(iris_tbl_df, iris_dt, iris_list, iris_list_uneven),
+    ~ {
+      set.seed(use_seed)
+      expect_identical(iris_stbl, as.data.frame(stubblise(.x, rows = 100L)))
+    }
+  )
+
+})
+
 test_that("stubblise and stubblize are equivalent", {
 
   expect_identical(stubblise, stubblize)
