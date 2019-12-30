@@ -39,6 +39,10 @@ gen_col_control(unique = FALSE, int_min = 0L, int_max = 100L,
 
 \item{chr_sym}{A character vector of allowed symbols for generated strings.}
 
+\item{chr_force_unique}{Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate the vector. If \code{TRUE}, there will be \code{chr_force_unique_attempts} attempts.}
+
+\item{chr_force_unique_attempts}{Number of attempts to make to generate a unique synthetic character vector.}
+
 \item{fct_lvls}{Levels attribute for synthetic factors. Should always be a list with character vectors as elements.}
 
 \item{fct_use_lvls}{Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of \code{fct_use_lvls} should be a subset of the corresponding element of \code{fct_lvls}.}

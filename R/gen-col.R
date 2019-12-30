@@ -44,6 +44,7 @@ gen_col_ <- function(col, elements, index, ctrl) {
 gen_col_.default <- function(col, elements, index, ctrl) {
 
   # Note, no user control over class of vector in this case
+  warning("Could not generate data for ", class(col), "; returning NAs")
   as.numeric(rep(NA, elements))
 
 }
@@ -51,11 +52,30 @@ gen_col_.default <- function(col, elements, index, ctrl) {
 
 gen_col_.numeric <- function(col, elements, ctrl) {
 
+  uniq <- as.logical(ctrl$unique)
+  rng_kind <- as.character(ctrl$dbl_rng_kind)
+
   old_kind = RNGkind()[1]
   on.exit(RNGkind(kind = old_kind))
-  RNGkind(kind = ctrl$dbl_rng_kind)
+  RNGkind(kind = rng_kind)
 
   syn_col <- stats::runif(elements, ctrl$dbl_min, ctrl$dbl_max)
+
+  if (rng_kind != "Wichmann-Hill" & !uniq) {
+    warning(
+      "Random number generators other than 'Wichmann-Hill' may return ",
+      "non-unique results in \nlarge columns. ",
+      "See ?control for `unique = TRUE` to enforce uniqueness."
+    )
+  } else if (uniq) {
+    if (anyDuplicated(syn_col)) {
+      stop(
+        "Duplicate values in column but `unique = TRUE`. ",
+        "See ?control and \ntry `dbl_rng_kind = \"Wichmann-Hill\"`.\n"
+      )
+      stop()
+    }
+  }
 
   if (!is.na(ctrl$dbl_round))
     syn_col <- round(syn_col, digits = ctrl$dbl_round)
@@ -74,11 +94,12 @@ gen_col_.integer <- function(col, elements, ctrl) {
   int_max <- as.integer(ctrl$int_max)
   uniq <- as.logical(ctrl$unique)
 
-  if (int_max - int_min + 1 < elements & uniq)
+  if ((int_max - int_min + 1 < elements) & uniq) {
     stop(
-      "Number of possible values must be at least `elements`.",
-      "Use `int_max` and `int_min`."
+      "Number of possible values must be at least `elements`. ",
+      "See ?control for \n`int_max` and `int_min`.\n"
     )
+  }
 
   int_min - 1L + sample.int(
     int_max - int_min + 1L,
@@ -241,9 +262,4 @@ gen_col_.list <- function(col, elements, ctrl) {
 
 resample <- function(size, x, replace = FALSE, prob = NULL) {
   base::sample(x, size, replace, prob)
-}
-
-
-get_ctrl_element <- function(item, index) {
-  ifelse(length(item) >= index, item[index], rep_len(item, index)[index])
 }

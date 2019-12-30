@@ -24,42 +24,84 @@ test_that("gen_col can return a length-0 vector", {
 })
 
 test_that("gen_col_ methods support alternative RNG algorithms", {
+
   # Currently only methods for numeric vectors support this
   RNGkind(kind = "Mersenne-Twister")
   set.seed(8972345)
-  num1 <- gen_col(
-    as.numeric(c()),
-    elements = 10L,
-    dbl_rng_kind = "Mersenne-Twister"
+  suppressWarnings(
+    num1 <- gen_col(
+      as.numeric(c()),
+      elements = 10L,
+      dbl_rng_kind = "Mersenne-Twister"
+    )
   )
   set.seed(8972345)
-  num2 <- gen_col(
-    as.numeric(c()),
-    elements = 10L,
-    dbl_rng_kind = "L'Ecuyer-CMRG"
+  suppressWarnings(
+    num2 <- gen_col(
+      as.numeric(c()),
+      elements = 10L,
+      dbl_rng_kind = "L'Ecuyer-CMRG"
+    )
   )
+
   expect_false(identical(num1, num2))
+
+  # dbl_rng_kind only makes temporary changes
   expect_equal("Mersenne-Twister", RNGkind()[1])
+
 })
 
 test_that("synthetic integer and numeric columns are unique as required", {
 
-  int1 <- gen_col(as.integer(c()), elements = 500000L, unique = TRUE)
+  # integer columns must have a range large enough to select uniquely from
+  int1 <- gen_col(
+    as.integer(c()), elements = 100L,
+    int_max = 100, unique = TRUE
+  )
   expect_equal(anyDuplicated(int1), 0)
 
-  # numerics should always be unique by construction
-  num1 <- gen_col(as.numeric(c()), elements = 500000L)
+  expect_error(
+    int2 <- gen_col(
+      as.integer(c()), elements = 100L,
+      int_max = 10, unique = TRUE
+    )
+  )
+
+  # numerics should be unique (before rounding) whenever RNGkind is
+  # "Wichmann-Hill"
+  num1 <- gen_col(as.numeric(c()), elements = 500000L, unique = TRUE)
   expect_equal(anyDuplicated(num1), 0)
+
+  expect_error(
+    num2 <- gen_col(
+      as.numeric(c()),
+      elements = 500000L,
+      unique = TRUE,
+      dbl_rng_kind = "Mersenne-Twister"
+    )
+  )
+
+  expect_warning(
+    gen_col(
+      as.numeric(c()),
+      elements = 500000L,
+      unique = FALSE,
+      dbl_rng_kind = "Mersenne-Twister"
+    )
+  )
 
 })
 
 test_that("synthetic character columns are unique as required", {
 
+  skip("forcing unique character columns is not currently supported")
+
   # Warn when there is a *risk* of duplication
+  set.seed(123)
   expect_warning(
     gen_col(
       as.character(c()),
-      elements = 10L,
+      elements = 2L,
       unique = TRUE,
       chr_min = 1,
       chr_max = 2,
@@ -73,6 +115,7 @@ test_that("synthetic character columns are unique as required", {
       as.character(c()),
       elements = 10L,
       unique = TRUE,
+      force_unique = TRUE,
       chr_min = 1,
       chr_max = 2,
       chr_sym = LETTERS[1:2]
@@ -81,7 +124,6 @@ test_that("synthetic character columns are unique as required", {
 
   # Expect warning when there is duplication but uniqueness is not enforced
   expect_warning(
-
     gen_col(
       as.character(c()),
       elements = 10L,
@@ -91,7 +133,5 @@ test_that("synthetic character columns are unique as required", {
       chr_sym = LETTERS[1:2]
     )
   )
-
-  expect_equal(anyDuplicated(char1), 0)
 
 })
