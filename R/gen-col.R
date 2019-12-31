@@ -122,17 +122,10 @@ gen_col_.character <- function(col, elements, ctrl) {
   uniq <- as.logical(ctrl$unique)
   force_uniq <- as.logical(ctrl$chr_force_unique)
 
-  if ((length(ctrl$chr_sym) ^ chr_max < elements) & uniq & force_uniq)
-    stop(
-      "Small symbol set and/or maximum number of characters implies ",
-      "non-unique synthetic values. See ?control for `chr_sym` and `chr_max`."
-    )
-
-  if ((length(ctrl$chr_sym) ^ chr_min < elements) & uniq)
+  if ((length(ctrl$chr_sym) ^ chr_max < elements) & uniq)
     warning(
-      "Small symbol set and/or minimum number of characters suggests ",
-      "risk of non-unique synthetic values. ",
-      "See ?control for `chr_sym` and `chr_min`."
+      "Small symbol set and/or maximum number of characters implies risk of ",
+      "non-unique synthetic values. See ?control for `chr_sym` and `chr_max`."
     )
 
   char_lengths <- gen_col_.integer(
@@ -197,7 +190,7 @@ gen_col_.factor <- function(col, elements, ctrl) {
     col, elements,
     gen_col_control(
       chr_min = 1L, chr_max = 1L,
-      chr_sym = fct_use_lvls,
+      chr_sym = list(fct_use_lvls),
       old_ctrl = ctrl,
       index = 1L
     )
