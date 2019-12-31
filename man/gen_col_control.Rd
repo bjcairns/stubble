@@ -72,7 +72,7 @@ gen_col_control(
 
 \item{dttm_max}{Max value for generated date-times.}
 
-\item{dttm_tz}{Timezone for generated date-times.}
+\item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but \code{Sys.timezone()} may be more appropriate for some users.}
 
 \item{def_class}{A default vector class to return when all else fails. Currently not used.}
 
@@ -102,12 +102,12 @@ Control parameters may be common to all or may be specified per-column.
 Arguments passed to \code{gen_col_control()} or directly via \code{stubblise()} or
 \code{gen_col()} are interpreted according to type:
 \itemize{
-\item \emph{Single-element vectors} (i.e. scalars) mean that the same parameter
-value applies to each column;
+\item \emph{Single-element vectors} mean that the same parameter value applies
+to each column;
 \item \emph{Multi-element vectors} mean that each element is matched (with
 recycling) as the parameter for the corresponding column;
 }
-To pass vector parameter for a column, such as a vector of allowed factor
+To pass a vector parameter for a column, such as a vector of allowed factor
 levels, wrap the vector in a list, e.g. \code{list(letters[1:4])}. (Internally,
 all arguments passed to \code{gen_col_control()}, whether directly or indirectly,
 are sanitised with \code{as.list()}.)
