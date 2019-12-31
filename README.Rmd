@@ -1,0 +1,86 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# stubble
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+stubble helps you generate simple synthetic datasets matching the format of a supplied data frame-like object (including base R data frames, tibbles, data.tables, and lists of vectors). 
+
+The original intended use of stubble is to generate simple test data for analysis projects and R package development.
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("bjcairns/stubble")
+```
+## Example
+
+### Default operation
+
+Because real data are often sensitive and unsuitable for sharing, stubble produces nonsense data unless you tell it not to. With default options, the function `stubblise()` (equivalently, `stubblize()`) will produce a data frame that shares only the column names and types with the source dataset.
+
+```{r example}
+library(stubble)
+stubblise(iris)
+```
+
+Contrast this with the actual `iris` dataset, and note that the distribution of the values, features like rounding, and factor levels, etc. are not preserved:
+
+```{r iris}
+head(iris, 10)
+```
+
+### Control parameters
+
+If you did want to use the same factor levels, however, you can do so, using the relevant control parameters which are available (see `?gen_col_control` for details).
+
+```{r factor.levels}
+stubblise(iris, fct_lvls = list(levels(iris$Species)))
+```
+
+Going further, control parameters can be specified for each column so as to produce more realistic looking data:
+
+```{r realistic}
+mins <- as.numeric(dplyr::summarise_if(iris, is.numeric, min))
+maxs <- as.numeric(dplyr::summarise_if(iris, is.numeric, max))
+lvls <- levels(iris$Species)
+rows <- dplyr::count(iris, Species)$n
+
+syn_iris <- purrr::map2_dfr(
+  rows, lvls,
+  ~ stubblise(
+    iris, rows = .x,
+    dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
+    fct_lvls = list(lvls), fct_use_lvls = .y
+  )
+)
+
+head(syn_iris, 10)
+```
+
+The code above extracts minima and maxima and factor levels, finds the number of rows for each species, then calls `stubblise()` for each species (via `purrr::map2_dfr()`) to give the same number of rows per species as in the original `iris`. Because the `map2_dfr()` function binds its results into a single data frame, the `Species` columns need to be compatible. This is ensured by giving a `fct_lvls` parameter including all 3 levels, while the `fct_use_lvls` parameter includes only the level for the current species.
+
+Note this important feature of the control parameter syntax: elements of vector parameters (like `mins`) apply to corresponding columns (first element to first column, second to second, and so on, with recycling). If the parameter for a single column is a vector (like `fct_lvls`), then it should be wrapped in `list()`.
+
+Although the result of the above looks much more realistic, there are obvious differences. It is easy to see, for example, that the `Petal.Width` column for setosa differs from the original `iris` dataset. This is because although different species tend to have different petal widths in the original data, in the synthetic version there are no such relationships. There is no facility in stubble to automatically generate relationships between variables, but different control parameters for the numeric columns can be passed to `stubblise()` for each species to achieve this effect manually.
+
+## Known issues
+
+* It is intended that stubble will support generation of character columns with unique values, but this is not currently guaranteed.

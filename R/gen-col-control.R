@@ -22,7 +22,7 @@
 #' @param date_origin The reference date for generated dates and times.
 #' @param date_max Max value for generated dates.
 #' @param dttm_max Max value for generated date-times.
-#' @param dttm_tz Timezone for generated date-times.
+#' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but `Sys.timezone()` may be more appropriate for some users.
 #' @param def_class A default vector class to return when all else fails. Currently not used.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly overwritten in the current call.
 #' @param index Default `NA`. If not `NA`, the function will return list in which elements apply to a single column (i.e. elements are not necessarily lists). Mostly for internal use to handle passing control parameters between `gen_col_` S3 methods.
