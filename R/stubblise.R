@@ -129,9 +129,9 @@ stubblise.list <- function(x, rows = 10L, ...) {
 
 # Internals
 stbls_ <- function(x, rows = 10L, ...) {
-  index <- length(x)
+  index <- 1:length(x)
   mapply(
-    gen_col, x, index,
+    gen_col, col = x, index = index,
     MoreArgs = list(elements = rows, ...),
     SIMPLIFY = FALSE,
     USE.NAMES = TRUE
