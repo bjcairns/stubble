@@ -220,6 +220,7 @@ gen_col_.factor <- function(col, elements, ctrl) {
       unique = uniq,
       chr_min = 1L, chr_max = 1L,
       chr_sym = list(fct_use_lvls),
+      chr_try_unique = uniq,
       old_ctrl = lapply(ctrl, list),
       index = 1L
     )
