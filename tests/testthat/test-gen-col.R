@@ -96,42 +96,4 @@ test_that("synthetic character columns are unique as required", {
 
   skip("forcing unique character columns is not currently supported")
 
-  # Warn when there is a *risk* of duplication
-  set.seed(123)
-  expect_warning(
-    gen_col(
-      as.character(c()),
-      elements = 2L,
-      unique = TRUE,
-      chr_min = 1,
-      chr_max = 2,
-      chr_sym = LETTERS[1:4]
-    )
-  )
-
-  # Error when duplication is certain
-  expect_error(
-    gen_col(
-      as.character(c()),
-      elements = 10L,
-      unique = TRUE,
-      force_unique = TRUE,
-      chr_min = 1,
-      chr_max = 2,
-      chr_sym = LETTERS[1:2]
-    )
-  )
-
-  # Expect warning when there is duplication but uniqueness is not enforced
-  expect_warning(
-    gen_col(
-      as.character(c()),
-      elements = 10L,
-      unique = TRUE,
-      chr_min = 1,
-      chr_max = 2,
-      chr_sym = LETTERS[1:2]
-    )
-  )
-
 })
