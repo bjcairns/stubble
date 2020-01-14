@@ -23,7 +23,9 @@ Suggests:
     data.table,
     tibble,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggplot2,
+    cowplot
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
