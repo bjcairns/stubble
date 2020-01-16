@@ -26,6 +26,25 @@ classes are \code{numeric}, \code{integer}, \code{character}, \code{factor}, \co
 \code{POSIXct} and \code{Date}. There is limited support for \code{list} (returns a list
 with all \code{NA}s).
 }
+\details{
+\code{gen_col()} calls an internal S3 generic function, \code{gen_col_()},
+with built-in methods for base R vector types.
+
+All methods return values sampled uniformly at random, with the exception of
+\code{gen_col_.character()}, which samples string lengths uniformly at random and
+then populates those strings with symbols (strings of one or more
+characters) chosen uniformly at random from the values in the \code{chr_sym}
+control parameter (see \code{\link[=gen_col_control]{gen_col_control()}}). Character results of
+\code{gen_col()} are therefore not chosen uniformly at random from the set of all
+strings which are valid according to the control parameters; short strings
+are overrepresented.
+
+Uniqueness can be demanded (using the \code{unique} control parameter) for any
+vector type, but is likely to result in an error for logical and factor
+vectors. To even attempt to enforce uniqueness for either of these, set
+the respective control parameters, \code{lgl_force_unique} and
+\code{fct_force_unique}, to \code{TRUE}.
+}
 \examples{
 gen_col(iris$Sepal.length)
 gen_col(iris$Species)

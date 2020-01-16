@@ -12,6 +12,24 @@
 #' @param ... control parameters for ranges and valid levels/characters in the
 #' synthetic data. See [control].
 #'
+#' @details `gen_col()` calls an internal S3 generic function, `gen_col_()`,
+#' with built-in methods for base R vector types.
+#'
+#' All methods return values sampled uniformly at random, with the exception of
+#' `gen_col_.character()`, which samples string lengths uniformly at random and
+#' then populates those strings with symbols (strings of one or more
+#' characters) chosen uniformly at random from the values in the `chr_sym`
+#' control parameter (see [gen_col_control()]). Character results of
+#' `gen_col()` are therefore not chosen uniformly at random from the set of all
+#' strings which are valid according to the control parameters; short strings
+#' are overrepresented.
+#'
+#' Uniqueness can be demanded (using the `unique` control parameter) for any
+#' vector type, but is likely to result in an error for logical and factor
+#' vectors. To even attempt to enforce uniqueness for either of these, set
+#' the respective control parameters, `lgl_force_unique` and
+#' `fct_force_unique`, to `TRUE`.
+#'
 #' @return Returns a vector of the same class as `col` with `elements` elements.
 #'
 #' @examples
@@ -99,7 +117,7 @@ gen_col_.integer <- function(col, elements, ctrl) {
 
   if ((int_max - int_min + 1 < elements) & uniq) {
     stop(
-      "Number of possible values must be at least `elements`. ",
+      "Number of possible values must be at least `elements` for uniqueness. ",
       "See ?control for \n`int_max` and `int_min`.\n"
     )
   }
@@ -119,20 +137,18 @@ gen_col_.character <- function(col, elements, ctrl) {
   # Enforce types
   chr_min <- as.integer(ctrl$chr_min)
   chr_max <- as.integer(ctrl$chr_max)
+  chr_sym <- sapply(ctrl$chr_sym, as.character)
   uniq <- as.logical(ctrl$unique)
-  force_uniq <- as.logical(ctrl$chr_force_unique)
+  try_uniq <- as.logical(ctrl$chr_try_unique)
+  try_attempts <- as.integer(ctrl$chr_try_unique_attempts)
+  dups_nmax <- as.integer(ctrl$chr_duplicates_nmax)
 
-  if ((length(ctrl$chr_sym) ^ chr_max < elements) & uniq)
-    warning(
-      "Small symbol set and/or maximum number of characters implies risk of ",
-      "non-unique synthetic values. See ?control for `chr_sym` and `chr_max`."
-    )
-
+  # Lengths of each string in the synthetic character vector
   char_lengths <- gen_col_.integer(
-    col, elements,
+    as.integer(), elements,
     gen_col_control(
       int_min = chr_min, int_max = chr_max,
-      old_ctrl = ctrl,
+      old_ctrl = lapply(ctrl, list),
       unique = FALSE,
       index = 1L
     )
@@ -140,32 +156,43 @@ gen_col_.character <- function(col, elements, ctrl) {
 
   # Sample symbols the number of times given by char_lengths
   syn_col <- sapply(
-    sapply(char_lengths, resample, x = ctrl$chr_sym, replace = TRUE),
+    lapply(char_lengths, resample, x = chr_sym, replace = TRUE),
     paste0, collapse = "", simplify = TRUE
   )
 
-  if (anyDuplicated(syn_col) & uniq) {
+  # duplicates and their count
+  dups <- duplicated(syn_col, nmax = dups_nmax)
+  ndups <- sum(dups)
 
-    if (ctrl$chr_force_unique_attempts <= 0 | !force_uniq) {
+  while (ndups > 0 & try_attempts > 0 & uniq & try_uniq) {
 
-      stop(
-        "Duplicate values required but not generated. ",
-        "See ?control for `chr_force_unique` and `chr_force_unique_attempts`."
+    try_attempts <- try_attempts - 1
+
+    syn_col_repl <- gen_col_.character(
+      as.character(),
+      ndups,
+      ctrl = gen_col_control(
+        unique = FALSE,
+        old_ctrl = lapply(ctrl, list),
+        index = 1L
       )
+    )
+    syn_col[dups] <- syn_col_repl
 
-    } else if (force_uniq) {
+    # duplicates and their count
+    dups <- duplicated(syn_col, nmax = dups_nmax)
+    ndups <- sum(dups)
 
-      syn_col <- gen_col_.character(
-        col,
-        elements,
-        ctrl = gen_col_control(
-          chr_force_unique_attempts = ctrl$chr_force_unique_attempts - 1,
-          old_ctrl = ctrl,
-          index = 1L
-        )
-      )
+  }
 
-    }
+  # Stop if there are still duplicates, and uniqueness is required, and either
+  # no attempts remain or uniqueness should not be forced
+  if ((ndups > 0) & uniq & (try_attempts <= 0 | !try_uniq)) {
+
+    stop(
+      "Duplicate values required but not generated. ",
+      "See ?control for `chr_try_unique` and `chr_try_unique_attempts`."
+    )
 
   }
 
@@ -180,6 +207,7 @@ gen_col_.factor <- function(col, elements, ctrl) {
   # Enforce types
   fct_lvls <- as.character(unlist(ctrl$fct_lvls))
   fct_use_lvls <- unlist(ctrl$fct_use_lvls)
+  uniq <- as.logical(ctrl$fct_force_unique)
 
   if (is.null(fct_use_lvls)) fct_use_lvls <- fct_lvls
   fct_use_lvls <- as.character(fct_use_lvls)
@@ -189,9 +217,11 @@ gen_col_.factor <- function(col, elements, ctrl) {
   fct_as_chr <- gen_col_.character(
     col, elements,
     gen_col_control(
+      unique = uniq,
       chr_min = 1L, chr_max = 1L,
       chr_sym = list(fct_use_lvls),
-      old_ctrl = ctrl,
+      chr_try_unique = uniq,
+      old_ctrl = lapply(ctrl, list),
       index = 1L
     )
   )
@@ -204,10 +234,17 @@ gen_col_.factor <- function(col, elements, ctrl) {
 #' @export
 gen_col_.logical <- function(col, elements, ctrl) {
 
+  uniq <- as.logical(ctrl$lgl_force_unique)
+
   as.logical(
     gen_col_.integer(
       col, elements,
-      gen_col_control(int_min = 0L, int_max = 1L, old_ctrl = ctrl, index = 1L)
+      gen_col_control(
+        unique = uniq,
+        int_min = 0L, int_max = 1L,
+        old_ctrl = lapply(ctrl, list),
+        index = 1L
+      )
     )
   )
 
@@ -221,7 +258,7 @@ gen_col_.POSIXct <- function(col, elements, ctrl) {
     col, elements,
     gen_col_control(
       dbl_min = 0, dbl_max = as.numeric(ctrl$dttm_max),
-      old_ctrl = ctrl,
+      old_ctrl = lapply(ctrl, list),
       index = 1L
     )
   )
@@ -243,7 +280,7 @@ gen_col_.Date <- function(col, elements, ctrl) {
       col, elements,
       gen_col_control(
         dbl_min = 0L, dbl_max = as.integer(ctrl$date_max),
-        old_ctrl = ctrl,
+        old_ctrl = lapply(ctrl, list),
         index = 1L
       )
     ),

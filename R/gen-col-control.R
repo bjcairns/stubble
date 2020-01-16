@@ -14,15 +14,17 @@
 #' @param chr_min The minimum number of characters in a generated string.
 #' @param chr_max The maximum number of characters in a generated string.
 #' @param chr_sym A character vector of allowed symbols for generated strings.
-#' @param chr_force_unique Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate the vector. If `TRUE`, there will be `chr_force_unique_attempts` attempts.
-#' @param chr_force_unique_attempts Number of attempts to make to generate a unique synthetic character vector.
+#' @param chr_try_unique Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate duplicates. If `TRUE`, there will be `chr_try_unique_attempts` attempts.
+#' @param chr_try_unique_attempts Number of attempts to make to generate a unique synthetic character vector.
+#' @param chr_duplicated_nmax Value (greater than one) for the `nmax` parameter of [duplicated()] when enforcing uniqueness. Defaults to `NA`, the default for `duplicated()`.
 #' @param fct_lvls Levels attribute for synthetic factors. Should always be a list with character vectors as elements.
 #' @param fct_use_lvls Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of `fct_use_lvls` should be a subset of the corresponding element of `fct_lvls`.
-#' @param lgl_vals Allowed values of generated logicals.
+#' @param fct_force_unique Force `gen_col()` to attempt to return a factor vector with unique elements. Will return an error unless `length(fct_use_lvls)` is greater than or equal to the `elements` argument of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
+#' @param lgl_force_unique Force `gen_col()` to attempt to return a logical vector with unique elements. Will return an error unless `length(lgl_lvls)` (usually equal to 2) is greater than or equal to the `elements` argument of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
 #' @param date_origin The reference date for generated dates and times.
 #' @param date_max Max value for generated dates.
 #' @param dttm_max Max value for generated date-times.
-#' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but `Sys.timezone()` may be more appropriate for some users.
+#' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but [Sys.timezone()] may be more appropriate for some users.
 #' @param def_class A default vector class to return when all else fails. Currently not used.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly overwritten in the current call.
 #' @param index Default `NA`. If not `NA`, the function will return list in which elements apply to a single column (i.e. elements are not necessarily lists). Mostly for internal use to handle passing control parameters between `gen_col_` S3 methods.
@@ -65,11 +67,13 @@ gen_col_control <- function(
     letters, LETTERS, as.character(0:9),
     unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
   )),
-  chr_force_unique = FALSE,
-  chr_force_unique_attempts = 10L,
+  chr_try_unique = FALSE,
+  chr_try_unique_attempts = 10L,
+  chr_duplicated_nmax = NA,
   fct_lvls = list(letters[1:4]),
   fct_use_lvls = NULL,
-  lgl_vals = list(c(TRUE, FALSE)),
+  fct_force_unique = FALSE,
+  lgl_force_unique = FALSE,
   date_origin = "1970-01-01",
   date_max = Sys.Date(),
   dttm_max = Sys.time(),

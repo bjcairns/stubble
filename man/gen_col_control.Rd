@@ -18,11 +18,13 @@ gen_col_control(
   chr_max = 10L,
   chr_sym = list(c(letters, LETTERS, as.character(0:9),
     unlist(strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", "")))),
-  chr_force_unique = FALSE,
-  chr_force_unique_attempts = 10L,
+  chr_try_unique = FALSE,
+  chr_try_unique_attempts = 10L,
+  chr_duplicated_nmax = NA,
   fct_lvls = list(letters[1:4]),
   fct_use_lvls = NULL,
-  lgl_vals = list(c(TRUE, FALSE)),
+  fct_force_unique = FALSE,
+  lgl_force_unique = FALSE,
   date_origin = "1970-01-01",
   date_max = Sys.Date(),
   dttm_max = Sys.time(),
@@ -56,15 +58,19 @@ gen_col_control(
 
 \item{chr_sym}{A character vector of allowed symbols for generated strings.}
 
-\item{chr_force_unique}{Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate the vector. If \code{TRUE}, there will be \code{chr_force_unique_attempts} attempts.}
+\item{chr_try_unique}{Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate duplicates. If \code{TRUE}, there will be \code{chr_try_unique_attempts} attempts.}
 
-\item{chr_force_unique_attempts}{Number of attempts to make to generate a unique synthetic character vector.}
+\item{chr_try_unique_attempts}{Number of attempts to make to generate a unique synthetic character vector.}
+
+\item{chr_duplicated_nmax}{Value (greater than one) for the \code{nmax} parameter of \code{\link[=duplicated]{duplicated()}} when enforcing uniqueness. Defaults to \code{NA}, the default for \code{duplicated()}.}
 
 \item{fct_lvls}{Levels attribute for synthetic factors. Should always be a list with character vectors as elements.}
 
 \item{fct_use_lvls}{Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of \code{fct_use_lvls} should be a subset of the corresponding element of \code{fct_lvls}.}
 
-\item{lgl_vals}{Allowed values of generated logicals.}
+\item{fct_force_unique}{Force \code{gen_col()} to attempt to return a factor vector with unique elements. Will return an error unless \code{length(fct_use_lvls)} is greater than or equal to the \code{elements} argument of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
+
+\item{lgl_force_unique}{Force \code{gen_col()} to attempt to return a logical vector with unique elements. Will return an error unless \code{length(lgl_lvls)} (usually equal to 2) is greater than or equal to the \code{elements} argument of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
 
 \item{date_origin}{The reference date for generated dates and times.}
 
@@ -72,7 +78,7 @@ gen_col_control(
 
 \item{dttm_max}{Max value for generated date-times.}
 
-\item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but \code{Sys.timezone()} may be more appropriate for some users.}
+\item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some users.}
 
 \item{def_class}{A default vector class to return when all else fails. Currently not used.}
 

@@ -1,5 +1,8 @@
 context("gen_col()")
 
+# Fixed seed for RNGs
+use.seed <- 29305678L
+
 test_that("gen_col returns expected classes", {
   expect_true(is.integer(gen_col(as.integer(c()), elements = 10L)))  # integer
   expect_true(is.numeric(gen_col(as.numeric(c()), elements = 10L)))  # numeric
@@ -55,26 +58,26 @@ test_that("synthetic integer and numeric columns are unique as required", {
 
   # integer columns must have a range large enough to select uniquely from
   int1 <- gen_col(
-    as.integer(c()), elements = 100L,
+    integer(), elements = 100L,
     int_max = 100, unique = TRUE
   )
   expect_equal(anyDuplicated(int1), 0)
 
   expect_error(
     int2 <- gen_col(
-      as.integer(c()), elements = 100L,
+      integer(), elements = 100L,
       int_max = 10, unique = TRUE
     )
   )
 
   # numerics should be unique (before rounding) whenever RNGkind is
   # "Wichmann-Hill"
-  num1 <- gen_col(as.numeric(c()), elements = 500000L, unique = TRUE)
+  num1 <- gen_col(numeric(), elements = 500000L, unique = TRUE)
   expect_equal(anyDuplicated(num1), 0)
 
   expect_error(
     num2 <- gen_col(
-      as.numeric(c()),
+      numeric(),
       elements = 500000L,
       unique = TRUE,
       dbl_rng_kind = "Mersenne-Twister"
@@ -83,7 +86,7 @@ test_that("synthetic integer and numeric columns are unique as required", {
 
   expect_warning(
     gen_col(
-      as.numeric(c()),
+      numeric(),
       elements = 500000L,
       unique = FALSE,
       dbl_rng_kind = "Mersenne-Twister"
@@ -94,44 +97,54 @@ test_that("synthetic integer and numeric columns are unique as required", {
 
 test_that("synthetic character columns are unique as required", {
 
-  skip("forcing unique character columns is not currently supported")
-
-  # Warn when there is a *risk* of duplication
-  set.seed(123)
-  expect_warning(
-    gen_col(
-      as.character(c()),
-      elements = 2L,
-      unique = TRUE,
-      chr_min = 1,
-      chr_max = 2,
-      chr_sym = LETTERS[1:4]
-    )
+  # Expect unique elements; lots of symbols, few elements
+  chr1 <- gen_col(
+    character(),
+    elements = 10L,
+    unique = TRUE,
+    chr_min = 5L, chr_max = 10L,
+    chr_try_unique = TRUE
   )
+  expect_equal(anyDuplicated(chr1), 0)
 
-  # Error when duplication is certain
+  # Expect error; insufficient symbols
   expect_error(
     gen_col(
-      as.character(c()),
+      character(),
       elements = 10L,
       unique = TRUE,
-      force_unique = TRUE,
-      chr_min = 1,
-      chr_max = 2,
-      chr_sym = LETTERS[1:2]
+      chr_min = 1L, chr_max = 2L,
+      chr_sym = list(LETTERS[1:2])
     )
   )
 
-  # Expect warning when there is duplication but uniqueness is not enforced
-  expect_warning(
+  # Expect error, retries allowed but no attempts
+  set.seed(use.seed)
+  expect_error(
     gen_col(
-      as.character(c()),
+      character(),
       elements = 10L,
       unique = TRUE,
-      chr_min = 1,
-      chr_max = 2,
-      chr_sym = LETTERS[1:2]
+      chr_min = 1L, chr_max = 3L,
+      chr_sym = list(LETTERS[1:2]),
+      chr_try_unique = TRUE,
+      chr_try_unique_attempts = 0L
     )
+  )
+
+  # Expect no error (i.e. error is NA); 10 retries allowed
+  set.seed(use.seed)
+  expect_error(
+    gen_col(
+      character(),
+      elements = 10L,
+      unique = TRUE,
+      chr_min = 1L, chr_max = 3L,
+      chr_sym = list(LETTERS[1:2]),
+      chr_try_unique = TRUE,
+      chr_try_unique_attempts = 10L
+    ),
+    NA
   )
 
 })
