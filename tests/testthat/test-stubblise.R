@@ -1,5 +1,12 @@
 context("stubblise()")
 
+# seed for common results
+use_seed <- 237892342L
+
+# Synthesise a reference data.frame
+set.seed(use_seed)
+iris_stbl_df <- stubblise(iris, rows = 100L)
+
 test_that("stubblise maintains structure", {
 
   expect_identical(lapply(iris, names), lapply(stubblise(iris), names))
@@ -10,42 +17,69 @@ test_that("stubblise maintains structure", {
 
 })
 
-test_that("stubblise can return a tibble with 0 rows",{
+test_that("stubblise can return data with 0 rows or many",{
 
-  iris_stbl <- stubblise(iris, rows = 0)
+  iris_stbl0 <- stubblise(iris, rows = 0L)
 
-  expect_identical(lapply(iris, names), lapply(iris_stbl, names))
-  expect_identical(lapply(iris, class), lapply(iris_stbl, class))
+  expect_identical(lapply(iris, names), lapply(iris_stbl0, names))
+  expect_identical(lapply(iris, class), lapply(iris_stbl0, class))
 
   expect_true(
-    dim(iris_stbl)[1] == 0L
+    dim(iris_stbl0)[1] == 0L
+  )
+
+  nr <- as.integer(Sys.time()) %% 100 + 1
+  iris_stbln <- stubblise(iris, rows = nr)
+  expect_true(
+    dim(iris_stbln)[1] == nr
   )
 
 })
 
-test_that("stubblise handles a range of data frame-like classes", {
+test_that("stubblise handles tibbles", {
 
-  # Standard data frame-like objects
+  skip_if_not_installed("tibble")
+
   iris_tbl_df <- tibble::as_tibble(iris)
+  set.seed(use_seed)
+  expect_identical(
+    iris_stbl_df,
+    as.data.frame(stubblise(iris_tbl_df, rows = 100L))
+  )
+
+})
+
+test_that("stubblise handles data.tables", {
+
+  # data.tables
   iris_dt <- data.table::as.data.table(iris)
+  set.seed(use_seed)
+  expect_identical(
+    iris_stbl_df,
+    as.data.frame(stubblise(iris_dt, rows = 100L))
+  )
+
+})
+
+test_that("stubblise handles lists", {
+
+  # Standard list
   iris_list <- as.list(iris)
 
   # List of vectors without identical lengths
   iris_list_uneven <- iris_list
   iris_list_uneven[[2]] <- iris_list_uneven[[2]][1:10]
 
-  # Synthesise the reference data.frame
-  use_seed <- 237892342L
   set.seed(use_seed)
-  iris_stbl <- stubblise(iris, rows = 100L)
+  expect_identical(
+    iris_stbl_df,
+    as.data.frame(stubblise(iris_list, rows = 100L))
+  )
 
-  # Compare all classes of iris data to the reference
-  purrr::map(
-    list(iris_tbl_df, iris_dt, iris_list, iris_list_uneven),
-    ~ {
-      set.seed(use_seed)
-      expect_identical(iris_stbl, as.data.frame(stubblise(.x, rows = 100L)))
-    }
+  set.seed(use_seed)
+  expect_identical(
+    iris_stbl_df,
+    as.data.frame(stubblise(iris_list_uneven, rows = 100L))
   )
 
 })
