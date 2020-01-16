@@ -1,7 +1,7 @@
 Package: stubble
 Type: Package
 Title: Simple synthetic data from data frames, tibbles, and data.tables
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(
       person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"), 
         email = "ben.cairns@ndph.ox.ac.uk", 
