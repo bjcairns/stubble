@@ -11,6 +11,9 @@ stubble helps you generate simple synthetic datasets matching the format
 of a supplied data frame-like object (including base R data frames,
 tibbles, data.tables, and lists of vectors).
 
+stubble replicates the column names and types of the original data, but
+rows contain only random data.
+
 The original intended use of stubble is to generate simple test data for
 analysis projects and R package development.
 
