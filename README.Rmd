@@ -32,7 +32,7 @@ devtools::install_github("bjcairns/stubble")
 ```
 ## Example
 
-Here is a very simple example of using stubble on the `iris` dataset.
+Here is a very simple example of using stubble on the `iris` dataset. By default, stubble generates nonsense values which bear no relation to the original values, other than having the same vector type.
 
 ``` {r seed, echo=FALSE}
 set.seed(98723895)
@@ -47,4 +47,4 @@ For more advanced use, see the "Using stubble" vignette.
 
 ## Known issues
 
-* It is intended that stubble will support generation of character columns with unique values, but this is not currently guaranteed.
+* See [Issues](https://github.com/bjcairns/stubble/issues) on the stubble GitHub repository.
