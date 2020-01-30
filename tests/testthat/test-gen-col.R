@@ -148,3 +148,45 @@ test_that("synthetic character columns are unique as required", {
   )
 
 })
+
+test_that("Synthetic character columns include correct separators", {
+
+  no_sep <- gen_col(
+    character(),
+    elements = 50L,
+    unique = FALSE,
+    chr_min = 1L, chr_max = 10L,
+    chr_sym = list(LETTERS[1:2]),
+    chr_sep = ""
+  )
+  no_sep_commas <- lengths(regmatches(no_sep, gregexpr(",", no_sep)))
+  expect_equal(no_sep_commas, rep(0L, 50L))
+
+  comma_sep <- gen_col(
+    character(),
+    elements = 50L,
+    unique = FALSE,
+    chr_min = 1L, chr_max = 10L,
+    chr_sym = list(LETTERS[1:2]),
+    chr_sep = ","
+  )
+  comma_sep_commas <- lengths(regmatches(comma_sep, gregexpr(",", comma_sep)))
+  expect_equal(comma_sep_commas, (nchar(comma_sep) - 1)/2)
+
+  # Works also with unique
+  set.seed(use.seed)
+  comma_sep_uniq <- gen_col(
+    character(),
+    elements = 10L,
+    unique = TRUE,
+    chr_min = 1L, chr_max = 3L,
+    chr_sym = list(LETTERS[1:2]),
+    chr_sep = ",",
+    chr_try_unique = TRUE,
+    chr_try_unique_attempts = 10L
+  )
+  comma_sep_uniq_commas <-
+    lengths(regmatches(comma_sep_uniq, gregexpr(",", comma_sep_uniq)))
+  expect_equal(comma_sep_uniq_commas, (nchar(comma_sep_uniq) - 1)/2)
+
+})

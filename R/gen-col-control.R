@@ -14,6 +14,7 @@
 #' @param chr_min The minimum number of characters in a generated string.
 #' @param chr_max The maximum number of characters in a generated string.
 #' @param chr_sym A character vector of allowed symbols for generated strings.
+#' @param chr_sep A separator for symbols in generated strings; defaults to `""` (an empty string).
 #' @param chr_try_unique Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate duplicates. If `TRUE`, there will be `chr_try_unique_attempts` attempts.
 #' @param chr_try_unique_attempts Number of attempts to make to generate a unique synthetic character vector.
 #' @param chr_duplicated_nmax Value (greater than one) for the `nmax` parameter of [duplicated()] when enforcing uniqueness. Defaults to `NA`, the default for `duplicated()`.
@@ -67,6 +68,7 @@ gen_col_control <- function(
     letters, LETTERS, as.character(0:9),
     unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
   )),
+  chr_sep = "",
   chr_try_unique = FALSE,
   chr_try_unique_attempts = 10L,
   chr_duplicated_nmax = NA,

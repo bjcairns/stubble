@@ -18,6 +18,7 @@ gen_col_control(
   chr_max = 10L,
   chr_sym = list(c(letters, LETTERS, as.character(0:9),
     unlist(strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", "")))),
+  chr_sep = "",
   chr_try_unique = FALSE,
   chr_try_unique_attempts = 10L,
   chr_duplicated_nmax = NA,
@@ -57,6 +58,8 @@ gen_col_control(
 \item{chr_max}{The maximum number of characters in a generated string.}
 
 \item{chr_sym}{A character vector of allowed symbols for generated strings.}
+
+\item{chr_sep}{A separator for symbols in generated strings; defaults to \code{""} (an empty string).}
 
 \item{chr_try_unique}{Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate duplicates. If \code{TRUE}, there will be \code{chr_try_unique_attempts} attempts.}
 

@@ -138,6 +138,7 @@ gen_col_.character <- function(col, elements, ctrl) {
   chr_min <- as.integer(ctrl$chr_min)
   chr_max <- as.integer(ctrl$chr_max)
   chr_sym <- sapply(ctrl$chr_sym, as.character)
+  chr_sep <- as.character(ctrl$chr_sep)
   uniq <- as.logical(ctrl$unique)
   try_uniq <- as.logical(ctrl$chr_try_unique)
   try_attempts <- as.integer(ctrl$chr_try_unique_attempts)
@@ -157,7 +158,7 @@ gen_col_.character <- function(col, elements, ctrl) {
   # Sample symbols the number of times given by char_lengths
   syn_col <- sapply(
     lapply(char_lengths, resample, x = chr_sym, replace = TRUE),
-    paste0, collapse = "", simplify = TRUE
+    paste0, collapse = chr_sep, simplify = TRUE
   )
 
   # duplicates and their count
