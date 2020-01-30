@@ -77,7 +77,7 @@ Although the result of the previous section looks much more realistic, there are
 
 <br />
 
-```{r figure, fig.width=6, fig.height=3, fig.cap="**Figure.** Original (A) and synthetic (B) iris data", echo=FALSE}
+```{r figure, fig.width=6, fig.height=3, fig.cap="**Figure 1.** Original (A) and synthetic (B) iris data", echo=FALSE}
 g1 <- ggplot(iris, aes(x = Species, y = Petal.Width, fill = Species)) + 
   geom_boxplot() +
   theme_cowplot() +
@@ -93,14 +93,70 @@ plot_grid(g1, g2, labels = "AUTO")
 
 There is no facility in stubble to automatically generate relationships between variables, because it is intended only to generate "simple" synthetic data. The motivations for this are:
 
-- *computation speed*, since generating correlated data will necessarily be much slower; and
+- *computation speed*, since generating correlated data will necessarily be slower; and
 - *data protection*, since associations and other statistics generated from real data can disclose sensitive information.
 
 Note that original column names and types are revealed in stubblised datasets, and if these are sensitive, then appropriate data protection measures should also be applied to the synthetic data.
 
-If, despite stubble's limitations, you do want to generate associations, it may still be possible. In the iris example, different control parameters for the numeric columns could be passed to `stubblise()` for each species to manually generate more realistic data.
+If, despite stubble's limitations, you do want to generate associations, it may still be possible. In the `iris` example, different control parameters for the numeric columns could be passed to `stubblise()` for each species. One way to do this is to convert the data from long to wide form:
+
+```{r more_realistic_widen}
+library(magrittr)
+
+species_rows <- dim(iris)[1] / 3
+
+iris_idd <-  iris %>% dplyr::mutate(id = rep(seq(1, species_rows),3))
+
+iris_idd_wide <- iris_idd %>% 
+  tidyr::pivot_wider(
+    id_cols = id,  
+    names_from = Species, 
+    values_from = c(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width)
+  )
+```
+
+Then the synthetic data can be generated with column-specific minima and maxima:
+
+```{r more_realisitic_stubblise}
+mins <- as.numeric(dplyr::summarise_if(iris_idd_wide, is.numeric, min))
+maxs <- as.numeric(dplyr::summarise_if(iris_idd_wide, is.numeric, max))
+
+iris_idd_wide_stub <- iris_idd_wide %>% 
+  stubblise(species_rows, dbl_min = mins, dbl_max = maxs, dbl_round = 1L)
+
+iris_idd_wide_stub$id <- seq(1L, species_rows)
+```
+
+Finally, the data can be converted back to a long format, and re-arranged to match the structure of the original `iris` dataset:
+
+```{r more_realistic_lengthen}
+iris_stub <- iris_idd_wide_stub %>% 
+  tidyr::pivot_longer(
+    -id,
+    names_to = c(".value", "Species"), 
+    names_sep = "_"
+  ) %>%
+  dplyr::select(-id, -Species, Species)
+```
+
+Consequently, the synthetic data have broadly similar relationships between `Species` and the sepal and petal measurements as in the original data; for example, again, `Petal.width` is greater now in *virginica* and *versicolor* than *setosa* species (**Figure 2**). 
 
 <br />
+
+```{r figure_more_realistic, fig.width=6, fig.height=3, fig.cap="**Figure 2.** Original (A) and synthetic (B) iris data with associations between Species and other columns", echo=FALSE}
+g1 <- ggplot(iris, aes(x = Species, y = Petal.Width, fill = Species)) + 
+  geom_boxplot() +
+  theme_cowplot() +
+  theme(legend.position = "none")
+g2 <- ggplot(iris_stub, aes(x = Species, y = Petal.Width, fill = Species)) + 
+  geom_boxplot() +
+  theme_cowplot() +
+  theme(legend.position = "none")
+plot_grid(g1, g2, labels = "AUTO")
+```
+
+<br />
+
 
 [^1]: The only exception is character vectors, in which every string length has equal probability, and then conditional on string length `n`, every symbol has equal probability of appearing in each of the `n` positions.
 
