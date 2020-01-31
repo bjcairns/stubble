@@ -190,3 +190,45 @@ test_that("Synthetic character columns include correct separators", {
   expect_equal(comma_sep_uniq_commas, (nchar(comma_sep_uniq) - 1)/2)
 
 })
+
+test_that("Missing values are handled correctly", {
+
+  # p_na is 0 means no missings
+  expect_false(
+    any(is.na(gen_col(integer(), elements = 1000L, p_na = 0, int_max = 100)))
+  )
+
+  # p_na == 1 means all missings
+  expect_true(
+    all(is.na(gen_col(integer(), elements = 1000L, p_na = 1, int_max = 100)))
+  )
+
+  # Expect warning if p_na > 1, but then all missing
+  expect_warning(
+    int1 <- gen_col(integer(), elements = 1000L, p_na = 2, int_max = 100)
+  )
+  expect_true(all(is.na(int1)))
+
+  # Expect SOME missing if p_na < 1 and p_na > 0
+  int2 <- gen_col(integer(), elements = 1000L, p_na = 0.5, int_max = 100)
+  expect_true(any(is.na(int2)) & !all(is.na(int2)))
+
+})
+
+test_that("Vector types are preserved when some values are NA", {
+
+  expect_true(is.integer(gen_col(integer(), elements = 1000L, p_na = 0.5)))  # integer
+  expect_true(is.double(gen_col(double(), elements = 1000L, p_na = 0.5)))    # numeric
+  expect_true(is.list(gen_col(list(), elements = 1000L, p_na = 0.5)))        # list
+  expect_true(is.factor(gen_col(factor(), elements = 1000L, p_na = 0.5)))    # factor
+  expect_true(is.logical(gen_col(logical(), elements = 1000L, p_na = 0.5)))  # logical
+  expect_identical(                                                          # date
+    "Date",
+    class(gen_col(as.Date(character()), elements = 1000L, p_na = 0.5))
+  )
+  expect_identical(                                                          # date-time
+    "POSIXct",
+    class(gen_col(as.POSIXct(numeric(), origin = "1970-01-01"), elements = 1000L, p_na = 0.5))[1]
+  )
+
+})

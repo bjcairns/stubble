@@ -7,6 +7,7 @@
 \usage{
 gen_col_control(
   unique = FALSE,
+  p_na = 0,
   int_min = 0L,
   int_max = 100L,
   dbl_min = 0,
@@ -38,6 +39,8 @@ gen_col_control(
 }
 \arguments{
 \item{unique}{Single logical value or logical vector indicating whether synthetic values should be unique within the column. When a vector, the relevant element is chosen by the \code{index} argument to \link{gen_col}.}
+
+\item{p_na}{Proportion of values set to \code{NA}; defaults to \code{0}.}
 
 \item{int_min}{Minmium values for integer generation.}
 

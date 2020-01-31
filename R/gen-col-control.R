@@ -4,6 +4,7 @@
 #' [stubblise()].
 #'
 #' @param unique Single logical value or logical vector indicating whether synthetic values should be unique within the column. When a vector, the relevant element is chosen by the `index` argument to [gen_col].
+#' @param p_na Proportion of values set to `NA`; defaults to `0`.
 #' @param int_min Minmium values for integer generation.
 #' @param int_max Maximum values for integer generation.
 #' @param dbl_min Minimum values for real/numeric/double generation
@@ -59,6 +60,7 @@
 #' @export
 gen_col_control <- function(
   unique = FALSE,
+  p_na = 0,
   int_min = 0L, int_max = 100L,
   dbl_min = 0, dbl_max = 100,
   dbl_rng_kind = "Wichmann-Hill",

@@ -43,10 +43,31 @@ gen_col <- function(col, elements = 10L, index = 1L, ...) {
 
   syn_col <- gen_col_(col, elements = elements, ctrl = this_ctrl)
 
+  # Revert to the default if something went wrong
   if (!exists("syn_col")) {
     syn_col <- gen_col_.default(
       col, elements = elements, ctrl = this_ctrl
     )
+  }
+
+  # Handle missing values (here because doing so is agnostic to vector type
+  # and because uniqueness has already been assessed)
+  p_na <- as.numeric(this_ctrl$p_na)
+  if (p_na != 0) {
+
+    if (p_na > 1) {
+      warning("Control parameter p_na > 1; value has been reset to 1")
+      p_na <- 1
+    }
+
+    # Number of missings is bin(elements, p_na) and which are missing is random
+    if (p_na == 1) syn_col[] <- NA
+    else {
+      n_missing <- stats::rbinom(1L, elements, p_na)
+      missings_indices <- sample.int(elements, n_missing, replace = FALSE)
+      syn_col[missings_indices] <- NA
+    }
+
   }
 
   invisible(syn_col)
