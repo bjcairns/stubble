@@ -38,7 +38,9 @@ gen_col_control(
 )
 }
 \arguments{
-\item{unique}{Single logical value or logical vector indicating whether synthetic values should be unique within the column. When a vector, the relevant element is chosen by the \code{index} argument to \link{gen_col}.}
+\item{unique}{Single logical value or logical vector indicating whether
+synthetic values should be unique within the column. When a vector, the
+relevant element is chosen by the \code{index} argument to \link{gen_col}.}
 
 \item{p_na}{Proportion of values set to \code{NA}; defaults to \code{0}.}
 
@@ -50,11 +52,18 @@ gen_col_control(
 
 \item{dbl_max}{Maximum values for real/numeric/double generation}
 
-\item{dbl_rng_kind}{The random number generation algorithm to use for real/numeric/double values. Takes values allowed by \code{\link[=RNGkind]{RNGkind()}}. Defaults to \code{"Wichmann-Hill"}, which is slower than other generators but is much less likely to produce duplicate values.}
+\item{dbl_rng_kind}{The random number generation algorithm to use for
+real/numeric/double values. Takes values allowed by \code{\link[=RNGkind]{RNGkind()}}. Defaults to
+\code{"Wichmann-Hill"}, which is slower than other generators but is much less
+likely to produce duplicate values.}
 
-\item{dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then \code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_signif}). If \code{NA} (default), no rounding is applied.}
+\item{dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then
+\code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_signif}, below). If \code{NA}
+(default), no rounding is applied.}
 
-\item{dbl_signif}{Number of significant digits to round to. \code{\link[=round]{round()}} and then \code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_round}). If \code{NA} (default), no rounding is applied.}
+\item{dbl_signif}{Number of significant digits to round to. \code{\link[=round]{round()}} and
+then \code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_round}). If \code{NA}
+(default), no rounding is applied.}
 
 \item{chr_min}{The minimum number of characters in a generated string.}
 
@@ -62,21 +71,37 @@ gen_col_control(
 
 \item{chr_sym}{A character vector of allowed symbols for generated strings.}
 
-\item{chr_sep}{A separator for symbols in generated strings; defaults to \code{""} (an empty string).}
+\item{chr_sep}{A separator for symbols in generated strings; defaults to
+\code{""} (an empty string).}
 
-\item{chr_try_unique}{Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate duplicates. If \code{TRUE}, there will be \code{chr_try_unique_attempts} attempts.}
+\item{chr_try_unique}{Logical value indicating whether, after a failure to
+generate a unique synthetic character vector, the algorithm should attempt
+to regenerate duplicates. If \code{TRUE}, there will be \code{chr_try_unique_attempts}
+attempts.}
 
-\item{chr_try_unique_attempts}{Number of attempts to make to generate a unique synthetic character vector.}
+\item{chr_try_unique_attempts}{Number of attempts to make to generate a
+unique synthetic character vector.}
 
-\item{chr_duplicated_nmax}{Value (greater than one) for the \code{nmax} parameter of \code{\link[=duplicated]{duplicated()}} when enforcing uniqueness. Defaults to \code{NA}, the default for \code{duplicated()}.}
+\item{chr_duplicated_nmax}{Value (greater than one) for the \code{nmax} parameter
+of \code{\link[=duplicated]{duplicated()}} when enforcing uniqueness. Defaults to \code{NA}, the default
+for \code{duplicated()}.}
 
-\item{fct_lvls}{Levels attribute for synthetic factors. Should always be a list with character vectors as elements.}
+\item{fct_lvls}{Levels attribute for synthetic factors. Should always be a
+list with character vectors as elements.}
 
-\item{fct_use_lvls}{Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of \code{fct_use_lvls} should be a subset of the corresponding element of \code{fct_lvls}.}
+\item{fct_use_lvls}{Allowed levels for synthetic factor data. Should always
+be a list with character vectors as elements. Each element of \code{fct_use_lvls}
+should be a subset of the corresponding element of \code{fct_lvls}.}
 
-\item{fct_force_unique}{Force \code{gen_col()} to attempt to return a factor vector with unique elements. Will return an error unless \code{length(fct_use_lvls)} is greater than or equal to the \code{elements} argument of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
+\item{fct_force_unique}{Force \code{gen_col()} to attempt to return a factor
+vector with unique elements. Will return an error unless
+\code{length(fct_use_lvls)} is greater than or equal to the \code{elements} argument
+of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
 
-\item{lgl_force_unique}{Force \code{gen_col()} to attempt to return a logical vector with unique elements. Will return an error unless \code{length(lgl_lvls)} (usually equal to 2) is greater than or equal to the \code{elements} argument of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
+\item{lgl_force_unique}{Force \code{gen_col()} to attempt to return a logical
+vector with unique elements. Will return an error unless \code{length(lgl_lvls)}
+(usually equal to 2) is greater than or equal to the \code{elements} argument
+of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
 
 \item{date_origin}{The reference date for generated dates and times.}
 
@@ -84,19 +109,28 @@ gen_col_control(
 
 \item{dttm_max}{Max value for generated date-times.}
 
-\item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some users.}
+\item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but
+\code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some users.}
 
-\item{def_class}{A default vector class to return when all else fails. Currently not used.}
+\item{def_class}{A default vector class to return when all else fails.
+Currently not used.}
 
-\item{old_ctrl}{A set of control parameters to inherit unless explicitly overwritten in the current call.}
+\item{old_ctrl}{A set of control parameters to inherit unless explicitly
+overwritten in the current call.}
 
-\item{index}{Default \code{NA}. If not \code{NA}, the function will return list in which elements apply to a single column (i.e. elements are not necessarily lists). Mostly for internal use to handle passing control parameters between \code{gen_col_} S3 methods.}
+\item{index}{Default \code{NA}. If not \code{NA}, the function will return list in
+which elements apply to a single column (i.e. elements are not necessarily
+lists). Mostly for internal use to handle passing control parameters between
+\code{gen_col_} S3 methods.}
 
-\item{...}{Further control parameters permitting extension of the \code{gen_col_} S3 methods.}
+\item{...}{Further control parameters permitting extension of the \code{gen_col_}
+S3 methods.}
 }
 \description{
 This help file describes the available parameters to control the output of
-\code{\link[=stubblise]{stubblise()}}.
+\code{\link[=stubblise]{stubblise()}}. The function which assembles these parameters into a list,
+\code{gen_col_control()}, is accessible to users but often will not need to be
+called directly.
 }
 \details{
 Generation of synthetic data in stubble is very simple. Numbers,

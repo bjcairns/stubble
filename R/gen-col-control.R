@@ -1,36 +1,70 @@
 #' Control parameters for gen_col()
 #'
 #' This help file describes the available parameters to control the output of
-#' [stubblise()].
+#' [stubblise()]. The function which assembles these parameters into a list,
+#' `gen_col_control()`, is accessible to users but often will not need to be
+#' called directly.
 #'
-#' @param unique Single logical value or logical vector indicating whether synthetic values should be unique within the column. When a vector, the relevant element is chosen by the `index` argument to [gen_col].
+#' @param unique Single logical value or logical vector indicating whether
+#' synthetic values should be unique within the column. When a vector, the
+#' relevant element is chosen by the `index` argument to [gen_col].
 #' @param p_na Proportion of values set to `NA`; defaults to `0`.
 #' @param int_min Minmium values for integer generation.
 #' @param int_max Maximum values for integer generation.
 #' @param dbl_min Minimum values for real/numeric/double generation
 #' @param dbl_max Maximum values for real/numeric/double generation
-#' @param dbl_rng_kind The random number generation algorithm to use for real/numeric/double values. Takes values allowed by [RNGkind()]. Defaults to `"Wichmann-Hill"`, which is slower than other generators but is much less likely to produce duplicate values.
-#' @param dbl_round Number of decimal places to round to. [round()] and then [signif()] are applied in sequence (see `dbl_signif`). If `NA` (default), no rounding is applied.
-#' @param dbl_signif Number of significant digits to round to. [round()] and then [signif()] are applied in sequence (see `dbl_round`). If `NA` (default), no rounding is applied.
+#' @param dbl_rng_kind The random number generation algorithm to use for
+#' real/numeric/double values. Takes values allowed by [RNGkind()]. Defaults to
+#' `"Wichmann-Hill"`, which is slower than other generators but is much less
+#' likely to produce duplicate values.
+#' @param dbl_round Number of decimal places to round to. [round()] and then
+#' [signif()] are applied in sequence (see `dbl_signif`, below). If `NA`
+#' (default), no rounding is applied.
+#' @param dbl_signif Number of significant digits to round to. [round()] and
+#' then [signif()] are applied in sequence (see `dbl_round`). If `NA`
+#' (default), no rounding is applied.
 #' @param chr_min The minimum number of characters in a generated string.
 #' @param chr_max The maximum number of characters in a generated string.
 #' @param chr_sym A character vector of allowed symbols for generated strings.
-#' @param chr_sep A separator for symbols in generated strings; defaults to `""` (an empty string).
-#' @param chr_try_unique Logical value indicating whether, after a failure to generate a unique synthetic character vector, the algorithm should attempt to regenerate duplicates. If `TRUE`, there will be `chr_try_unique_attempts` attempts.
-#' @param chr_try_unique_attempts Number of attempts to make to generate a unique synthetic character vector.
-#' @param chr_duplicated_nmax Value (greater than one) for the `nmax` parameter of [duplicated()] when enforcing uniqueness. Defaults to `NA`, the default for `duplicated()`.
-#' @param fct_lvls Levels attribute for synthetic factors. Should always be a list with character vectors as elements.
-#' @param fct_use_lvls Allowed levels for synthetic factor data. Should always be a list with character vectors as elements. Each element of `fct_use_lvls` should be a subset of the corresponding element of `fct_lvls`.
-#' @param fct_force_unique Force `gen_col()` to attempt to return a factor vector with unique elements. Will return an error unless `length(fct_use_lvls)` is greater than or equal to the `elements` argument of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
-#' @param lgl_force_unique Force `gen_col()` to attempt to return a logical vector with unique elements. Will return an error unless `length(lgl_lvls)` (usually equal to 2) is greater than or equal to the `elements` argument of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
+#' @param chr_sep A separator for symbols in generated strings; defaults to
+#' `""` (an empty string).
+#' @param chr_try_unique Logical value indicating whether, after a failure to
+#' generate a unique synthetic character vector, the algorithm should attempt
+#' to regenerate duplicates. If `TRUE`, there will be `chr_try_unique_attempts`
+#' attempts.
+#' @param chr_try_unique_attempts Number of attempts to make to generate a
+#' unique synthetic character vector.
+#' @param chr_duplicated_nmax Value (greater than one) for the `nmax` parameter
+#' of [duplicated()] when enforcing uniqueness. Defaults to `NA`, the default
+#' for `duplicated()`.
+#' @param fct_lvls Levels attribute for synthetic factors. Should always be a
+#' list with character vectors as elements.
+#' @param fct_use_lvls Allowed levels for synthetic factor data. Should always
+#' be a list with character vectors as elements. Each element of `fct_use_lvls`
+#' should be a subset of the corresponding element of `fct_lvls`.
+#' @param fct_force_unique Force `gen_col()` to attempt to return a factor
+#' vector with unique elements. Will return an error unless
+#' `length(fct_use_lvls)` is greater than or equal to the `elements` argument
+#' of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
+#' @param lgl_force_unique Force `gen_col()` to attempt to return a logical
+#' vector with unique elements. Will return an error unless `length(lgl_lvls)`
+#' (usually equal to 2) is greater than or equal to the `elements` argument
+#' of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
 #' @param date_origin The reference date for generated dates and times.
 #' @param date_max Max value for generated dates.
 #' @param dttm_max Max value for generated date-times.
-#' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but [Sys.timezone()] may be more appropriate for some users.
-#' @param def_class A default vector class to return when all else fails. Currently not used.
-#' @param old_ctrl A set of control parameters to inherit unless explicitly overwritten in the current call.
-#' @param index Default `NA`. If not `NA`, the function will return list in which elements apply to a single column (i.e. elements are not necessarily lists). Mostly for internal use to handle passing control parameters between `gen_col_` S3 methods.
-#' @param ... Further control parameters permitting extension of the `gen_col_` S3 methods.
+#' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but
+#' [Sys.timezone()] may be more appropriate for some users.
+#' @param def_class A default vector class to return when all else fails.
+#' Currently not used.
+#' @param old_ctrl A set of control parameters to inherit unless explicitly
+#' overwritten in the current call.
+#' @param index Default `NA`. If not `NA`, the function will return list in
+#' which elements apply to a single column (i.e. elements are not necessarily
+#' lists). Mostly for internal use to handle passing control parameters between
+#' `gen_col_` S3 methods.
+#' @param ... Further control parameters permitting extension of the `gen_col_`
+#' S3 methods.
 #'
 #' @details Generation of synthetic data in stubble is very simple. Numbers,
 #' dates and times are sampled uniformly within a range, while strings and

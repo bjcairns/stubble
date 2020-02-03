@@ -1,6 +1,6 @@
 context("gen_col_control()")
 
-test_that("gen_col_control() correctly retains old parameters", {
+test_that("gen_col_control correctly retains old parameters", {
 
   # Parameters #1 has custom int_min; #2 adds custom int_max; #3 overwrites
   expect_error(ctrl1 <- gen_col_control(int_min = -1L), NA)
@@ -14,7 +14,7 @@ test_that("gen_col_control() correctly retains old parameters", {
 
 })
 
-test_that("gen_col_control() handles vector parameters", {
+test_that("gen_col_control handles vector parameters", {
 
   # Test: can set a mix of vector / non-vector parameters
   expect_error(

@@ -8,8 +8,10 @@
 #'
 #' @param x the data frame-like object to emulate. Can have 0 rows.
 #' @param rows the number of rows to generate.
-#' @param ... control parameters for ranges and valid levels/characters in the
+#' @param control a named list of control parameters for generating the
 #' synthetic data. See [control].
+#' @param ... named individual control parameters, which take precedence over
+#' those in the `control` list.
 #'
 #' @details One intended use of `stubblise()` is in generating test data for R
 #' package development. The function can create very simple synthetic data from
@@ -73,8 +75,10 @@
 #'   rows, lvls,
 #'   ~ stubblise(
 #'     iris, rows = .x,
-#'     dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
-#'     fct_lvls = list(lvls), fct_use_lvls = list(.y)
+#'     control = list(
+#'       dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
+#'       fct_lvls = list(lvls), fct_use_lvls = list(.y)
+#'     )
 #'   )
 #' )
 #'
@@ -86,7 +90,7 @@ stubblise <- function(x, ...) {
 
 # Default
 #' @export
-stubblise.default <- function(x, rows = 10L, ...) {
+stubblise.default <- function(x, rows = 10L, control = list(), ...) {
 
   tryCatch(
     x <- as.list(x),
@@ -94,46 +98,47 @@ stubblise.default <- function(x, rows = 10L, ...) {
     warning = function(warn) warning(warn)
   )
 
-  as.data.frame(stbls_(x, rows, ...))
+  as.data.frame(stbls_(x, rows, control, ...))
 
 }
 
 
 # Data frames
 #' @export
-stubblise.data.frame <- function(x, rows = 10L, ...) {
-  as.data.frame(stbls_(x, rows, ...))
+stubblise.data.frame <- function(x, rows = 10L, control = list(), ...) {
+  as.data.frame(stbls_(x, rows, control, ...))
 }
 
 
 # Tibbles
 #' @export
-stubblise.tbl_df <- function(x, rows = 10L, ...) {
-  tibble::as_tibble(stbls_(x, rows, ...))
+stubblise.tbl_df <- function(x, rows = 10L, control = list(), ...) {
+  tibble::as_tibble(stbls_(x, rows, control, ...))
 
 }
 
 
 # Data tables
 #' @export
-stubblise.data.table <- function(x, rows = 10L, ...) {
-  data.table::as.data.table(stbls_(x, rows, ...))
+stubblise.data.table <- function(x, rows = 10L, control = list(), ...) {
+  data.table::as.data.table(stbls_(x, rows, control, ...))
 }
 
 
 # Lists
 #' @export
-stubblise.list <- function(x, rows = 10L, ...) {
-  as.data.frame(stbls_(x, rows, ...))
+stubblise.list <- function(x, rows = 10L, control = list(), ...) {
+  as.data.frame(stbls_(x, rows, control, ...))
 }
 
 
 # Internals
-stbls_ <- function(x, rows = 10L, ...) {
+stbls_ <- function(x, rows = 10L, control = list(), ...) {
+  if (!is.list(control)) stop("Argument `control` must be a list")
   index <- 1:length(x)
   mapply(
     gen_col, col = x, index = index,
-    MoreArgs = list(elements = rows, ...),
+    MoreArgs = list(elements = rows, control = control, ...),
     SIMPLIFY = FALSE,
     USE.NAMES = TRUE
   )

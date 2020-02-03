@@ -54,7 +54,7 @@ test_that("gen_col_ methods support alternative RNG algorithms", {
 
 })
 
-test_that("synthetic integer and numeric columns are unique as required", {
+test_that("gen_col generates unique integer and numeric columns as required", {
 
   # integer columns must have a range large enough to select uniquely from
   int1 <- gen_col(
@@ -95,7 +95,7 @@ test_that("synthetic integer and numeric columns are unique as required", {
 
 })
 
-test_that("synthetic character columns are unique as required", {
+test_that("gen_col generates unique character columns as required", {
 
   # Expect unique elements; lots of symbols, few elements
   chr1 <- gen_col(
@@ -149,7 +149,7 @@ test_that("synthetic character columns are unique as required", {
 
 })
 
-test_that("Synthetic character columns include correct separators", {
+test_that("gen_col correctly includes separators in character columns", {
 
   no_sep <- gen_col(
     character(),
@@ -191,7 +191,7 @@ test_that("Synthetic character columns include correct separators", {
 
 })
 
-test_that("Missing values are handled correctly", {
+test_that("gen_col handles missingness correctly", {
 
   # p_na is 0 means no missings
   expect_false(
@@ -215,7 +215,7 @@ test_that("Missing values are handled correctly", {
 
 })
 
-test_that("Vector types are preserved when some values are NA", {
+test_that("gen_col preserves vector types when some values are NA", {
 
   expect_true(is.integer(gen_col(integer(), elements = 1000L, p_na = 0.5)))  # integer
   expect_true(is.double(gen_col(double(), elements = 1000L, p_na = 0.5)))    # numeric
@@ -230,5 +230,31 @@ test_that("Vector types are preserved when some values are NA", {
     "POSIXct",
     class(gen_col(as.POSIXct(numeric(), origin = "1970-01-01"), elements = 1000L, p_na = 0.5))[1]
   )
+
+})
+
+test_that("gen_col correctly handles control lists", {
+
+  set.seed(349866)
+  syn_col_1 <- gen_col(
+    factor(),
+    fct_lvls = list(levels(iris$Species))
+  )
+
+  set.seed(349866)
+  syn_col_2 <- gen_col(
+    factor(),
+    control = list(fct_lvls = list(levels(iris$Species)))
+  )
+
+  set.seed(349866)
+  syn_col_3 <- gen_col(
+    factor(),
+    control = list(fct_lvls = list(letters[1:3])),
+    fct_lvls = list(levels(iris$Species))
+  )
+
+  expect_identical(syn_col_1, syn_col_2)
+  expect_identical(syn_col_1, syn_col_3)
 
 })

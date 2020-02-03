@@ -13,10 +13,13 @@ stubblize(x, ...)
 \arguments{
 \item{x}{the data frame-like object to emulate. Can have 0 rows.}
 
-\item{...}{control parameters for ranges and valid levels/characters in the
-synthetic data. See \link{control}.}
+\item{...}{named individual control parameters, which take precedence over
+those in the \code{control} list.}
 
 \item{rows}{the number of rows to generate.}
+
+\item{control}{a named list of control parameters for generating the
+synthetic data. See \link{control}.}
 }
 \value{
 A data frame-like object with the same class as \code{x} (unless \code{x} is a
@@ -91,8 +94,10 @@ syn_iris_2 <- purrr::map2_dfr(
   rows, lvls,
   ~ stubblise(
     iris, rows = .x,
-    dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
-    fct_lvls = list(lvls), fct_use_lvls = list(.y)
+    control = list(
+      dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
+      fct_lvls = list(lvls), fct_use_lvls = list(.y)
+    )
   )
 )
 

@@ -9,8 +9,10 @@
 #' @param elements the number of elements to generate.
 #' @param index the index of the column for the purposes of extracting control
 #' parameters.
-#' @param ... control parameters for ranges and valid levels/characters in the
+#' @param control a named list of control parameters for generating the
 #' synthetic data. See [control].
+#' @param ... named individual control parameters, which take precedence over
+#' those in the `control` list.
 #'
 #' @details `gen_col()` calls an internal S3 generic function, `gen_col_()`,
 #' with built-in methods for base R vector types.
@@ -37,9 +39,9 @@
 #' gen_col(iris$Species)
 #'
 #' @export
-gen_col <- function(col, elements = 10L, index = 1L, ...) {
+gen_col <- function(col, elements = 10L, index = 1L, control = list(), ...) {
 
-  this_ctrl <- gen_col_control(..., index = index)
+  this_ctrl <- gen_col_control(..., old_ctrl = control, index = index)
 
   syn_col <- gen_col_(col, elements = elements, ctrl = this_ctrl)
 

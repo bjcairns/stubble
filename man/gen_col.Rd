@@ -4,7 +4,7 @@
 \alias{gen_col}
 \title{Generate simple synthetic data from an R vector}
 \usage{
-gen_col(col, elements = 10L, index = 1L, ...)
+gen_col(col, elements = 10L, index = 1L, control = list(), ...)
 }
 \arguments{
 \item{col}{the vector from which the type of the synthetic data is taken.}
@@ -14,8 +14,11 @@ gen_col(col, elements = 10L, index = 1L, ...)
 \item{index}{the index of the column for the purposes of extracting control
 parameters.}
 
-\item{...}{control parameters for ranges and valid levels/characters in the
+\item{control}{a named list of control parameters for generating the
 synthetic data. See \link{control}.}
+
+\item{...}{named individual control parameters, which take precedence over
+those in the \code{control} list.}
 }
 \value{
 Returns a vector of the same class as \code{col} with \code{elements} elements.

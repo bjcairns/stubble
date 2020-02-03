@@ -84,6 +84,32 @@ test_that("stubblise handles lists", {
 
 })
 
+test_that("stubblise correctly handles control lists", {
+
+  set.seed(2342343)
+  syn_iris_1 <- stubblise(
+    iris,
+    fct_lvls = list(levels(iris$Species))
+  )
+
+  set.seed(2342343)
+  syn_iris_2 <- stubblise(
+    iris,
+    control = list(fct_lvls = list(levels(iris$Species)))
+  )
+
+  set.seed(2342343)
+  syn_iris_3 <- stubblise(
+    iris,
+    control = list(fct_lvls = list(letters[1:3])),
+    fct_lvls = list(levels(iris$Species))
+  )
+
+  expect_identical(syn_iris_1, syn_iris_2)
+  expect_identical(syn_iris_1, syn_iris_3)
+
+})
+
 test_that("stubblise and stubblize are equivalent", {
 
   expect_identical(stubblise, stubblize)
