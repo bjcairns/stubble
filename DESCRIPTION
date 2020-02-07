@@ -2,6 +2,7 @@ Package: stubble
 Type: Package
 Title: Simple synthetic data from data frames, tibbles, and data.tables
 Version: 0.2.1
+Date: 2020-02-07
 Authors@R: c(
       person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"), 
         email = "ben.cairns@ndph.ox.ac.uk", 
@@ -25,7 +26,9 @@ Suggests:
     knitr,
     rmarkdown,
     ggplot2,
-    cowplot
+    cowplot,
+    tidyr,
+    magrittr
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
