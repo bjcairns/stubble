@@ -32,3 +32,5 @@ Suggests:
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+URL: https://github.com/bjcairns/stubble
+BugReports: https://github.com/bjcairns/stubble/issues
