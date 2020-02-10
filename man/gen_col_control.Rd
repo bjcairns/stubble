@@ -10,6 +10,7 @@ gen_col_control(
   p_na = 0,
   int_min = 0L,
   int_max = 100L,
+  int_list = NULL,
   dbl_min = 0,
   dbl_max = 100,
   dbl_rng_kind = "Wichmann-Hill",
@@ -47,6 +48,10 @@ relevant element is chosen by the \code{index} argument to \link{gen_col}.}
 \item{int_min}{Minmium values for integer generation.}
 
 \item{int_max}{Maximum values for integer generation.}
+
+\item{int_list}{An integer vector of allowed values for integer generation.
+If \code{NULL} (the default), this is ignored. If non-\code{NULL}, \code{int_list}
+overrides \code{int_min}/\code{int_max}.}
 
 \item{dbl_min}{Minimum values for real/numeric/double generation}
 
