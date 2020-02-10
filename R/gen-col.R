@@ -136,12 +136,12 @@ gen_col_.integer <- function(col, elements, ctrl) {
   # Enforce types
   int_min <- as.integer(ctrl$int_min)
   int_max <- as.integer(ctrl$int_max)
-  int_list <- if (!is.null(ctrl$int_list[1])) {
+  int_list <- if (!is.na(ctrl$int_list[1])) {
     as.integer(ctrl$int_list)
-  } else {NULL}
+  } else {NA}
   uniq <- as.logical(ctrl$unique)
 
-  npossible <- ifelse(!is.null(int_list), length(int_list), int_max - int_min + 1)
+  npossible <- ifelse(!is.na(int_list[1]), length(int_list), int_max - int_min + 1)
 
   if ((npossible < elements) & uniq) {
     stop(
@@ -150,7 +150,7 @@ gen_col_.integer <- function(col, elements, ctrl) {
     )
   }
 
-  if (is.null(int_list)) {
+  if (is.na(int_list[1])) {
     int_min - 1L + sample.int(
       int_max - int_min + 1L,
       size = as.integer(elements),

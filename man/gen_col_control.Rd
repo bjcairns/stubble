@@ -50,7 +50,7 @@ relevant element is chosen by the \code{index} argument to \link{gen_col}.}
 \item{int_max}{Maximum values for integer generation.}
 
 \item{int_list}{An integer vector of allowed values for integer generation.
-If \code{NULL} (the default), this is ignored. If non-\code{NULL}, \code{int_list}
+If \code{NA} (the default), this is ignored. If non-\code{NA}, \code{int_list}
 overrides \code{int_min}/\code{int_max}.}
 
 \item{dbl_min}{Minimum values for real/numeric/double generation}
