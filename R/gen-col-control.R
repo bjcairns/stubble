@@ -11,6 +11,9 @@
 #' @param p_na Proportion of values set to `NA`; defaults to `0`.
 #' @param int_min Minmium values for integer generation.
 #' @param int_max Maximum values for integer generation.
+#' @param int_list An integer vector of allowed values for integer generation.
+#' If `NULL` (the default), this is ignored. If non-`NULL`, `int_list`
+#' overrides `int_min`/`int_max`.
 #' @param dbl_min Minimum values for real/numeric/double generation
 #' @param dbl_max Maximum values for real/numeric/double generation
 #' @param dbl_rng_kind The random number generation algorithm to use for
@@ -95,7 +98,7 @@
 gen_col_control <- function(
   unique = FALSE,
   p_na = 0,
-  int_min = 0L, int_max = 100L,
+  int_min = 0L, int_max = 100L, int_list = NULL,
   dbl_min = 0, dbl_max = 100,
   dbl_rng_kind = "Wichmann-Hill",
   dbl_round = NA, dbl_signif = NA,

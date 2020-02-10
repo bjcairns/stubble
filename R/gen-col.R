@@ -136,21 +136,29 @@ gen_col_.integer <- function(col, elements, ctrl) {
   # Enforce types
   int_min <- as.integer(ctrl$int_min)
   int_max <- as.integer(ctrl$int_max)
+  int_list <- if (!is.null(ctrl$int_list[1])) {
+    as.integer(ctrl$int_list)
+  } else {NULL}
   uniq <- as.logical(ctrl$unique)
 
-  if ((int_max - int_min + 1 < elements) & uniq) {
+  npossible <- ifelse(!is.null(int_list), length(int_list), int_max - int_min + 1)
+
+  if ((npossible < elements) & uniq) {
     stop(
       "Number of possible values must be at least `elements` for uniqueness. ",
-      "See ?control for \n`int_max` and `int_min`.\n"
+      "See ?control for \n`int_max`, `int_min`, and `int_list`.\n"
     )
   }
 
-  int_min - 1L + sample.int(
-    int_max - int_min + 1L,
-    size = as.integer(elements),
-    replace = !uniq
-  )
-
+  if (is.null(int_list)) {
+    int_min - 1L + sample.int(
+      int_max - int_min + 1L,
+      size = as.integer(elements),
+      replace = !uniq
+    )
+  } else {
+    sample(int_list, replace = !uniq)
+  }
 }
 
 

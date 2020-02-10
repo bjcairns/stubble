@@ -95,6 +95,24 @@ test_that("gen_col generates unique integer and numeric columns as required", {
 
 })
 
+test_that("gen_col allows an integer list", {
+
+  int_list <- sample.int(1000,100)
+
+  expect_true(
+    all(
+      gen_col(
+        integer(),
+        elements = 100L,
+        int_list = list(int_list),
+        unique = TRUE
+      ) %in%
+        int_list
+    )
+  )
+
+})
+
 test_that("gen_col generates unique character columns as required", {
 
   # Expect unique elements; lots of symbols, few elements
