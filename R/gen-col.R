@@ -83,7 +83,7 @@ gen_col_ <- function(col, ...) {
 
 
 #' @export
-gen_col_.default <- function(col, elements, index, ctrl) {
+gen_col_.default <- function(col, elements, ctrl) {
 
   # Note, no user control over class of vector in this case
   warning("Could not generate data for ", class(col), "; returning NAs")
