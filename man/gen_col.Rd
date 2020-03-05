@@ -11,8 +11,8 @@ gen_col(col, elements = 10L, index = 1L, control = list(), ...)
 
 \item{elements}{the number of elements to generate.}
 
-\item{index}{the index of the column for the purposes of extracting control
-parameters.}
+\item{index}{the index of the column (i.e. the position in the data frame)
+for the purposes of extracting control parameters.}
 
 \item{control}{a named list of control parameters for generating the
 synthetic data. See \link{control}.}

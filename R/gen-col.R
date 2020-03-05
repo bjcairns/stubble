@@ -7,8 +7,8 @@
 #'
 #' @param col the vector from which the type of the synthetic data is taken.
 #' @param elements the number of elements to generate.
-#' @param index the index of the column for the purposes of extracting control
-#' parameters.
+#' @param index the index of the column (i.e. the position in the data frame)
+#' for the purposes of extracting control parameters.
 #' @param control a named list of control parameters for generating the
 #' synthetic data. See [control].
 #' @param ... named individual control parameters, which take precedence over
