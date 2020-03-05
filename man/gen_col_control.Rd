@@ -10,7 +10,7 @@ gen_col_control(
   p_na = 0,
   int_min = 0L,
   int_max = 100L,
-  int_list = NULL,
+  int_list = NA,
   dbl_min = 0,
   dbl_max = 100,
   dbl_rng_kind = "Wichmann-Hill",
