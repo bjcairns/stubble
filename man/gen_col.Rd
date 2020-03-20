@@ -53,3 +53,9 @@ gen_col(iris$Sepal.length)
 gen_col(iris$Species)
 
 }
+\author{
+Benjamin J. Cairns, \email{ben.cairns@ndph.ox.ac.uk}
+}
+\keyword{simulate}
+\keyword{simulated}
+\keyword{simulation}

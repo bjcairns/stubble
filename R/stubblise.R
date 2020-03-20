@@ -82,7 +82,7 @@
 #'     )
 #'   )
 #' )
-#'
+#' 
 #' @export
 stubblise <- function(x, ...) {
   UseMethod("stubblise", x)
