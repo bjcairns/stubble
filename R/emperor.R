@@ -244,7 +244,21 @@ emperor_.character <- function(col, elements = elements, ctrl){
 ### emperor_.POSIXct() ###
 #' @export
 emperor_.POSIXct <- function(col, elements = elements, ctrl){
-  syn_col <- as.POSIXct(rep(NA_integer_, elements), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
+  
+  ## Empirical CDF ##
+  fn <- ecdf(col)
+  
+  ## Tail Omission ##
+  p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+  
+  ## Quantile ECDF ##
+  syn_col <- quantile(fn, p)
+  
+  ## Strip Quantile Values ##
+  names(syn_col) <- NULL
+  
+  ## Coerce to POSIXct ##
+  syn_col <- as.POSIXct(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   ## Output ##
   return(syn_col)
@@ -254,7 +268,24 @@ emperor_.POSIXct <- function(col, elements = elements, ctrl){
 ### emperor_.POSIXlt() ###
 #' @export
 emperor_.POSIXlt <- function(col, elements = elements, ctrl){
-  syn_col <- as.POSIXlt(rep(NA_integer_, elements), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
+  
+  ## Coerce to POSIXct ##
+  col <- as.POSIXct(col)
+  
+  ## Empirical CDF ##
+  fn <- ecdf(col)
+  
+  ## Tail Omission ##
+  p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+  
+  ## Quantile ECDF ##
+  syn_col <- quantile(fn, p)
+  
+  ## Strip Quantile Values ##
+  names(syn_col) <- NULL
+  
+  ## Coerce to POSIXlt ##
+  syn_col <- as.POSIXlt(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   ## Output ##
   return(syn_col)
@@ -265,20 +296,20 @@ emperor_.POSIXlt <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.Date <- function(col, elements = elements, ctrl){
   
-   ## Empirical CDF ##
-    fn <- ecdf(col)
-    
-    ## Tail Omission ##
-    p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
-    
-    ## Quantile ECDF ##
-    syn_col <- quantile(fn, p)
-    
-    ## Strip Quantile Values ##
-    names(syn_col) <- NULL
-    
-    ## Coerce to Date ##
-    syn_col <- as.Date(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
+  ## Empirical CDF ##
+  fn <- ecdf(col)
+  
+  ## Tail Omission ##
+  p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+  
+  ## Quantile ECDF ##
+  syn_col <- quantile(fn, p)
+  
+  ## Strip Quantile Values ##
+  names(syn_col) <- NULL
+  
+  ## Coerce to Date ##
+  syn_col <- as.Date(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   ## Output ##
   return(syn_col)
