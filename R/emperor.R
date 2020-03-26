@@ -63,10 +63,11 @@
 # - Add some means to determine whether sample() or ecdf() is used for any given integer.
 # - Add fuzz to each double. Ensure Values do not exceed range.
 # - Find why devtools::check() if flagging emperor() as being undocumented.
-# - Split out emperor_.numeric() into emperor_.integer() and emperor_.double().
 # - Check how emperor_.factor() and emperor_.ordered() handle columns in which addNA() has been used.
 # - See what gen_col() is doing with the date origins in gen_con_ctrl(). I can't see why this needs to be settable.
 # - Add checks for rounding and try to mirror the number of dps of sig figs in the output.
+# - Consider splitting emperor_.integer() into two submethods, one using ecdf() and one using prop.table(table()).
+#   These may then be referenced by the other methods to save re-use of code.
 
 
 ### var_ident() ###
@@ -177,13 +178,20 @@ emperor_.numeric <- function(col, elements = elements, ctrl){
     names(syn_col) <- NULL
     
   } else if(type == "integer"){
-    syn_col <- sample(col, elements, replace = T)
+    emperor_.integer(col, elements, ctrl)
   } else {
     emperor_.default(col, elements)
   }
   
   ## Output ##
   return(syn_col)
+}
+
+
+### emperor_.integer() ###
+#' @export
+emperor_.integer <- function(col, elements = elements, ctrl){
+  syn_col <- sample(col, elements, replace = T)
 }
 
 
