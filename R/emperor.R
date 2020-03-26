@@ -4,8 +4,8 @@
 #' @description
 #' `emperor()` does the real work for [stubblise()]. Currently supported column
 #' classes are `numeric`, `integer`, `character`, `factor`, `ordered`, `logical`,
-#' `POSIXct`, `POSIXlt`, `Date` and `IDate`. There is limited support for `list` (returns a list
-#' with all `NA`s).
+#' `POSIXct`, `POSIXlt`, `Date` and `IDate`. There is limited support for `list`
+#' (returns a list with all `NA`s).
 #' 
 #' @param col the vector from which the type of the synthetic data is taken.
 #' @param elements the number of elements to generate.
@@ -20,14 +20,14 @@
 #' `emperor()` calls an internal S3 generic function, `emperor_()`,
 #' with built-in methods for base R vector types.
 #' 
-#' All methods return values sampled uniformly at random, with the exception of
-#' `emperor_.character()`, which samples string lengths uniformly at random and
-#' then populates those strings with symbols (strings of one or more
-#' characters) chosen uniformly at random from the values in the `chr_sym`
-#' control parameter (see [emperor_control()]). Character results of
-#' `emperor()` are therefore not chosen uniformly at random from the set of all
-#' strings which are valid according to the control parameters; short strings
-#' are overrepresented.
+#' All methods return values sampled from the cumulative empirical distribution
+#' function, with the exception of `emperor_.character()`, which samples string
+#' lengths uniformly at random and then populates those strings with symbols
+#' (strings of one or more characters) chosen uniformly at random from the
+#' values in the `chr_sym` control parameter (see [emperor_control()]).
+#' Character results of `emperor()` are therefore not chosen uniformly at random
+#' from the set of all strings which are valid according to the control
+#' parameters; short strings are overrepresented.
 #' 
 #' @return
 #' Returns a vector of the same class as `col` with `elements` elements.
@@ -39,8 +39,8 @@
 #' @author
 #' Benjamin G. Feakins, \email{benjamin.feakins@@ndph.ox.ac.uk}
 #' 
-#' @seealso
-#' \code{\link{gen_col}}
+#' @seealso 
+#' [emperor_control()]
 #' 
 #' @examples
 #' emperor(iris$Sepal.length)
@@ -48,6 +48,7 @@
 #' 
 #' @keywords empirical
 #' @keywords ecdf
+#' @keywords resample
 #' @keywords simulate
 #' @keywords simulated
 #' @keywords simulation
@@ -57,13 +58,15 @@
 
 
 ### TODO ###
+# - Decide how and when to implement emperor() in stubble.
 # - Check for a certain proportion of values occurring < p or > p.
-# - Add fuzz to each double equal to 100th range of distribution. Ensure Values do not exceed range.
-# - Add `tails` parameter to emperor_control.
+# - Add some means to determine whether sample() or ecdf() is used for any given integer.
+# - Add fuzz to each double. Ensure Values do not exceed range.
 # - Find why devtools::check() if flagging emperor() as being undocumented.
-# - Leverage gen_col_control() or make a new emperor_control().
-# - Make use of ecdf() in the other categorical functions.
 # - Split out emperor_.numeric() into emperor_.integer() and emperor_.double().
+# - Check how emperor_.factor() and emperor_.ordered() handle columns in which addNA() has been used.
+# - See what gen_col() is doing with the date origins in gen_con_ctrl(). I can't see why this needs to be settable.
+# - Add checks for rounding and try to mirror the number of dps of sig figs in the output.
 
 
 ### var_ident() ###
@@ -85,11 +88,34 @@ var_ident <- function(col){
 
 ### emperor() ###
 #' @export
-emperor <- function(col, elements = length(col), ...){
-  syn_col <- emperor_(col, elements)
+emperor <- function(col, elements = length(col), index = 1L, control = list(), ...){
   
+  ## Set Control Parameters ##
+  this_ctrl <- emperor_control(..., old_ctrl = control, index = index)
+  
+  ## Simulate According to Data Type ##
+  syn_col <- emperor_(col, elements = elements, ctrl = this_ctrl)
+  
+  ## Fallback Simulation Method ##
   if(!exists("syn_col")){
-    syn_col <- emperor_.default(col, elements)
+    syn_col <- emperor_.default(col, elements = elements, ctrl = this_ctrl)
+  }
+  
+  ## Handle NA Values ##
+  if(!is.na(this_ctrl[["p_na"]])){
+    p_na <- as.double(this_ctrl[["p_na"]])
+  } else {
+    p_na <- sum(is.na(col))/length(col)
+  }
+  if(p_na != 0){
+    if(p_na > 1){
+      warning("Control parameter p_na > 1; value has been reset to 1")
+      p_na <- 1
+    } else if(p_na == 1){
+      syn_col[] <- NA
+    } else {
+      syn_col[rbinom(elements, 1L, p_na) == 1L] <- NA
+    }
   }
   
   ## Output ##
@@ -106,7 +132,7 @@ emperor_ <- function(col, ...){
 
 ### emperor_.default() ###
 #' @export
-emperor_.default <- function(col, elements){
+emperor_.default <- function(col, elements = elements, ctrl){
   warning("Could not generate data for ", class(col), "; returning NAs")
   rep(NA_integer_, elements)
 }
@@ -114,8 +140,17 @@ emperor_.default <- function(col, elements){
 
 ### emperor_.logical() ###
 #' @export
-emperor_.logical <- function(col, elements){
-  syn_col <- rep(NA, elements)
+emperor_.logical <- function(col, elements = elements, ctrl){
+  
+  ## Tabulate Values ##
+  p_obs <- prop.table(table(col))
+  
+  ## Simulate Values ##
+  if(length(p_obs != 0)){
+    syn_col <- sample(as.logical(names(p_obs)), size = elements, replace = TRUE, prob = p_obs)
+  } else {
+    syn_col <- rep(NA, elements)
+  }
   
   ## Output ##
   return(syn_col)
@@ -124,7 +159,7 @@ emperor_.logical <- function(col, elements){
 
 ### emperor_.numeric() ###
 #' @export
-emperor_.numeric <- function(col, elements, tails = T, tailsize = 0.05){
+emperor_.numeric <- function(col, elements = elements, ctrl){
   ## Type Identification ##
   type <- var_ident(col)
   
@@ -133,11 +168,7 @@ emperor_.numeric <- function(col, elements, tails = T, tailsize = 0.05){
     fn <- ecdf(col)
     
     ## Tail Omission ##
-    if(tails){
-      p <- runif(elements)
-    } else {
-      p <- runif(elements, 0 + tailsize, 1 - tailsize)
-    }
+    p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
     
     ## Quantile ECDF ##
     syn_col <- quantile(fn, p)
@@ -158,9 +189,20 @@ emperor_.numeric <- function(col, elements, tails = T, tailsize = 0.05){
 
 ### emperor_.factor() ###
 #' @export
-emperor_.factor <- function(col, elements){
-  syn_col <- factor(rep(NA_integer_, elements))
-  syn_col <- addNA(syn_col)
+emperor_.factor <- function(col, elements = elements, ctrl){
+  
+  ## Tabulate Values ##
+  p_obs <- prop.table(table(col))
+  
+  ## Simulate Values ##
+  if(length(p_obs != 0)){
+    syn_col <- sample(names(p_obs), size = elements, replace = TRUE, prob = p_obs)
+  } else {
+    syn_col <- rep(NA_integer_, elements)
+  }
+  
+  ## Coerce to Factor ##
+  syn_col <- factor(syn_col, levels = names(p_obs))
   
   ## Output ##
   return(syn_col)
@@ -169,9 +211,20 @@ emperor_.factor <- function(col, elements){
 
 ### emperor_.ordered() ###
 #' @export
-emperor_.ordered <- function(col, elements){
-  syn_col <- ordered(rep(NA_integer_, elements))
-  syn_col <- addNA(syn_col)
+emperor_.ordered <- function(col, elements = elements, ctrl){
+  
+  ## Tabulate Values ##
+  p_obs <- prop.table(table(col))
+  
+  ## Simulate Values ##
+  if(length(p_obs != 0)){
+    syn_col <- sample(names(p_obs), size = elements, replace = TRUE, prob = p_obs)
+  } else {
+    syn_col <- rep(NA_integer_, elements)
+  }
+  
+  ## Coerce to Factor ##
+  syn_col <- ordered(syn_col, levels = names(p_obs))
   
   ## Output ##
   return(syn_col)
@@ -180,7 +233,7 @@ emperor_.ordered <- function(col, elements){
 
 ### emperor_.character() ###
 #' @export
-emperor_.character <- function(col, elements){
+emperor_.character <- function(col, elements = elements, ctrl){
   syn_col <- rep(NA_character_, elements)
   
   ## Output ##
@@ -190,8 +243,8 @@ emperor_.character <- function(col, elements){
 
 ### emperor_.POSIXct() ###
 #' @export
-emperor_.POSIXct <- function(col, elements){
-  syn_col <- as.POSIXct(rep(NA_integer_, elements), origin = "1970-01-01", tz = "UTC")
+emperor_.POSIXct <- function(col, elements = elements, ctrl){
+  syn_col <- as.POSIXct(rep(NA_integer_, elements), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   ## Output ##
   return(syn_col)
@@ -200,8 +253,8 @@ emperor_.POSIXct <- function(col, elements){
 
 ### emperor_.POSIXlt() ###
 #' @export
-emperor_.POSIXlt <- function(col, elements){
-  syn_col <- as.POSIXlt(rep(NA_integer_, elements), origin = "1970-01-01", tz = "UTC")
+emperor_.POSIXlt <- function(col, elements = elements, ctrl){
+  syn_col <- as.POSIXlt(rep(NA_integer_, elements), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   ## Output ##
   return(syn_col)
@@ -210,8 +263,22 @@ emperor_.POSIXlt <- function(col, elements){
 
 ### emperor_.Date() ###
 #' @export
-emperor_.Date <- function(col, elements){
-  syn_col <- as.Date(rep(NA_integer_, elements), origin = "1970-01-01", tz = "UTC")
+emperor_.Date <- function(col, elements = elements, ctrl){
+  
+   ## Empirical CDF ##
+    fn <- ecdf(col)
+    
+    ## Tail Omission ##
+    p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+    
+    ## Quantile ECDF ##
+    syn_col <- quantile(fn, p)
+    
+    ## Strip Quantile Values ##
+    names(syn_col) <- NULL
+    
+    ## Coerce to Date ##
+    syn_col <- as.Date(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   ## Output ##
   return(syn_col)
@@ -220,9 +287,24 @@ emperor_.Date <- function(col, elements){
 
 ### emperor_.IDate() ###
 #' @export
-emperor_.IDate <- function(col, elements){
+emperor_.IDate <- function(col, elements = elements, ctrl){
   if("data.table" %in% rownames(installed.packages())){
-    syn_col <- data.table::as.IDate(rep(NA_integer_, elements), origin = "1970-01-01", tz = "UTC")
+    
+    ## Empirical CDF ##
+    fn <- ecdf(col)
+    
+    ## Tail Omission ##
+    p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+    
+    ## Quantile ECDF ##
+    syn_col <- quantile(fn, p)
+    
+    ## Strip Quantile Values ##
+    names(syn_col) <- NULL
+    
+    ## Coerce to Date ##
+    syn_col <- data.table::as.IDate(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
+    
   } else {
     warning("Package 'data.table' not found. IDates will be converted to Dates.")
     emperor_.Date(col, elements)
@@ -235,7 +317,7 @@ emperor_.IDate <- function(col, elements){
 
 ### emperor_.list() ###
 #' @export
-gen_col_.list <- function(col, elements){
+gen_col_.list <- function(col, elements = elements, ctrl){
   syn_col <- as.list(rep(NA_integer_, elements))
   
   ## Output ##
