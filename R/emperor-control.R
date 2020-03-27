@@ -8,8 +8,13 @@
 #' called directly.
 #'
 #' @param p_na Proportion of values set to `NA`; defaults to `NA`.
-#' @param tailsize Quantile size to be omitted from sampling at each end of
-#' the empirical cumulative distribution function.
+#' @param tail_exc Quantile tail size to be omitted from sampling at each end
+#' of the empirical cumulative distribution function. Defaults to 5% (`0.05`)
+#' at each end (tail) of the distribution.
+#' @param cat_exc Categorical observation prevalence below which values will
+#' not be excluded from simulations. Defaults to 5% (`0.05`)
+#' @param drop_lev Parameter indicating whether empty factor levels should be
+#' dropped from simlated factors and ordered factors. Defauls to `TRUE`
 #' @param dbl_round Number of decimal places to round to. [round()] and then
 #' [signif()] are applied in sequence (see `dbl_signif`, below). If `NA`
 #' (default), no rounding is applied.
@@ -62,7 +67,9 @@
 #' @export
 emperor_control <- function(
   p_na = NA,
-  tailsize = 0.05,
+  tail_exc = 0.05,
+  cat_exc = 0.05,
+  drop_lev = TRUE,
   dbl_round = NA, dbl_signif = NA,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),
@@ -97,7 +104,6 @@ emperor_control <- function(
 
 
 #' @rdname emperor_control
-#' @name control
 NULL
 
 

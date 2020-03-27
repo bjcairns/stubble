@@ -2,12 +2,13 @@
 % Please edit documentation in R/emperor-control.R
 \name{emperor_control}
 \alias{emperor_control}
-\alias{control}
 \title{Control parameters for emperor()}
 \usage{
 emperor_control(
   p_na = NA,
-  tailsize = 0.05,
+  tail_exc = 0.05,
+  cat_exc = 0.05,
+  drop_lev = TRUE,
   dbl_round = NA,
   dbl_signif = NA,
   dttm_tz = "UTC",
@@ -19,8 +20,15 @@ emperor_control(
 \arguments{
 \item{p_na}{Proportion of values set to \code{NA}; defaults to \code{NA}.}
 
-\item{tailsize}{Quantile size to be omitted from sampling at each end of
-the empirical cumulative distribution function.}
+\item{tail_exc}{Quantile tail size to be omitted from sampling at each end
+of the empirical cumulative distribution function. Defaults to 5\% (\code{0.05})
+at each end (tail) of the distribution.}
+
+\item{cat_exc}{Categorical observation prevalence below which values will
+not be excluded from simulations. Defaults to 5\% (\code{0.05})}
+
+\item{drop_lev}{Parameter indicating whether empty factor levels should be
+dropped from simlated factors and ordered factors. Defauls to \code{TRUE}}
 
 \item{dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then
 \code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_signif}, below). If \code{NA}

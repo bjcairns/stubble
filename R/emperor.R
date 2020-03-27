@@ -3,7 +3,7 @@
 #' 
 #' @description
 #' `emperor()` does the real work for [stubblise()]. Currently supported column
-#' classes are `numeric`, `integer`, `character`, `factor`, `ordered`, `logical`,
+#' classes are `double`, `integer`, `character`, `factor`, `ordered`, `logical`,
 #' `POSIXct`, `POSIXlt`, `Date` and `IDate`. There is limited support for `list`
 #' (returns a list with all `NA`s).
 #' 
@@ -139,28 +139,9 @@ emperor_.default <- function(col, elements = elements, ctrl){
 }
 
 
-### emperor_.logical() ###
+### emperor_.double() ###
 #' @export
-emperor_.logical <- function(col, elements = elements, ctrl){
-  
-  ## Tabulate Values ##
-  p_obs <- prop.table(table(col))
-  
-  ## Simulate Values ##
-  if(length(p_obs != 0)){
-    syn_col <- sample(as.logical(names(p_obs)), size = elements, replace = TRUE, prob = p_obs)
-  } else {
-    syn_col <- rep(NA, elements)
-  }
-  
-  ## Output ##
-  return(syn_col)
-}
-
-
-### emperor_.numeric() ###
-#' @export
-emperor_.numeric <- function(col, elements = elements, ctrl){
+emperor_.double <- function(col, elements = elements, ctrl){
   ## Type Identification ##
   type <- var_ident(col)
   
@@ -169,7 +150,7 @@ emperor_.numeric <- function(col, elements = elements, ctrl){
     fn <- ecdf(col)
     
     ## Tail Omission ##
-    p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+    p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
     
     ## Quantile ECDF ##
     syn_col <- quantile(fn, p)
@@ -191,7 +172,41 @@ emperor_.numeric <- function(col, elements = elements, ctrl){
 ### emperor_.integer() ###
 #' @export
 emperor_.integer <- function(col, elements = elements, ctrl){
-  syn_col <- sample(col, elements, replace = T)
+  
+  ## Tabulate Values ##
+  p_obs <- prop.table(table(col))
+  
+  ## All NA Check ##
+  if(length(p_obs) == 0){
+    syn_col <- rep(NA_integer_, elements)
+  } else {
+    # Omit Low Prevalence Observations #
+    if(ctrl[["cat_exc"]] != 0) p_obs <- p_obs[p_obs >= ctrl[["cat_exc"]]]
+    
+    # Simulate Values #
+    syn_col <- sample(as.integer(names(p_obs)), size = elements, replace = TRUE, prob = p_obs)
+  }
+  
+  ## Output ##
+  return(syn_col)
+}
+
+
+### emperor_.logical() ###
+#' @export
+emperor_.logical <- function(col, elements = elements, ctrl){
+  
+  ## Coerce to Integer ##
+  col_int <- as.integer(col)
+  
+  ## Use Integer Method ##
+  syn_col <- emperor_.integer(col_int, elements = elements, ctrl = ctrl)
+  
+  ## Coerce to Logical ##
+  syn_col <- as.logical(syn_col)
+  
+  ## Output ##
+  return(syn_col)
 }
 
 
@@ -199,18 +214,17 @@ emperor_.integer <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.factor <- function(col, elements = elements, ctrl){
   
-  ## Tabulate Values ##
-  p_obs <- prop.table(table(col))
+  ## Coerce to Integer ##
+  col_int <- as.integer(col)
   
-  ## Simulate Values ##
-  if(length(p_obs != 0)){
-    syn_col <- sample(names(p_obs), size = elements, replace = TRUE, prob = p_obs)
-  } else {
-    syn_col <- rep(NA_integer_, elements)
-  }
+  ## Use Integer Method ##
+  syn_col <- emperor_.integer(col_int, elements = elements, ctrl = ctrl)
   
   ## Coerce to Factor ##
-  syn_col <- factor(syn_col, levels = names(p_obs))
+  syn_col <- factor(syn_col, levels = sort(unique(col_int)), labels = levels(col))
+  
+  ## Drop Empty Levels ##
+  if(ctrl[["drop_lev"]]) syn_col <- droplevels(syn_col)
   
   ## Output ##
   return(syn_col)
@@ -221,18 +235,17 @@ emperor_.factor <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.ordered <- function(col, elements = elements, ctrl){
   
-  ## Tabulate Values ##
-  p_obs <- prop.table(table(col))
+  ## Coerce to Integer ##
+  col_int <- as.integer(col)
   
-  ## Simulate Values ##
-  if(length(p_obs != 0)){
-    syn_col <- sample(names(p_obs), size = elements, replace = TRUE, prob = p_obs)
-  } else {
-    syn_col <- rep(NA_integer_, elements)
-  }
+  ## Use Integer Method ##
+  syn_col <- emperor_.integer(col_int, elements = elements, ctrl = ctrl)
   
-  ## Coerce to Factor ##
-  syn_col <- ordered(syn_col, levels = names(p_obs))
+  ## Coerce to Ordered Factor ##
+  syn_col <- ordered(syn_col, levels = sort(unique(col_int)), labels = levels(col))
+  
+  ## Drop Empty Levels ##
+  if(ctrl[["drop_lev"]]) syn_col <- droplevels(syn_col)
   
   ## Output ##
   return(syn_col)
@@ -257,7 +270,7 @@ emperor_.POSIXct <- function(col, elements = elements, ctrl){
   fn <- ecdf(col)
   
   ## Tail Omission ##
-  p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+  p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
   
   ## Quantile ECDF ##
   syn_col <- quantile(fn, p)
@@ -284,7 +297,7 @@ emperor_.POSIXlt <- function(col, elements = elements, ctrl){
   fn <- ecdf(col)
   
   ## Tail Omission ##
-  p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+  p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
   
   ## Quantile ECDF ##
   syn_col <- quantile(fn, p)
@@ -308,7 +321,7 @@ emperor_.Date <- function(col, elements = elements, ctrl){
   fn <- ecdf(col)
   
   ## Tail Omission ##
-  p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+  p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
   
   ## Quantile ECDF ##
   syn_col <- quantile(fn, p)
@@ -333,7 +346,7 @@ emperor_.IDate <- function(col, elements = elements, ctrl){
     fn <- ecdf(col)
     
     ## Tail Omission ##
-    p <- runif(elements, 0 + ctrl[["tailsize"]], 1 - ctrl[["tailsize"]])
+    p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
     
     ## Quantile ECDF ##
     syn_col <- quantile(fn, p)
