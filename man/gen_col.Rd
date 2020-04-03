@@ -56,6 +56,9 @@ gen_col(iris$Species)
 \author{
 Benjamin J. Cairns, \email{ben.cairns@ndph.ox.ac.uk}
 }
-\keyword{simulate}
-\keyword{simulated}
-\keyword{simulation}
+\concept{simulate}
+\concept{simulated}
+\concept{simulation}
+\keyword{datagen}
+\keyword{distribution}
+\keyword{manip}

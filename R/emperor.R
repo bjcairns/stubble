@@ -46,14 +46,16 @@
 #' emperor(iris$Sepal.length)
 #' emperor(iris$Species)
 #' 
-#' @keywords empirical
-#' @keywords ecdf
-#' @keywords resample
-#' @keywords simulate
-#' @keywords simulated
-#' @keywords simulation
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
 #' 
-#' @importFrom stats ecdf quantile runif
+#' @keywords datagen distribution manip
+#' 
+#' @importFrom stats ecdf quantile runif rnorm
 #' @importFrom utils installed.packages
 
 
@@ -68,6 +70,7 @@
 # - Add checks for rounding and try to mirror the number of dps of sig figs in the output.
 # - Consider splitting emperor_.integer() into two submethods, one using ecdf() and one using prop.table(table()).
 #   These may then be referenced by the other methods to save re-use of code.
+# - Instead of 'fuzzing' the data, try searching for values in the output data that match values in the input data, and resample these. 
 
 
 ### var_ident() ###
@@ -102,21 +105,25 @@ emperor <- function(col, elements = length(col), index = 1L, control = list(), .
     syn_col <- emperor_.default(col, elements = elements, ctrl = this_ctrl)
   }
   
-  ## Handle NA Values ##
+  ## Parameterise p_na ##
   if(!is.na(this_ctrl[["p_na"]])){
     p_na <- as.double(this_ctrl[["p_na"]])
-  } else {
-    p_na <- sum(is.na(col))/length(col)
-  }
-  if(p_na != 0){
     if(p_na > 1){
       warning("Control parameter p_na > 1; value has been reset to 1")
       p_na <- 1
-    } else if(p_na == 1){
-      syn_col[] <- NA
-    } else {
-      syn_col[rbinom(elements, 1L, p_na) == 1L] <- NA
+    } else if(p_na < 0){
+      warning("Control parameter p_na < 0; value has been reset to 0")
+      p_na <- 0
     }
+  } else {
+    p_na <- sum(is.na(col))/length(col)
+  }
+  
+  ## Simulate Missing Data ##
+  if(p_na == 1){
+    syn_col[] <- NA
+  } else if(p_na > 0 & p_na < 1){
+    syn_col[rbinom(elements, 1L, p_na) == 1L] <- NA
   }
   
   ## Output ##
@@ -149,11 +156,35 @@ emperor_.double <- function(col, elements = elements, ctrl){
     ## Empirical CDF ##
     fn <- ecdf(col)
     
-    ## Tail Omission ##
+    ## Probabilites to Sample (with Distribution Tail Exclusions) ##
     p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
     
     ## Quantile ECDF ##
     syn_col <- quantile(fn, p)
+    
+    ## Apply Fuzzing ##
+    if(ctrl[["fuzz_ecdf"]]){
+      fuzz_sd <- diff(range(col, na.rm = TRUE))*ctrl[["fuzz_sca"]]
+      fuzz_col <- syn_col + rnorm(elements, 0, fuzz_sd)
+      
+      # Hard Tails #
+      if(ctrl[["fuzz_ht"]]){
+        # Check OOB #
+        oob <- length(fuzz_col[fuzz_col <  min(col, na.rm = TRUE) | fuzz_col > max(col, na.rm = TRUE)])
+        while(oob != 0){
+          # Indices to Fuzz #
+          ind <- which(fuzz_col <  min(col, na.rm = TRUE) | fuzz_col > max(col, na.rm = TRUE))
+          
+          # Re-Fuzz Quantiled ECDF Data #
+          fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
+          
+          # Check OOB #
+          oob <- length(fuzz_col[fuzz_col <  min(col, na.rm = TRUE) | fuzz_col > max(col, na.rm = TRUE)])
+        }
+      }
+      
+      syn_col <- fuzz_col
+    }
     
     ## Strip Quantile Values ##
     names(syn_col) <- NULL
@@ -175,6 +206,8 @@ emperor_.integer <- function(col, elements = elements, ctrl){
   
   ## Tabulate Values ##
   p_obs <- prop.table(table(col))
+  
+  # Stuff here to determine possible switch to emperor_.double()
   
   ## All NA Check ##
   if(length(p_obs) == 0){

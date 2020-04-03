@@ -11,6 +11,13 @@
 #' @param tail_exc Quantile tail size to be omitted from sampling at each end
 #' of the empirical cumulative distribution function. Defaults to 5% (`0.05`)
 #' at each end (tail) of the distribution.
+#' @param fuzz_ecdf Should the values sampled from the ECDF be 'fuzzed'
+#' through the addition of random normal noise? Defaults to `TRUE`.
+#' @param fuzz_sca Scaling factor for the random noise added to the ECDF data.
+#' Defaults to `0.01`, i.e. 100th the range of the original data.
+#' of the original data.
+#' @param fuzz_ht Should all fuzzed parameters be kept within the bounds set
+#' by `tail_exc`? Defaults to `TRUE`.
 #' @param cat_exc Categorical observation prevalence below which values will
 #' not be excluded from simulations. Defaults to 5% (`0.05`)
 #' @param drop_lev Parameter indicating whether empty factor levels should be
@@ -66,18 +73,15 @@
 
 #' @export
 emperor_control <- function(
-  p_na = NA,
-  tail_exc = 0.05,
-  cat_exc = 0.05,
-  drop_lev = TRUE,
-  dbl_round = NA, dbl_signif = NA,
+  p_na = NA_real_,
+  tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_sca = 0.01, fuzz_ht = TRUE,
+  cat_exc = 0.05, drop_lev = TRUE,
+  dbl_round = NA_integer_, dbl_signif = NA_integer_,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),
-  index = NA,
+  index = NA_integer_,
   ...
 ){
-  
-  if(!is.list(old_ctrl)) stop("Argument `old_ctrl` must be a list")
   
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())
@@ -98,12 +102,13 @@ emperor_control <- function(
     all_args <- lapply(all_args, get_ctrl_element, index = index)
   }
   
-  invisible(all_args)
+  return(invisible(all_args))
   
 }
 
 
 #' @rdname emperor_control
+#' @name control
 NULL
 
 

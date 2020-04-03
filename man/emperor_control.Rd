@@ -2,18 +2,22 @@
 % Please edit documentation in R/emperor-control.R
 \name{emperor_control}
 \alias{emperor_control}
+\alias{control}
 \title{Control parameters for emperor()}
 \usage{
 emperor_control(
-  p_na = NA,
-  tail_exc = 0.05,
+  p_na = NA_real_,
+  tail_exc = 0.025,
+  fuzz_ecdf = TRUE,
+  fuzz_sca = 0.01,
+  fuzz_ht = TRUE,
   cat_exc = 0.05,
   drop_lev = TRUE,
-  dbl_round = NA,
-  dbl_signif = NA,
+  dbl_round = NA_integer_,
+  dbl_signif = NA_integer_,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),
-  index = NA,
+  index = NA_integer_,
   ...
 )
 }
@@ -23,6 +27,16 @@ emperor_control(
 \item{tail_exc}{Quantile tail size to be omitted from sampling at each end
 of the empirical cumulative distribution function. Defaults to 5\% (\code{0.05})
 at each end (tail) of the distribution.}
+
+\item{fuzz_ecdf}{Should the values sampled from the ECDF be 'fuzzed'
+through the addition of random normal noise? Defaults to \code{TRUE}.}
+
+\item{fuzz_sca}{Scaling factor for the random noise added to the ECDF data.
+Defaults to \code{0.01}, i.e. 100th the range of the original data.
+of the original data.}
+
+\item{fuzz_ht}{Should all fuzzed parameters be kept within the bounds set
+by \code{tail_exc}? Defaults to \code{TRUE}.}
 
 \item{cat_exc}{Categorical observation prevalence below which values will
 not be excluded from simulations. Defaults to 5\% (\code{0.05})}

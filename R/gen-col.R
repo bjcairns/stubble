@@ -45,9 +45,11 @@
 #' gen_col(iris$Sepal.length)
 #' gen_col(iris$Species)
 #' 
-#' @keywords simulate
-#' @keywords simulated
-#' @keywords simulation
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen distribution manip
 #' 
 #' @importFrom stats rbinom runif
 
