@@ -65,9 +65,6 @@
 #' all arguments passed to `emperor_control()`, whether directly or indirectly,
 #' are sanitised with `as.list()`.)
 #' 
-#' @author
-#' Benjamin G. Feakins, \email{benjamin.feakins@@ndph.ox.ac.uk}
-#' 
 #' @seealso
 #' [emperor()]
 

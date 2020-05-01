@@ -21,13 +21,7 @@
 #' with built-in methods for base R vector types.
 #' 
 #' All methods return values sampled from the cumulative empirical distribution
-#' function, with the exception of `emperor_.character()`, which samples string
-#' lengths uniformly at random and then populates those strings with symbols
-#' (strings of one or more characters) chosen uniformly at random from the
-#' values in the `chr_sym` control parameter (see [emperor_control()]).
-#' Character results of `emperor()` are therefore not chosen uniformly at random
-#' from the set of all strings which are valid according to the control
-#' parameters; short strings are overrepresented.
+#' function.
 #' 
 #' @return
 #' Returns a vector of the same class as `col` with `elements` elements.
@@ -35,9 +29,6 @@
 #' @note
 #' This function is entirely experimental and should not be used yet. There are
 #' currently risks of data leakage and many of the methods do not yet work.
-#' 
-#' @author
-#' Benjamin G. Feakins, \email{benjamin.feakins@@ndph.ox.ac.uk}
 #' 
 #' @seealso 
 #' [emperor_control()]
@@ -288,7 +279,15 @@ emperor_.ordered <- function(col, elements = elements, ctrl){
 ### emperor_.character() ###
 #' @export
 emperor_.character <- function(col, elements = elements, ctrl){
-  syn_col <- rep(NA_character_, elements)
+  
+  ## Coerce to Factor ##
+  col_fac <- factor(col)
+  
+  ## Use Factor Method ##
+  syn_col <- emperor_.factor(col_fac, elements = elements, ctrl = ctrl)
+  
+  ## Coerce to Character ##
+  syn_col <- as.character(syn_col)
   
   ## Output ##
   return(syn_col)

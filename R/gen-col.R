@@ -37,9 +37,6 @@
 #' 
 #' @return
 #' Returns a vector of the same class as `col` with `elements` elements.
-#' 
-#' @author
-#' Benjamin J. Cairns, \email{ben.cairns@@ndph.ox.ac.uk}
 #'
 #' @examples
 #' gen_col(iris$Sepal.length)
