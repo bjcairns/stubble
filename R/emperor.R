@@ -58,7 +58,7 @@
 #   These may then be referenced by the other methods to save re-use of code.
 # - Overlay a uniform distribution on top of the existing ecdf for values falling oob.
 # - Add code to emperor_arbiter() to decide whether to use the ecdf or sample methods.
-# - See whether it's worth using NextMethod() on "POSIXct" and "POSIXlt" classes. They share a common second class, "POSIXt"
+# - See whether it's worth using NextMethod() on "POSIXct" and "POSIXlt" classes. They share a common second class, "POSIXt".
 
 
 ### emperor_arbiter() ###
@@ -70,13 +70,21 @@ emperor_arbiter <- function(col){
   match_numeric <- match(type, c("numeric", "integer")) == 2L
   
   if(any(!is.na(match_numeric))){
+    
     if(all(is.na(col))){
+      
       method <- "sample"
+      
     } else if(any(col %% 1 != 0)){
+      
       method <- "ecdf"
+      
     } else {
+      
       method <- "sample"
+      
     }
+  
   }
   
   ## Output ##
@@ -86,7 +94,7 @@ emperor_arbiter <- function(col){
 
 
 ### emperor_ecdf() ###
-#' @export
+#' @noRd
 emperor_ecdf <- function(col, elements = elements, ctrl){
   
   ## Debugging ##
@@ -103,26 +111,35 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   
   ## Apply Fuzzing ##
   if(ctrl[["fuzz_ecdf"]]){
-    fuzz_sd <- diff(range(col, na.rm = TRUE))*ctrl[["fuzz_sca"]]
+    
+    col_range <- range(col, na.rm = TRUE)
+    fuzz_sd <- diff(col_range)*ctrl[["fuzz_sca"]]
     fuzz_col <- syn_col + rnorm(elements, 0, fuzz_sd)
     
     # Hard Tails #
     if(ctrl[["fuzz_ht"]]){
+      
       # Check OOB #
-      oob <- length(fuzz_col[fuzz_col <  min(col, na.rm = TRUE) | fuzz_col > max(col, na.rm = TRUE)])
+      oob <- length(fuzz_col[fuzz_col < col_range[1] | fuzz_col > col_range[2]])
+      
       while(oob != 0){
+        
         # Indices to Fuzz #
-        ind <- which(fuzz_col <  min(col, na.rm = TRUE) | fuzz_col > max(col, na.rm = TRUE))
+        ind <- which(fuzz_col <  col_range[1] | fuzz_col > col_range[2])
         
         # Re-Fuzz Quantiled ECDF Data #
         fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
         
         # Check OOB #
-        oob <- length(fuzz_col[fuzz_col <  min(col, na.rm = TRUE) | fuzz_col > max(col, na.rm = TRUE)])
+        oob <- length(fuzz_col[fuzz_col <  col_range[1] | fuzz_col > col_range[2]])
+        
       }
+      
     }
     
+    # Replace with Fuzzed Data #
     syn_col <- fuzz_col
+    
   }
   
   ## Strip Quantile Values ##
@@ -135,7 +152,7 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
 
 
 ### emperor_sample() ###
-#' @export
+#' @noRd
 emperor_sample <- function(col, elements = elements, ctrl){
   
   ## Debugging ##
@@ -146,8 +163,11 @@ emperor_sample <- function(col, elements = elements, ctrl){
   
   ## All NA Check ##
   if(length(p_obs) == 0){
+    
     syn_col <- rep(NA_integer_, elements)
+    
   } else {
+    
     # Omit Low Prevalence Observations #
     if(ctrl[["cat_exc"]] != 0) p_obs <- p_obs[p_obs >= ctrl[["cat_exc"]]]
     
@@ -172,29 +192,40 @@ emperor <- function(col, elements = length(col), index = 1L, control = list(), .
   syn_col <- emperor_(col, elements = elements, ctrl = this_ctrl)
   
   ## Fallback Simulation Method ##
-  if(!exists("syn_col")){
-    syn_col <- emperor_.default(col, elements = elements, ctrl = this_ctrl)
-  }
+  if(!exists("syn_col")) syn_col <- emperor_.default(col, elements = elements, ctrl = this_ctrl)
   
   ## Parameterise p_na ##
   if(!is.na(this_ctrl[["p_na"]])){
+    
     p_na <- as.double(this_ctrl[["p_na"]])
+    
     if(p_na > 1){
+      
       warning("Control parameter p_na > 1; value has been reset to 1")
       p_na <- 1
+      
     } else if(p_na < 0){
+      
       warning("Control parameter p_na < 0; value has been reset to 0")
       p_na <- 0
+      
     }
+    
   } else {
+    
     p_na <- sum(is.na(col))/length(col)
+    
   }
   
   ## Simulate Missing Data ##
   if(p_na == 1){
+    
     syn_col[] <- NA
+    
   } else if(p_na > 0 & p_na < 1){
+    
     syn_col[rbinom(elements, 1L, p_na) == 1L] <- NA
+    
   }
   
   ## Output ##
@@ -241,13 +272,17 @@ emperor_.integer <- function(col, elements = elements, ctrl){
   
   ## Apply Appropriate Method ##
   if(method == "sample"){
+    
     syn_col <- emperor_sample(col, elements = elements, ctrl = ctrl)
+    
   } else if(method == "ecdf"){
+    
     syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+    
   }
   
   ## Coerce to Integer ##
-  if(!is.integer(syn_col)) syn_col <- as.integer(syn_col)
+  if(!is.integer(syn_col)) syn_col <- as.integer(round(syn_col))
   
   ## Output ##
   return(syn_col)
@@ -267,9 +302,13 @@ emperor_.double <- function(col, elements = elements, ctrl){
   
   ## Apply Appropriate Method ##
   if(method == "sample"){
+    
     syn_col <- emperor_sample(col, elements = elements, ctrl = ctrl)
+    
   } else if(method == "ecdf"){
+    
     syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+    
   }
   
   ## Coerce to Double ##
@@ -445,8 +484,10 @@ emperor_.IDate <- function(col, elements = elements, ctrl){
     syn_col <- data.table::as.IDate(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   } else {
+    
     warning("Package 'data.table' not found. IDates will be converted to Dates.")
     syn_col <- NextMethod(col)
+    
   }
   
   ## Output ##
