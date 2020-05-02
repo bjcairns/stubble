@@ -70,7 +70,9 @@ emperor_arbiter <- function(col){
   match_numeric <- match(type, c("numeric", "integer")) == 2L
   
   if(any(!is.na(match_numeric))){
-    if(any(col %% 1 != 0)){
+    if(all(is.na(col))){
+      method <- "sample"
+    } else if(any(col %% 1 != 0)){
       method <- "ecdf"
     } else {
       method <- "sample"
