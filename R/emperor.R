@@ -56,7 +56,6 @@
 # - Check how emperor_.factor() and emperor_.ordered() handle columns in which addNA() has been used.
 # - Add checks for rounding and try to mirror the number of dps of sig figs in the output.
 #   These may then be referenced by the other methods to save re-use of code.
-# - Overlay a uniform distribution on top of the existing ecdf for values falling oob.
 # - Add code to emperor_arbiter() to decide whether to use the ecdf or sample methods.
 # - See whether it's worth using NextMethod() on "POSIXct" and "POSIXlt" classes. They share a common second class, "POSIXt".
 
@@ -97,8 +96,8 @@ emperor_arbiter <- function(col){
 #' @noRd
 emperor_ecdf <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_ecdf()", "\n")
+  # ## Debugging ##
+  # cat("emperor_ecdf()", "\n")
   
   ## Empirical CDF ##
   fn <- ecdf(col)
@@ -155,8 +154,8 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
 #' @noRd
 emperor_sample <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_sample()", "\n")
+  # ## Debugging ##
+  # cat("emperor_sample()", "\n")
   
   ## Tabulate Values ##
   p_obs <- prop.table(table(col))
@@ -247,8 +246,8 @@ emperor_ <- function(col, ...){
 #' @export
 emperor_.default <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.default()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.default()", "\n")
   
   warning("Could not generate data for ", class(col), "; returning NAs")
   
@@ -264,8 +263,8 @@ emperor_.default <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.integer <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.integer()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.integer()", "\n")
   
   ## Determine Type ##
   method <- emperor_arbiter(col)
@@ -294,8 +293,8 @@ emperor_.integer <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.double <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.double()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.double()", "\n")
   
   ## Determine Type ##
   method <- emperor_arbiter(col)
@@ -324,8 +323,8 @@ emperor_.double <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.logical <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.logical()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.logical()", "\n")
   
   ## Coerce to Integer ##
   col_int <- as.integer(col)
@@ -346,8 +345,8 @@ emperor_.logical <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.factor <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.factor()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.factor()", "\n")
   
   ## Coerce to Integer ##
   col_int <- as.integer(col)
@@ -371,8 +370,8 @@ emperor_.factor <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.ordered <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.ordered()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.ordered()", "\n")
   
   ## Use Factor Method ##
   syn_col <- NextMethod(col)
@@ -390,8 +389,8 @@ emperor_.ordered <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.character <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.character()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.character()", "\n")
   
   ## Coerce to Factor ##
   col_fac <- factor(col)
@@ -412,8 +411,8 @@ emperor_.character <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.POSIXct <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.POSIXct()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.POSIXct()", "\n")
   
   ## Use ECDF Method ##
   syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
@@ -431,8 +430,8 @@ emperor_.POSIXct <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.POSIXlt <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.POSIXlt()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.POSIXlt()", "\n")
   
   ## Coerce to POSIXct ##
   col <- as.POSIXct(col)
@@ -453,8 +452,8 @@ emperor_.POSIXlt <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.Date <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.Date()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.Date()", "\n")
   
   ## Use ECDF Method ##
   syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
@@ -472,8 +471,8 @@ emperor_.Date <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.IDate <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.IDate()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.IDate()", "\n")
   
   if("data.table" %in% rownames(installed.packages())){
 
@@ -500,8 +499,8 @@ emperor_.IDate <- function(col, elements = elements, ctrl){
 #' @export
 emperor_.list <- function(col, elements = elements, ctrl){
   
-  ## Debugging ##
-  cat("emperor_.list()", "\n")
+  # ## Debugging ##
+  # cat("emperor_.list()", "\n")
   
   syn_col <- as.list(rep(NA_integer_, elements))
   
