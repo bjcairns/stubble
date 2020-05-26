@@ -8,6 +8,12 @@
 #'
 #' @param x the data frame-like object to emulate. Can have 0 rows.
 #' @param rows the number of rows to generate.
+#' @param method the method to use in simulating data. Possible values can be
+#' `"empirical"` or `"naive"`. When set to `"empirical"` (default) simulated
+#' data will mimmic the empirical distributions present within the data. When
+#' set to `"naive"` simulated data will share some properties with the source
+#' data, such as the range or possible values, but will be distributed
+#' uniformally.
 #' @param control a named list of control parameters for generating the
 #' synthetic data. See [control].
 #' @param ... named individual control parameters, which take precedence over
@@ -145,24 +151,31 @@ stubblise.list <- function(x, rows = nrow(x), method = "empirical", control = li
 
 
 # Internals
-stbls_ <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+stbls_ <- function(x, rows = rows, method = method, control = list(), ...) {
   if (!is.list(control)) stop("Argument `control` must be a list")
   index <- 1:length(x)
+    
   if (method == "empirical") {
+    
     mapply(
       emperor, col = x, index = index,
       MoreArgs = list(elements = rows, control = control, ...),
       SIMPLIFY = FALSE,
       USE.NAMES = TRUE
     )
-  } else if(method == "naive") {
+    
+  } else if (method == "naive") {
+    
     mapply(
       gen_col, col = x, index = index,
       MoreArgs = list(elements = rows, control = control, ...),
       SIMPLIFY = FALSE,
       USE.NAMES = TRUE
     )
+    
   } else {
+    
     stop("Argument `method` must be either 'empirical' or 'naive'")
+    
   }
 }

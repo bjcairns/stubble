@@ -46,143 +46,22 @@
 #' 
 #' @keywords datagen distribution manip
 #' 
-#' @importFrom stats ecdf quantile runif rnorm
+#' @importFrom stats runif rnorm
 #' @importFrom utils installed.packages
-
-
-### TODO ###
-# - Decide how and when to implement emperor() in stubble.
-# - Find why devtools::check() if flagging emperor() as being undocumented.
-# - Check how emperor_.factor() and emperor_.ordered() handle columns in which addNA() has been used.
-# - Add checks for rounding and try to mirror the number of dps of sig figs in the output.
-#   These may then be referenced by the other methods to save re-use of code.
-# - Add code to emperor_arbiter() to decide whether to use the ecdf or sample methods.
-# - See whether it's worth using NextMethod() on "POSIXct" and "POSIXlt" classes. They share a common second class, "POSIXt".
-
-
-### emperor_arbiter() ###
-#' @noRd
-emperor_arbiter <- function(col){
-  
-  type <- class(col)
-  
-  match_numeric <- match(type, c("numeric", "integer")) == 2L
-  
-  if(any(!is.na(match_numeric))){
-    
-    if(all(is.na(col))){
-      
-      method <- "sample"
-      
-    } else if(any(col %% 1 != 0)){
-      
-      method <- "ecdf"
-      
-    } else {
-      
-      method <- "sample"
-      
-    }
-  
-  }
-  
-  ## Output ##
-  return(method)
-  
-}
-
-
-### emperor_ecdf() ###
-#' @noRd
-emperor_ecdf <- function(col, elements = elements, ctrl){
-  
-  # ## Debugging ##
-  # cat("emperor_ecdf()", "\n")
-  
-  ## Empirical CDF ##
-  fn <- ecdf(col)
-  
-  ## Probabilites to Sample (with Distribution Tail Exclusions) ##
-  p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
-  
-  ## Quantile ECDF ##
-  syn_col <- quantile(fn, p)
-  
-  ## Apply Fuzzing ##
-  if(ctrl[["fuzz_ecdf"]]){
-    
-    col_range <- range(col, na.rm = TRUE)
-    fuzz_sd <- diff(col_range)*ctrl[["fuzz_sca"]]
-    fuzz_col <- syn_col + rnorm(elements, 0, fuzz_sd)
-    
-    # Hard Tails #
-    if(ctrl[["fuzz_ht"]]){
-      
-      # Check OOB #
-      oob <- length(fuzz_col[fuzz_col < col_range[1] | fuzz_col > col_range[2]])
-      
-      while(oob != 0){
-        
-        # Indices to Fuzz #
-        ind <- which(fuzz_col <  col_range[1] | fuzz_col > col_range[2])
-        
-        # Re-Fuzz Quantiled ECDF Data #
-        fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
-        
-        # Check OOB #
-        oob <- length(fuzz_col[fuzz_col <  col_range[1] | fuzz_col > col_range[2]])
-        
-      }
-      
-    }
-    
-    # Replace with Fuzzed Data #
-    syn_col <- fuzz_col
-    
-  }
-  
-  ## Strip Quantile Values ##
-  names(syn_col) <- NULL
-  
-  ## Output ##
-  return(syn_col)
-  
-}
-
-
-### emperor_sample() ###
-#' @noRd
-emperor_sample <- function(col, elements = elements, ctrl){
-  
-  # ## Debugging ##
-  # cat("emperor_sample()", "\n")
-  
-  ## Tabulate Values ##
-  p_obs <- prop.table(table(col))
-  
-  ## All NA Check ##
-  if(length(p_obs) == 0){
-    
-    syn_col <- rep(NA_integer_, elements)
-    
-  } else {
-    
-    # Omit Low Prevalence Observations #
-    if(ctrl[["cat_exc"]] != 0) p_obs <- p_obs[p_obs >= ctrl[["cat_exc"]]]
-    
-    # Simulate Values #
-    syn_col <- sample(as.integer(names(p_obs)), size = elements, replace = TRUE, prob = p_obs)
-  }
-  
-  ## Output ##
-  return(syn_col)
-  
-}
+#' @importFrom grDevices nclass.FD
+#' @importFrom graphics hist
+#' @importFrom stats splinefun
 
 
 ### emperor() ###
 #' @export
 emperor <- function(col, elements = length(col), index = 1L, control = list(), ...){
+  
+  ## Checks ##
+  if (!is.numeric(elements)) stop("'elements' argument must be numeric.")
+  if (elements %% 1 != 0) stop("'elements' argument must be a whole number.")
+  if (length(elements) > 1) stop("'elements' argument must be of length 1.")
+  if (!{elements >= 1}) stop("'elements' argument must be >= 1.")
   
   ## Set Control Parameters ##
   this_ctrl <- emperor_control(..., old_ctrl = control, index = index)
@@ -242,6 +121,222 @@ emperor_ <- function(col, ...){
 }
 
 
+# ### emperor_arbiter() ###
+# #' @noRd
+# emperor_arbiter <- function(col){
+#   
+#   type <- class(col)
+#   
+#   match_numeric <- match(type, c("numeric", "integer")) == 2L
+#   
+#   if(any(!is.na(match_numeric))){
+#     
+#     if(all(is.na(col))){
+#       
+#       method <- "sample"
+#       
+#     } else if(any(col %% 1 != 0)){
+#       
+#       method <- "ecdf"
+#       
+#     } else {
+#       
+#       method <- "sample"
+#       
+#     }
+#   
+#   }
+#   
+#   ## Output ##
+#   return(method)
+#   
+# }
+
+
+### emperor_arbiter() ###
+#' @noRd
+emperor_arbiter <- function(col, ctrl){
+  
+  # Complete Cases Only #
+  cc_col <- col[!is.na(col)]
+  
+  # Uniqueness #
+  p_uniq <- length(unique(cc_col))/length(cc_col)
+  
+  # Method Selection #
+  method <- if(p_uniq > ctrl[["emp_sw"]]) "ecdf" else "sample" 
+  
+  # Output #
+  return(method)
+  
+}
+
+
+### fuzz_col() ###
+#' @noRd
+fuzz <- function(syn_col, limits, elements, ctrl){
+  
+  # ## Debugging ##
+  # cat("fuzz_col()", "\n")
+  
+  fuzz_sd <- diff(limits)*ctrl[["fuzz_sca"]]
+  
+  fuzz_col <- syn_col + rnorm(elements, 0, fuzz_sd)
+  
+  # Hard Tails #
+  if(ctrl[["fuzz_ht"]]){
+    
+    # Check OOB #
+    oob <- length(fuzz_col[fuzz_col < limits[1] | fuzz_col > limits[2]])
+    
+    i <- 1L
+    
+    while(oob != 0){
+      
+      # Indices to Fuzz #
+      ind <- which(fuzz_col <  limits[1] | fuzz_col > limits[2])
+      
+      # Re-Fuzz Quantiled ECDF Data #
+      fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
+      
+      # Check OOB #
+      oob <- length(fuzz_col[fuzz_col <  limits[1] | fuzz_col > limits[2]])
+      
+      i <- i + 1L
+      
+      if (i == 50L) {
+        
+        warning("Maximum number of iterations reached.")
+        break
+        
+      }
+      
+    }
+    
+  }
+  
+  # Output #
+  return(fuzz_col)
+  
+}
+
+
+### emperor_ecdf() ###
+#' @noRd
+emperor_ecdf <- function(col, elements = elements, ctrl){
+  
+  # ## Debugging ##
+  # cat("emperor_ecdf()", "\n")
+  
+  ## Determine Optimal Number of Breaks ##
+  if (ctrl[["breaks"]] == "FD") {
+    nclass <- nclass.FD(col)
+    breaks <- seq(min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L)
+  }
+  
+  ## Histogram Object ##
+  h <- hist(col, breaks = breaks, plot = FALSE)
+  
+  ## Cumulative Sum of Densities
+  width <- diff(h[["breaks"]])
+  area <- width*h[["density"]]
+  cdf <- cumsum(area)
+  
+  ## Remove Duplicates ##
+  mids <- h[["mids"]][!duplicated(cdf)]
+  cdf <- cdf[!duplicated(cdf)]
+  
+  ## Generate a Spline Function ##
+  inv_cdf_spf <- splinefun(cdf, mids, method = "natural")
+  
+  ## Simulate Using Inverse CDF ##
+  syn_col <- inv_cdf_spf(runif(n = elements, min = 0 + ctrl[["tail_exc"]], max = 1 - ctrl[["tail_exc"]]))
+  
+  ## Fuzzing ##
+  limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]))
+  names(limits) <- NULL
+  if (ctrl[["fuzz_ecdf"]]){
+    
+    syn_col <- fuzz(syn_col = syn_col, limits = limits, elements = elements, ctrl = ctrl)
+    
+  }
+  
+  ## Output ##
+  return(syn_col)
+  
+}
+
+#' ### emperor_ecdf() ###
+#' #' @noRd
+#' emperor_ecdf <- function(col, elements = elements, ctrl){
+#'   
+#'   # ## Debugging ##
+#'   # cat("emperor_ecdf()", "\n")
+#'   
+#'   ## Empirical CDF ##
+#'   fn <- ecdf(col)
+#'   
+#'   ## Probabilites to Sample (with Distribution Tail Exclusions) ##
+#'   p <- runif(elements, 0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]])
+#'   
+#'   ## Quantile ECDF ##
+#'   syn_col <- quantile(fn, p)
+#'   
+#'   ## Fuzzing ##
+#'   if (ctrl[["fuzz_ecdf"]]){
+#'     
+#'     if (ctrl[["tail_exc"]] == 0){
+#'       limits <- range(col)
+#'     } else {
+#'       limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]))
+#'     }
+#'     
+#'     syn_col <- fuzz_col(syn_col = syn_col, limits = limits, elements = elements, ctrl = ctrl)
+#'     
+#'   }
+#'   
+#'   ## Strip Quantile Values ##
+#'   names(syn_col) <- NULL
+#'   
+#'   ## Output ##
+#'   return(syn_col)
+#'   
+#' }
+
+
+### emperor_sample() ###
+#' @noRd
+emperor_sample <- function(col, elements = elements, ctrl){
+  
+  # ## Debugging ##
+  # cat("emperor_sample()", "\n")
+  
+  ## Tabulate Values ##
+  n_obs <- table(col)
+  p_obs <- prop.table(n_obs)
+  
+  ## Omit Low Counts/Prop from Resimulation ##
+  p_obs <- p_obs[n_obs >= ctrl[["n_exc"]] & p_obs >= ctrl[["p_exc"]]]
+  
+  # Simulate Values #
+  if(length(p_obs) != 0){
+    
+    p_obs <- p_obs + runif(length(p_obs), -1e-3, 1e-3)
+    
+    syn_col <- sample(as.integer(names(p_obs)), size = elements, replace = TRUE, prob = p_obs)
+    
+  } else {
+    
+    syn_col <- rep(NA_integer_, elements)
+    
+  }
+  
+  ## Output ##
+  return(syn_col)
+  
+}
+
+
 ### emperor_.default() ###
 #' @export
 emperor_.default <- function(col, elements = elements, ctrl){
@@ -267,7 +362,7 @@ emperor_.integer <- function(col, elements = elements, ctrl){
   # cat("emperor_.integer()", "\n")
   
   ## Determine Type ##
-  method <- emperor_arbiter(col)
+  method <- emperor_arbiter(col, ctrl = ctrl)
   
   ## Apply Appropriate Method ##
   if(method == "sample"){
@@ -297,7 +392,7 @@ emperor_.double <- function(col, elements = elements, ctrl){
   # cat("emperor_.double()", "\n")
   
   ## Determine Type ##
-  method <- emperor_arbiter(col)
+  method <- emperor_arbiter(col, ctrl = ctrl)
   
   ## Apply Appropriate Method ##
   if(method == "sample"){
@@ -414,8 +509,22 @@ emperor_.POSIXct <- function(col, elements = elements, ctrl){
   # ## Debugging ##
   # cat("emperor_.POSIXct()", "\n")
   
-  ## Use ECDF Method ##
-  syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+  ## Coerce to Double ##
+  col <- as.double(col)
+  
+  ## Determine Type ##
+  method <- emperor_arbiter(col, ctrl = ctrl)
+  
+  ## Apply Appropriate Method ##
+  if(method == "sample"){
+    
+    syn_col <- emperor_sample(col, elements = elements, ctrl = ctrl)
+    
+  } else if(method == "ecdf"){
+    
+    syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+    
+  }
   
   ## Coerce to POSIXct ##
   syn_col <- as.POSIXct(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
@@ -436,8 +545,22 @@ emperor_.POSIXlt <- function(col, elements = elements, ctrl){
   ## Coerce to POSIXct ##
   col <- as.POSIXct(col)
   
-  ## Use ECDF Method ##
-  syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+  ## Coerce to Double ##
+  col <- as.double(col)
+  
+  ## Determine Type ##
+  method <- emperor_arbiter(col, ctrl = ctrl)
+  
+  ## Apply Appropriate Method ##
+  if(method == "sample"){
+    
+    syn_col <- emperor_sample(col, elements = elements, ctrl = ctrl)
+    
+  } else if(method == "ecdf"){
+    
+    syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+    
+  }
   
   ## Coerce to POSIXlt ##
   syn_col <- as.POSIXlt(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
@@ -455,8 +578,22 @@ emperor_.Date <- function(col, elements = elements, ctrl){
   # ## Debugging ##
   # cat("emperor_.Date()", "\n")
   
-  ## Use ECDF Method ##
-  syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+  ## Coerce to Integer ##
+  col <- as.integer(col)
+  
+  ## Determine Type ##
+  method <- emperor_arbiter(col, ctrl = ctrl)
+  
+  ## Apply Appropriate Method ##
+  if(method == "sample"){
+    
+    syn_col <- emperor_sample(col, elements = elements, ctrl = ctrl)
+    
+  } else if(method == "ecdf"){
+    
+    syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+    
+  }
   
   ## Coerce to Date ##
   syn_col <- as.Date(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
@@ -475,11 +612,25 @@ emperor_.IDate <- function(col, elements = elements, ctrl){
   # cat("emperor_.IDate()", "\n")
   
   if("data.table" %in% rownames(installed.packages())){
+    
+    ## Coerce to Integer ##
+    col <- as.integer(col)
+    
+    ## Determine Type ##
+    method <- emperor_arbiter(col, ctrl = ctrl)
+    
+    ## Apply Appropriate Method ##
+    if(method == "sample"){
+      
+      syn_col <- emperor_sample(col, elements = elements, ctrl = ctrl)
+      
+    } else if(method == "ecdf"){
+      
+      syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
+      
+    }
 
-    ## Use ECDF Method ##
-    syn_col <- emperor_ecdf(col, elements = elements, ctrl = ctrl)
-
-    ## Coerce to Date ##
+    ## Coerce to IDate ##
     syn_col <- data.table::as.IDate(round(syn_col), origin = "1970-01-01", tz = ctrl[["dtm_tz"]])
   
   } else {

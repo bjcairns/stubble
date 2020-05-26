@@ -15,15 +15,15 @@ stubblise(x, ...)
 
 stubblize(x, ...)
 
-\method{stubblise}{default}(x, rows = 10L, control = list(), ...)
+\method{stubblise}{default}(x, rows = nrow(x), method = "empirical", control = list(), ...)
 
-\method{stubblise}{data.frame}(x, rows = 10L, control = list(), ...)
+\method{stubblise}{data.frame}(x, rows = nrow(x), method = "empirical", control = list(), ...)
 
-\method{stubblise}{tbl_df}(x, rows = 10L, control = list(), ...)
+\method{stubblise}{tbl_df}(x, rows = nrow(x), method = "empirical", control = list(), ...)
 
-\method{stubblise}{data.table}(x, rows = 10L, control = list(), ...)
+\method{stubblise}{data.table}(x, rows = nrow(x), method = "empirical", control = list(), ...)
 
-\method{stubblise}{list}(x, rows = 10L, control = list(), ...)
+\method{stubblise}{list}(x, rows = nrow(x), method = "empirical", control = list(), ...)
 }
 \arguments{
 \item{x}{the data frame-like object to emulate. Can have 0 rows.}
@@ -32,6 +32,13 @@ stubblize(x, ...)
 those in the \code{control} list.}
 
 \item{rows}{the number of rows to generate.}
+
+\item{method}{the method to use in simulating data. Possible values can be
+\code{"empirical"} or \code{"naive"}. When set to \code{"empirical"} (default) simulated
+data will mimmic the empirical distributions present within the data. When
+set to \code{"naive"} simulated data will share some properties with the source
+data, such as the range or possible values, but will be distributed
+uniformally.}
 
 \item{control}{a named list of control parameters for generating the
 synthetic data. See \link{control}.}

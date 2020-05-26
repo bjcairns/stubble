@@ -8,6 +8,18 @@
 #' called directly.
 #'
 #' @param p_na Proportion of values set to `NA`; defaults to `NA`.
+#' @param emp_sw Value determining whether spline or resample methods are used
+#' in the the generation of synthetic data. When the unique fraction of a column
+#' is above this value spline-based methods will be used. Conversely, when it is
+#' below this value resample-based methods will be used. Hence, setting it to 1
+#' will ensure that resample-based methods will always be used, while setting it
+#' to 0 will ensure that spline-based methods will always be used. Defaults to
+#' 50% (`0.5`).
+#' will always be used. When set to 0 ECDF-based methods will always be used.
+#' @param breaks Number of breaks to use for spline-based interpolation of the
+#' empirical cumulative distribution function. Can be either `"FD"` (default) or
+#' a whole number. When set to `"FD"` the number of breaks is calculated using
+#' the Freedman-Diaconis method.
 #' @param tail_exc Quantile tail size to be omitted from sampling at each end
 #' of the empirical cumulative distribution function. Defaults to 5% (`0.05`)
 #' at each end (tail) of the distribution.
@@ -18,16 +30,12 @@
 #' of the original data.
 #' @param fuzz_ht Should all fuzzed parameters be kept within the bounds set
 #' by `tail_exc`? Defaults to `TRUE`.
-#' @param cat_exc Categorical observation prevalence below which values will
-#' not be excluded from simulations. Defaults to 5% (`0.05`)
+#' @param n_exc Observation prevalence below which values will be excluded from
+#' simulations. Defaults to 10.
+#' @param p_exc Observation prevalence below which values will be excluded from
+#' simulations. Defaults to 1% (`0.01`)
 #' @param drop_lev Parameter indicating whether empty factor levels should be
 #' dropped from simlated factors and ordered factors. Defauls to `TRUE`
-#' @param dbl_round Number of decimal places to round to. [round()] and then
-#' [signif()] are applied in sequence (see `dbl_signif`, below). If `NA`
-#' (default), no rounding is applied.
-#' @param dbl_signif Number of significant digits to round to. [round()] and
-#' then [signif()] are applied in sequence (see `dbl_round`). If `NA`
-#' (default), no rounding is applied.
 #' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but
 #' [Sys.timezone()] may be more appropriate for some users.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly
@@ -68,17 +76,21 @@
 #' @seealso
 #' [emperor()]
 
+
 #' @export
 emperor_control <- function(
-  p_na = NA_real_,
-  tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_sca = 0.01, fuzz_ht = TRUE,
-  cat_exc = 0.05, drop_lev = TRUE,
-  dbl_round = NA_integer_, dbl_signif = NA_integer_,
+  p_na = NA_real_, emp_sw = 0.5,
+  breaks = "FD", tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_sca = 0.01, fuzz_ht = TRUE,
+  n_exc = 10, p_exc = 0.01, drop_lev = TRUE,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),
   index = NA_integer_,
   ...
 ){
+  
+  ## Checks ##
+  if (length(breaks) > 1) stop("'breaks' argument must be of length 1.")
+  if (tail_exc < 0 | tail_exc >= 0.5) stop("'tail_exc' must be a positive value < 0.5.")
   
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())

@@ -7,14 +7,15 @@
 \usage{
 emperor_control(
   p_na = NA_real_,
+  emp_sw = 0.5,
+  breaks = "FD",
   tail_exc = 0.025,
   fuzz_ecdf = TRUE,
   fuzz_sca = 0.01,
   fuzz_ht = TRUE,
-  cat_exc = 0.05,
+  n_exc = 10,
+  p_exc = 0.01,
   drop_lev = TRUE,
-  dbl_round = NA_integer_,
-  dbl_signif = NA_integer_,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),
   index = NA_integer_,
@@ -23,6 +24,20 @@ emperor_control(
 }
 \arguments{
 \item{p_na}{Proportion of values set to \code{NA}; defaults to \code{NA}.}
+
+\item{emp_sw}{Value determining whether spline or resample methods are used
+in the the generation of synthetic data. When the unique fraction of a column
+is above this value spline-based methods will be used. Conversely, when it is
+below this value resample-based methods will be used. Hence, setting it to 1
+will ensure that resample-based methods will always be used, while setting it
+to 0 will ensure that spline-based methods will always be used. Defaults to
+50\% (\code{0.5}).
+will always be used. When set to 0 ECDF-based methods will always be used.}
+
+\item{breaks}{Number of breaks to use for spline-based interpolation of the
+empirical cumulative distribution function. Can be either \code{"FD"} (default) or
+a whole number. When set to \code{"FD"} the number of breaks is calculated using
+the Freedman-Diaconis method.}
 
 \item{tail_exc}{Quantile tail size to be omitted from sampling at each end
 of the empirical cumulative distribution function. Defaults to 5\% (\code{0.05})
@@ -38,19 +53,14 @@ of the original data.}
 \item{fuzz_ht}{Should all fuzzed parameters be kept within the bounds set
 by \code{tail_exc}? Defaults to \code{TRUE}.}
 
-\item{cat_exc}{Categorical observation prevalence below which values will
-not be excluded from simulations. Defaults to 5\% (\code{0.05})}
+\item{n_exc}{Observation prevalence below which values will be excluded from
+simulations. Defaults to 10.}
+
+\item{p_exc}{Observation prevalence below which values will be excluded from
+simulations. Defaults to 1\% (\code{0.01})}
 
 \item{drop_lev}{Parameter indicating whether empty factor levels should be
 dropped from simlated factors and ordered factors. Defauls to \code{TRUE}}
-
-\item{dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then
-\code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_signif}, below). If \code{NA}
-(default), no rounding is applied.}
-
-\item{dbl_signif}{Number of significant digits to round to. \code{\link[=round]{round()}} and
-then \code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_round}). If \code{NA}
-(default), no rounding is applied.}
 
 \item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but
 \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some users.}
@@ -100,7 +110,4 @@ are sanitised with \code{as.list()}.)
 }
 \seealso{
 \code{\link[=emperor]{emperor()}}
-}
-\author{
-Benjamin G. Feakins, \email{benjamin.feakins@ndph.ox.ac.uk}
 }
