@@ -148,11 +148,11 @@ fuzz <- function(col, syn_col, elements, ctrl){
   # cat("fuzz_col()", "\n")
   
   ## Limits ##
-  limits <- range(col)
+  limits <- range(col, na.rm = TRUE)
   
   ## SD ##
-  col_sd <- sd(col)
-  syn_col_sd <- sd(syn_col)
+  col_sd <- sd(col, na.rm = TRUE)
+  syn_col_sd <- sd(syn_col, na.rm = TRUE)
   fuzz_sd <- abs(col_sd - syn_col_sd)
   
   ## Apply Fuzzing ##
@@ -168,7 +168,7 @@ fuzz <- function(col, syn_col, elements, ctrl){
     ## Indices to Fuzz ##
     ind <- which(fuzz_col <  limits[1] | fuzz_col > limits[2])
     
-    ## Re-Fuzz Quantiled ECDF Data ##
+    ## Re-Fuzz ECDF Data ##
     fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
     
     ## Check OOB ##
@@ -206,7 +206,7 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   # cat("emperor_ecdf()", "\n")
   
   ## Determine Optimal Number of Breaks ##
-  nclass <- nclass.FD(col)
+  nclass <- nclass.FD(col[!is.na(col)])
   breaks <- seq(min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L)
   
   ## Histogram Object ##
@@ -237,8 +237,6 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   ## Fuzzing ##
   if (ctrl[["fuzz_ecdf"]]){
     
-    limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]))
-    names(limits) <- NULL
     syn_col <- fuzz(col = col, syn_col = syn_col, elements = elements, ctrl = ctrl)
     
   }

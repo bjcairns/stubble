@@ -8,11 +8,8 @@
 emperor_control(
   p_na = NA_real_,
   emp_sw = 0.5,
-  breaks = "FD",
   tail_exc = 0.025,
   fuzz_ecdf = TRUE,
-  fuzz_sca = 0.1,
-  fuzz_ht = TRUE,
   n_exc = 10,
   p_exc = 0.01,
   drop_lev = TRUE,
@@ -34,24 +31,12 @@ will ensure that spline-based methods will always be used. Defaults to 50\%
 (\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
 used.}
 
-\item{breaks}{Number of breaks to use for spline-based interpolation of the
-empirical cumulative distribution function. Can be either \code{"FD"} (default) or
-a whole number. When set to \code{"FD"} the number of breaks is calculated using
-the Freedman-Diaconis method.}
-
 \item{tail_exc}{Quantile tail size to be omitted from sampling at each end
-of the empirical cumulative distribution function. Defaults to 5\% (\code{0.05})
+of the empirical cumulative distribution function. Defaults to 2.5\% (\code{0.025})
 at each end (tail) of the distribution.}
 
 \item{fuzz_ecdf}{Should the values sampled from the ECDF be 'fuzzed'
 through the addition of random normal noise? Defaults to \code{TRUE}.}
-
-\item{fuzz_sca}{Scaling factor for the random noise added to the ECDF data.
-Defaults to \code{0.1}, i.e. one 10th the range of the original data.
-of the original data.}
-
-\item{fuzz_ht}{Should all fuzzed parameters be kept within the bounds set
-by \code{tail_exc}? Defaults to \code{TRUE}.}
 
 \item{n_exc}{Observation prevalence below which values will be excluded from
 simulations. Defaults to 10.}
