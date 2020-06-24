@@ -142,48 +142,57 @@ emperor_arbiter <- function(col, ctrl){
 
 ### fuzz_col() ###
 #' @noRd
-fuzz <- function(syn_col, limits, elements, ctrl){
+fuzz <- function(col, syn_col, elements, ctrl){
   
   # ## Debugging ##
   # cat("fuzz_col()", "\n")
   
-  fuzz_sd <- diff(limits)*ctrl[["fuzz_sca"]]
+  ## Limits ##
+  limits <- range(col)
   
-  fuzz_col <- syn_col + rnorm(elements, 0, fuzz_sd)
+  ## SD ##
+  col_sd <- sd(col)
+  syn_col_sd <- sd(syn_col)
+  fuzz_sd <- abs(col_sd - syn_col_sd)
   
-  # Hard Tails #
-  if(ctrl[["fuzz_ht"]]){
+  ## Apply Fuzzing ##
+  fuzz_col <- syn_col + rnorm(elements, fuzz_sd)
     
-    # Check OOB #
-    oob <- length(fuzz_col[fuzz_col < limits[1] | fuzz_col > limits[2]])
+  ## Check OOB ##
+  oob <- length(fuzz_col[fuzz_col < limits[1] | fuzz_col > limits[2]])
+  
+  i <- 1L
+  
+  while(oob != 0){
     
-    i <- 1L
+    ## Indices to Fuzz ##
+    ind <- which(fuzz_col <  limits[1] | fuzz_col > limits[2])
     
-    while(oob != 0){
+    ## Re-Fuzz Quantiled ECDF Data ##
+    fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
+    
+    ## Check OOB ##
+    oob <- length(fuzz_col[fuzz_col <  limits[1] | fuzz_col > limits[2]])
+    
+    ## Break Clause ##
+    if (i == 1e3) {
       
-      # Indices to Fuzz #
-      ind <- which(fuzz_col <  limits[1] | fuzz_col > limits[2])
-      
-      # Re-Fuzz Quantiled ECDF Data #
-      fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
-      
-      # Check OOB #
-      oob <- length(fuzz_col[fuzz_col <  limits[1] | fuzz_col > limits[2]])
-      
-      i <- i + 1L
-      
-      if (i == 50L) {
-        
-        warning("Maximum number of iterations reached.")
-        break
-        
-      }
+      warning(
+        paste(
+          "Maximum number of iterations reached.",
+          "Some values will be outside the range of the source data.",
+          sep = "\n"
+        ))
+      break
       
     }
     
+    ## Iterate ##
+    i <- i + 1L
+    
   }
   
-  # Output #
+  ## Output ##
   return(fuzz_col)
   
 }
@@ -197,10 +206,8 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   # cat("emperor_ecdf()", "\n")
   
   ## Determine Optimal Number of Breaks ##
-  if (ctrl[["breaks"]] == "FD") {
-    nclass <- nclass.FD(col)
-    breaks <- seq(min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L)
-  }
+  nclass <- nclass.FD(col)
+  breaks <- seq(min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L)
   
   ## Histogram Object ##
   h <- hist(col, breaks = breaks, plot = FALSE)
@@ -232,7 +239,7 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
     
     limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]))
     names(limits) <- NULL
-    syn_col <- fuzz(syn_col = syn_col, limits = limits, elements = elements, ctrl = ctrl)
+    syn_col <- fuzz(col = col, syn_col = syn_col, elements = elements, ctrl = ctrl)
     
   }
   

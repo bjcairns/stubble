@@ -16,20 +16,11 @@
 #' will ensure that spline-based methods will always be used. Defaults to 50%
 #' (`0.5`). will always be used. When set to 0 ECDF-based methods will always be
 #' used.
-#' @param breaks Number of breaks to use for spline-based interpolation of the
-#' empirical cumulative distribution function. Can be either `"FD"` (default) or
-#' a whole number. When set to `"FD"` the number of breaks is calculated using
-#' the Freedman-Diaconis method.
 #' @param tail_exc Quantile tail size to be omitted from sampling at each end
-#' of the empirical cumulative distribution function. Defaults to 5% (`0.05`)
+#' of the empirical cumulative distribution function. Defaults to 2.5% (`0.025`)
 #' at each end (tail) of the distribution.
 #' @param fuzz_ecdf Should the values sampled from the ECDF be 'fuzzed'
 #' through the addition of random normal noise? Defaults to `TRUE`.
-#' @param fuzz_sca Scaling factor for the random noise added to the ECDF data.
-#' Defaults to `0.1`, i.e. one 10th the range of the original data.
-#' of the original data.
-#' @param fuzz_ht Should all fuzzed parameters be kept within the bounds set
-#' by `tail_exc`? Defaults to `TRUE`.
 #' @param n_exc Observation prevalence below which values will be excluded from
 #' simulations. Defaults to 10.
 #' @param p_exc Observation prevalence below which values will be excluded from
@@ -80,7 +71,7 @@
 #' @export
 emperor_control <- function(
   p_na = NA_real_, emp_sw = 0.5,
-  breaks = "FD", tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_sca = 0.10, fuzz_ht = TRUE,
+  tail_exc = 0.025, fuzz_ecdf = TRUE,
   n_exc = 10, p_exc = 0.01, drop_lev = TRUE,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),
@@ -89,7 +80,6 @@ emperor_control <- function(
 ){
   
   ## Checks ##
-  if (length(breaks) > 1) stop("'breaks' argument must be of length 1.")
   if (tail_exc < 0 | tail_exc >= 0.5) stop("'tail_exc' must be a positive value < 0.5.")
   
   args <- as.list(sys.frame(sys.nframe()))
