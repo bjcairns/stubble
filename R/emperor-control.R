@@ -8,14 +8,14 @@
 #' called directly.
 #'
 #' @param p_na Proportion of values set to `NA`; defaults to `NA`.
-#' @param emp_sw Value determining whether spline or resample methods are used
+#' @param emp_sw Value determining whether spline or resampling methods are used
 #' in the the generation of synthetic data. When the unique fraction of a column
 #' is above this value spline-based methods will be used. Conversely, when it is
-#' below this value resample-based methods will be used. Hence, setting it to 1
-#' will ensure that resample-based methods will always be used, while setting it
-#' to 0 will ensure that spline-based methods will always be used. Defaults to
-#' 50% (`0.5`).
-#' will always be used. When set to 0 ECDF-based methods will always be used.
+#' below this value resampling methods will be used. Hence, setting it to 1 will
+#' ensure that resampling methods will always be used, while setting it to 0
+#' will ensure that spline-based methods will always be used. Defaults to 50%
+#' (`0.5`). will always be used. When set to 0 ECDF-based methods will always be
+#' used.
 #' @param breaks Number of breaks to use for spline-based interpolation of the
 #' empirical cumulative distribution function. Can be either `"FD"` (default) or
 #' a whole number. When set to `"FD"` the number of breaks is calculated using
@@ -26,7 +26,7 @@
 #' @param fuzz_ecdf Should the values sampled from the ECDF be 'fuzzed'
 #' through the addition of random normal noise? Defaults to `TRUE`.
 #' @param fuzz_sca Scaling factor for the random noise added to the ECDF data.
-#' Defaults to `0.01`, i.e. 100th the range of the original data.
+#' Defaults to `0.1`, i.e. one 10th the range of the original data.
 #' of the original data.
 #' @param fuzz_ht Should all fuzzed parameters be kept within the bounds set
 #' by `tail_exc`? Defaults to `TRUE`.
@@ -80,7 +80,7 @@
 #' @export
 emperor_control <- function(
   p_na = NA_real_, emp_sw = 0.5,
-  breaks = "FD", tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_sca = 0.01, fuzz_ht = TRUE,
+  breaks = "FD", tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_sca = 0.10, fuzz_ht = TRUE,
   n_exc = 10, p_exc = 0.01, drop_lev = TRUE,
   dttm_tz = "UTC",
   old_ctrl = as.list(NULL),

@@ -50,7 +50,7 @@
 #' @importFrom utils installed.packages
 #' @importFrom grDevices nclass.FD
 #' @importFrom graphics hist
-#' @importFrom stats splinefun
+#' @importFrom stats approxfun
 
 
 ### emperor() ###
@@ -119,38 +119,6 @@ emperor_ <- function(col, ...){
   UseMethod("emperor_", col)
   
 }
-
-
-# ### emperor_arbiter() ###
-# #' @noRd
-# emperor_arbiter <- function(col){
-#   
-#   type <- class(col)
-#   
-#   match_numeric <- match(type, c("numeric", "integer")) == 2L
-#   
-#   if(any(!is.na(match_numeric))){
-#     
-#     if(all(is.na(col))){
-#       
-#       method <- "sample"
-#       
-#     } else if(any(col %% 1 != 0)){
-#       
-#       method <- "ecdf"
-#       
-#     } else {
-#       
-#       method <- "sample"
-#       
-#     }
-#   
-#   }
-#   
-#   ## Output ##
-#   return(method)
-#   
-# }
 
 
 ### emperor_arbiter() ###
@@ -247,16 +215,23 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   cdf <- cdf[!duplicated(cdf)]
   
   ## Generate a Spline Function ##
-  inv_cdf_spf <- splinefun(cdf, mids, method = "natural")
+  inv_cdf_spf <- approxfun(x = cdf, y = mids, n = 10, rule = 1, ties = "ordered")
   
   ## Simulate Using Inverse CDF ##
-  syn_col <- inv_cdf_spf(runif(n = elements, min = 0 + ctrl[["tail_exc"]], max = 1 - ctrl[["tail_exc"]]))
+  syn_col <- rep(NA_real_, elements)
+  while (any(is.na(syn_col))){
+    
+    n <- sum(is.na(syn_col))
+    x <- runif(n = n, min = 0 + ctrl[["tail_exc"]], max = 1 - ctrl[["tail_exc"]])
+    syn_col[is.na(syn_col)] <- inv_cdf_spf(x)
+    
+  }
   
   ## Fuzzing ##
-  limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]))
-  names(limits) <- NULL
   if (ctrl[["fuzz_ecdf"]]){
     
+    limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]))
+    names(limits) <- NULL
     syn_col <- fuzz(syn_col = syn_col, limits = limits, elements = elements, ctrl = ctrl)
     
   }

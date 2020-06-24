@@ -11,7 +11,7 @@ emperor_control(
   breaks = "FD",
   tail_exc = 0.025,
   fuzz_ecdf = TRUE,
-  fuzz_sca = 0.01,
+  fuzz_sca = 0.1,
   fuzz_ht = TRUE,
   n_exc = 10,
   p_exc = 0.01,
@@ -25,14 +25,14 @@ emperor_control(
 \arguments{
 \item{p_na}{Proportion of values set to \code{NA}; defaults to \code{NA}.}
 
-\item{emp_sw}{Value determining whether spline or resample methods are used
+\item{emp_sw}{Value determining whether spline or resampling methods are used
 in the the generation of synthetic data. When the unique fraction of a column
 is above this value spline-based methods will be used. Conversely, when it is
-below this value resample-based methods will be used. Hence, setting it to 1
-will ensure that resample-based methods will always be used, while setting it
-to 0 will ensure that spline-based methods will always be used. Defaults to
-50\% (\code{0.5}).
-will always be used. When set to 0 ECDF-based methods will always be used.}
+below this value resampling methods will be used. Hence, setting it to 1 will
+ensure that resampling methods will always be used, while setting it to 0
+will ensure that spline-based methods will always be used. Defaults to 50\%
+(\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
+used.}
 
 \item{breaks}{Number of breaks to use for spline-based interpolation of the
 empirical cumulative distribution function. Can be either \code{"FD"} (default) or
@@ -47,7 +47,7 @@ at each end (tail) of the distribution.}
 through the addition of random normal noise? Defaults to \code{TRUE}.}
 
 \item{fuzz_sca}{Scaling factor for the random noise added to the ECDF data.
-Defaults to \code{0.01}, i.e. 100th the range of the original data.
+Defaults to \code{0.1}, i.e. one 10th the range of the original data.
 of the original data.}
 
 \item{fuzz_ht}{Should all fuzzed parameters be kept within the bounds set
