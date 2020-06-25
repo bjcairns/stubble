@@ -205,6 +205,10 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   # ## Debugging ##
   # cat("emperor_ecdf()", "\n")
   
+  ## Tail Exclusions ##
+  limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]), na.rm = TRUE, names = FALSE)
+  col <- col[col >= limits[1] & col <= limits[2]]
+  
   ## Determine Optimal Number of Breaks ##
   nclass <- nclass.FD(col[!is.na(col)])
   breaks <- seq(min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L)
@@ -215,24 +219,14 @@ emperor_ecdf <- function(col, elements = elements, ctrl){
   ## Cumulative Sum of Densities
   width <- diff(h[["breaks"]])
   area <- width*h[["density"]]
-  cdf <- cumsum(area)
-  
-  ## Remove Duplicates ##
-  mids <- h[["mids"]][!duplicated(cdf)]
-  cdf <- cdf[!duplicated(cdf)]
+  cdf <- c(0, cumsum(area))
   
   ## Generate a Spline Function ##
-  inv_cdf_spf <- approxfun(x = cdf, y = mids, n = 10, rule = 1, ties = "ordered")
+  inv_cdf_spf <- approxfun(x = cdf, y = breaks, rule = 1, ties = list("ordered", min))
   
   ## Simulate Using Inverse CDF ##
-  syn_col <- rep(NA_real_, elements)
-  while (any(is.na(syn_col))){
-    
-    n <- sum(is.na(syn_col))
-    x <- runif(n = n, min = 0 + ctrl[["tail_exc"]], max = 1 - ctrl[["tail_exc"]])
-    syn_col[is.na(syn_col)] <- inv_cdf_spf(x)
-    
-  }
+  x <- runif(elements, 0, 1)
+  syn_col <- inv_cdf_spf(x)
   
   ## Fuzzing ##
   if (ctrl[["fuzz_ecdf"]]){
