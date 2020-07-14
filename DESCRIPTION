@@ -1,14 +1,13 @@
 Package: stubble
-Type: Package
 Title: Simple synthetic data from data frames, tibbles, and data.tables
-Version: 0.2.1
-Date: 2020-02-07
+Version: 0.2.3
+Date: 2020-06-24
 Authors@R: c(
-      person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"), 
-        email = "ben.cairns@ndph.ox.ac.uk", 
+      person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"),
+        email = "ben.cairns@ndph.ox.ac.uk",
         comment = c(ORCID = "0000-0001-7994-8213")),
-      person(c("Benjamin", "G."), "Feakins", role = "ctb", 
-        email = "benjamin.feakins@ndph.ox.ac.uk", 
+      person(c("Benjamin", "G."), "Feakins", role = "ctb",
+        email = "benjamin.feakins@ndph.ox.ac.uk",
         comment = c(ORCID = "0000-0002-3928-6750")),
       person("University of Oxford", role = "cph")
     )
@@ -17,22 +16,25 @@ Description: stubble takes a data frame-like object as input and returns an obje
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: 
-    stats
-Suggests: 
-    usethis,
-    testthat (>= 2.1.0),
-    purrr,
-    dplyr,
-    data.table,
-    tibble,
-    knitr,
-    rmarkdown,
-    ggplot2,
+Imports:
+    graphics,
+    grDevices,
+    stats,
+    utils
+Suggests:
     cowplot,
+    data.table,
+    dplyr,
+    ggplot2,
+    knitr,
+    magrittr,
+    purrr,
+    rmarkdown,
+    testthat (>= 2.1.0),
+    tibble,
     tidyr,
-    magrittr
-RoxygenNote: 7.0.2
+    usethis
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 URL: https://github.com/bjcairns/stubble

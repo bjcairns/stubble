@@ -53,3 +53,9 @@ gen_col(iris$Sepal.length)
 gen_col(iris$Species)
 
 }
+\concept{simulate}
+\concept{simulated}
+\concept{simulation}
+\keyword{datagen}
+\keyword{distribution}
+\keyword{manip}

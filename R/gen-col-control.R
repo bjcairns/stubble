@@ -93,7 +93,7 @@
 #' levels, wrap the vector in a list, e.g. `list(letters[1:4])`. (Internally,
 #' all arguments passed to `gen_col_control()`, whether directly or indirectly,
 #' are sanitised with `as.list()`.)
-#'
+
 #' @export
 gen_col_control <- function(
   unique = FALSE,

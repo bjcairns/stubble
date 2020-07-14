@@ -1,10 +1,12 @@
+#' @title
 #' Generate simple synthetic data from an R vector
-#'
+#' 
+#' @description
 #' `gen_col()` does the real work for [stubblise()]. Currently supported column
 #' classes are `numeric`, `integer`, `character`, `factor`, `logical`,
 #' `POSIXct` and `Date`. There is limited support for `list` (returns a list
 #' with all `NA`s).
-#'
+#' 
 #' @param col the vector from which the type of the synthetic data is taken.
 #' @param elements the number of elements to generate.
 #' @param index the index of the column (i.e. the position in the data frame)
@@ -13,10 +15,11 @@
 #' synthetic data. See [control].
 #' @param ... named individual control parameters, which take precedence over
 #' those in the `control` list.
-#'
-#' @details `gen_col()` calls an internal S3 generic function, `gen_col_()`,
+#' 
+#' @details
+#' `gen_col()` calls an internal S3 generic function, `gen_col_()`,
 #' with built-in methods for base R vector types.
-#'
+#' 
 #' All methods return values sampled uniformly at random, with the exception of
 #' `gen_col_.character()`, which samples string lengths uniformly at random and
 #' then populates those strings with symbols (strings of one or more
@@ -25,19 +28,28 @@
 #' `gen_col()` are therefore not chosen uniformly at random from the set of all
 #' strings which are valid according to the control parameters; short strings
 #' are overrepresented.
-#'
+#' 
 #' Uniqueness can be demanded (using the `unique` control parameter) for any
 #' vector type, but is likely to result in an error for logical and factor
 #' vectors. To even attempt to enforce uniqueness for either of these, set
 #' the respective control parameters, `lgl_force_unique` and
 #' `fct_force_unique`, to `TRUE`.
-#'
-#' @return Returns a vector of the same class as `col` with `elements` elements.
+#' 
+#' @return
+#' Returns a vector of the same class as `col` with `elements` elements.
 #'
 #' @examples
 #' gen_col(iris$Sepal.length)
 #' gen_col(iris$Species)
-#'
+#' 
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen distribution manip
+#' 
+#' @importFrom stats rbinom runif
+
 #' @export
 gen_col <- function(col, elements = 10L, index = 1L, control = list(), ...) {
 
@@ -65,7 +77,7 @@ gen_col <- function(col, elements = 10L, index = 1L, control = list(), ...) {
     # Number of missings is bin(elements, p_na) and which are missing is random
     if (p_na == 1) syn_col[] <- NA
     else {
-      n_missing <- stats::rbinom(1L, elements, p_na)
+      n_missing <- rbinom(1L, elements, p_na)
       missings_indices <- sample.int(elements, n_missing, replace = FALSE)
       syn_col[missings_indices] <- NA
     }
@@ -102,7 +114,7 @@ gen_col_.numeric <- function(col, elements, ctrl) {
   on.exit(RNGkind(kind = old_kind))
   RNGkind(kind = rng_kind)
 
-  syn_col <- stats::runif(elements, ctrl$dbl_min, ctrl$dbl_max)
+  syn_col <- runif(elements, ctrl$dbl_min, ctrl$dbl_max)
 
   if (rng_kind != "Wichmann-Hill" & !uniq) {
     warning(
