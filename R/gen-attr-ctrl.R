@@ -7,17 +7,14 @@
 
 ### gen_attr_ctrl() ###
 gen_attr_ctrl <- function(
-  p_na = NA_real_, emp_sw = 0.5,
+  p_na = NA_real_, emp_sw = 0.1,
   tail_exc = 0.025, fuzz_ecdf = TRUE,
   n_exc = 10, p_exc = 0.05, fuzz_samp = TRUE, drop_lev = TRUE,
   dttm_tz = "UTC",
-  old_ctrl = as.list(NULL),
+  old_ctrl = list(),
   index = NA_integer_,
   ...
 ){
-  
-  ## Checks ##
-  if (tail_exc < 0 | tail_exc >= 0.5) stop("'tail_exc' must be a positive value < 0.5.")
   
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())

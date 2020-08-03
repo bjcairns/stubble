@@ -146,6 +146,10 @@ ecdf_method.POSIXlt <- function(col, ctrl){
 ### ecdf_method_() ###
 ecdf_method_ <- function(col, ctrl){
   
+  ## Checks ##
+  if (!is.numeric(ctrl[["emp_sw"]])) stop("The 'emp_sw' control parameter must be of class numeric.")
+  if (ctrl[["emp_sw"]] < 0 | ctrl[["emp_sw"]] > 1) stop("The 'emp_sw' control parameter must be between 0 and 1.")
+  
   ## Complete Cases Only ##
   cc_col <- col[!is.na(col)]
   

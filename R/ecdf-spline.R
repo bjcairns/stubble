@@ -26,7 +26,13 @@ ecdf_spline.default <- function(col, ctrl){
   ## Define Function ##
   f <- function(v){rep(NA_integer_, v)}
   
-  return(f)
+  ## Form Output ##
+  out <- list(
+    fun = f
+  )
+  
+  ## Output ##
+  return(out)
   
 }
 
@@ -138,6 +144,10 @@ ecdf_spline.POSIXlt <- function(col, ctrl){
 
 ### ecdf_spline_() ###
 ecdf_spline_ <- function(col, ctrl){
+  
+  ## Checks ##
+  if (!is.numeric(ctrl[["tail_exc"]])) stop("The 'tail_exc' control parameter must be of class numeric.")
+  if (ctrl[["tail_exc"]] < 0 | ctrl[["tail_exc"]] >= 0.5) stop("The 'tail_exc' control parameter must be between 0 and 0.5.")
   
   ## Tail Exclusions ##
   limits <- quantile(col, c(0 + ctrl[["tail_exc"]], 1 - ctrl[["tail_exc"]]), na.rm = TRUE, names = FALSE)

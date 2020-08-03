@@ -100,6 +100,9 @@ stub_ <- function(x, rows, ctrl, ...){
     USE.NAMES = TRUE
   )
   
+  ## Assign Class ##
+  class(l) <- "stub"
+  
   ## Output ##
   return(l)
   

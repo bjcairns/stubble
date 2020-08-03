@@ -22,8 +22,8 @@ Imports:
     stats,
     utils
 Suggests:
-    bit,
-    bit64,
+    bit (>= 4.0.3),
+    bit64 (>= 4.0.2),
     cowplot,
     data.table,
     dplyr,
