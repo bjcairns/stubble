@@ -14,7 +14,7 @@ gen_spline <- function(x, elements, ctrl){
   
   ## Extract stub Params ##
   cl <- x[["class"]]
-  f <- x[["stub"]][["fun"]]
+  f <- x[["sim"]][["fun"]]
   
   ## Generate Data ##
   v <- runif(n = elements, min = 0 + ctrl[["tail_exc"]], max = 1 - ctrl[["tail_exc"]])

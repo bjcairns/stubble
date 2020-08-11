@@ -18,10 +18,11 @@ gen_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ...
   ## Method ##
   method <- ecdf_method(col = col, ctrl = ctrl)
   
-  ### Generate stub ##
-  stub <- switch(method,
-                 spline = ecdf_spline(col = col, ctrl = ctrl),
-                 sample = ecdf_sample(col = col, ctrl = ctrl))
+  ### Generate sim ##
+  sim <- switch(method,
+                spline = ecdf_spline(col = col, ctrl = ctrl),
+                sample = ecdf_sample(col = col, ctrl = ctrl))
+  sim <- append(list(method = method), sim)
   
   ## Missing Values ##
   p_na <- if (is.na(ctrl[["p_na"]])) sum(is.na(col))/length(col) else ctrl[["p_na"]]
@@ -29,10 +30,9 @@ gen_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ...
   ## Form Output ##
   out <- list(
     class = cl,
-    method = method,
-    stub = stub,
     n = elements,
-    p_na = p_na
+    p_na = p_na,
+    sim = sim
   )
   
   ## Output ##

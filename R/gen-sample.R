@@ -9,8 +9,8 @@
 gen_sample <- function(x, elements, ctrl){
   
   ## Extract Values ##
-  val <- x[["stub"]][["values"]]
-  wt <- x[["stub"]][["wt"]]
+  val <- x[["sim"]][["values"]]
+  wt <- x[["sim"]][["wt"]]
   
   ## Re-Sample ##
   syn_col <- sample(x = val, size = elements, replace = TRUE, prob = wt)

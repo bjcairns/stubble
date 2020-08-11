@@ -12,7 +12,7 @@ gen_ble <- function(x, elements, index = 1L, ctrl = list(), ...){
   ctrl <- gen_stubble_ctrl(..., old_ctrl = ctrl, index = index)
   
   ## Extract Params ##
-  method <- x[["method"]]
+  method <- x[["sim"]][["method"]]
   elements <- if (missing(elements)) x[["n"]] else elements
   
   syn_col <- switch(method,

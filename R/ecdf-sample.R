@@ -21,13 +21,13 @@ ecdf_sample.default <- function(col, ctrl){
   warning("No method exists for vector of class: ", class(col)[1])
   
   ## Form Output ##
-  samp <- list(
+  sim <- list(
     values = NA_integer_,
     wt = double(0)
   )
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -39,18 +39,18 @@ ecdf_sample.default <- function(col, ctrl){
 #   if (length(col) == 0) col <- logical(0)
 #   
 #   ## Use Logical Method ##
-#   samp <- ecdf_sample.logical(col = col, ctrl = ctrl)
+#   sim <- ecdf_sample.logical(col = col, ctrl = ctrl)
 #   
 #   ## Coerce to Bit ##
 #   if("bit" %in% rownames(installed.packages())){
 #     
-#     samp[["values"]] <- if(length(samp[["values"]]) == 0){
+#     sim[["values"]] <- if(length(sim[["values"]]) == 0){
 #       
 #       bit::bit(0)
 #       
 #     } else {
 #       
-#       bit::as.bit(samp[["values"]])
+#       bit::as.bit(sim[["values"]])
 #       
 #     }
 #     
@@ -61,7 +61,7 @@ ecdf_sample.default <- function(col, ctrl){
 #   }
 #   
 #   ## Output ##
-#   return(samp)
+#   return(sim)
 #   
 # }
 
@@ -70,12 +70,12 @@ ecdf_sample.default <- function(col, ctrl){
 ecdf_sample.bit <- function(col, ctrl){
   
   ## Use Logical Method ##
-  samp <- ecdf_sample.logical(col = col, ctrl = ctrl)
+  sim <- ecdf_sample.logical(col = col, ctrl = ctrl)
   
   ## Coerce to Bit ##
   if("bit" %in% rownames(installed.packages())){
     
-    samp[["values"]] <- bit::as.bit(samp[["values"]])
+    sim[["values"]] <- bit::as.bit(sim[["values"]])
 
   } else {
     
@@ -84,7 +84,7 @@ ecdf_sample.bit <- function(col, ctrl){
   }
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -93,28 +93,28 @@ ecdf_sample.bit <- function(col, ctrl){
 ecdf_sample.character <- function(col, ctrl){
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
 
-### sampler_Date() ###
+### ecdf_sample_Date() ###
 ecdf_sample.Date <- function(col, ctrl){
   
   ## Extract Value Labels ##
   labels <- sort(unique(col))
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to Date ##
-  samp[["values"]] <- as.Date(samp[["values"]], tz = ctrl[["dttm_tz"]])
+  sim[["values"]] <- as.Date(sim[["values"]], tz = ctrl[["dttm_tz"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -123,13 +123,13 @@ ecdf_sample.Date <- function(col, ctrl){
 ecdf_sample.double <- function(col, ctrl){
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to Double ##
-  samp[["values"]] <- as.double(samp[["values"]])
+  sim[["values"]] <- as.double(sim[["values"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -141,16 +141,16 @@ ecdf_sample.factor <- function(col, ctrl){
   labels <- sort(unique(col))
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to Factor ##
-  samp[["values"]] <- factor(samp[["values"]], levels = labels)
+  sim[["values"]] <- factor(sim[["values"]], levels = labels)
   
   ## Drop Empty Levels ##
-  if (ctrl[["drop_lev"]]) samp[["values"]] <- droplevels(samp[["values"]])
+  if (ctrl[["drop_lev"]]) sim[["values"]] <- droplevels(sim[["values"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -159,12 +159,12 @@ ecdf_sample.factor <- function(col, ctrl){
 ecdf_sample.IDate <- function(col, ctrl){
   
   ## Use Date Method ##
-  samp <- NextMethod(col)
+  sim <- NextMethod(col)
   
   ## Coerce to IDate ##
   if("data.table" %in% rownames(installed.packages())){
     
-    samp[["values"]] <- data.table::as.IDate(samp[["values"]])
+    sim[["values"]] <- data.table::as.IDate(sim[["values"]])
     
   } else {
     
@@ -173,7 +173,7 @@ ecdf_sample.IDate <- function(col, ctrl){
   }
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -182,13 +182,13 @@ ecdf_sample.IDate <- function(col, ctrl){
 ecdf_sample.integer <- function(col, ctrl){
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to Integer ##
-  samp[["values"]] <- as.integer(samp[["values"]])
+  sim[["values"]] <- as.integer(sim[["values"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -200,18 +200,18 @@ ecdf_sample.integer <- function(col, ctrl){
 #   if (length(col) == 0) col <- double(0)
 #   
 #   ## Extract Parameters ##
-#   samp <- ecdf_sample.double(col = col, ctrl = ctrl)
+#   sim <- ecdf_sample.double(col = col, ctrl = ctrl)
 #   
 #   ## Coerce to Integer64 ##
 #   if("bit64" %in% rownames(installed.packages())){
 #     
-#     samp[["values"]] <- if(length(samp[["values"]]) == 0){
+#     sim[["values"]] <- if(length(sim[["values"]]) == 0){
 #       
 #       bit64::integer64(0)
 #       
 #     } else {
 #       
-#       bit64::as.integer64(samp[["values"]])
+#       bit64::as.integer64(sim[["values"]])
 #       
 #     }
 #     
@@ -222,7 +222,7 @@ ecdf_sample.integer <- function(col, ctrl){
 #   }
 #   
 #   ## Output ##
-#   return(samp)
+#   return(sim)
 #   
 # }
 
@@ -231,12 +231,12 @@ ecdf_sample.integer <- function(col, ctrl){
 ecdf_sample.integer64 <- function(col, ctrl){
   
   ## Extract Parameters ##
-  samp <- ecdf_sample.double(col = col, ctrl = ctrl)
+  sim <- ecdf_sample.double(col = col, ctrl = ctrl)
   
   ## Coerce to Integer64 ##
   if("bit64" %in% rownames(installed.packages())){
     
-    samp[["values"]] <- bit64::as.integer64(samp[["values"]])
+    sim[["values"]] <- bit64::as.integer64(sim[["values"]])
     
   } else {
     
@@ -245,7 +245,7 @@ ecdf_sample.integer64 <- function(col, ctrl){
   }
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -254,13 +254,13 @@ ecdf_sample.integer64 <- function(col, ctrl){
 ecdf_sample.logical <- function(col, ctrl){
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to Logical ##
-  samp[["values"]] <- as.logical(samp[["values"]])
+  sim[["values"]] <- as.logical(sim[["values"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -269,13 +269,13 @@ ecdf_sample.logical <- function(col, ctrl){
 ecdf_sample.ordered <- function(col, ctrl){
   
   ## Use Factor Method ##
-  samp <- NextMethod(col)
+  sim <- NextMethod(col)
   
   ## Coerce to Ordered Factor ##
-  samp[["values"]] <- ordered(samp[["values"]])
+  sim[["values"]] <- ordered(sim[["values"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -284,13 +284,13 @@ ecdf_sample.ordered <- function(col, ctrl){
 ecdf_sample.POSIXct <- function(col, ctrl){
   
   ## Extract Parameters ##
-  samp <- ecdf_sample_(col = col, ctrl = ctrl)
+  sim <- ecdf_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to POSIXct ##
-  samp[["values"]] <- as.POSIXct(samp[["values"]], tz = ctrl[["dttm_tz"]])
+  sim[["values"]] <- as.POSIXct(sim[["values"]], tz = ctrl[["dttm_tz"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
@@ -302,13 +302,13 @@ ecdf_sample.POSIXlt <- function(col, ctrl){
   col <- as.POSIXct(col, tz = ctrl[["dttm_tz"]])
   
   ## Use POSIXct Method ##
-  samp <- ecdf_sample.POSIXct(col = col, ctrl = ctrl)
+  sim <- ecdf_sample.POSIXct(col = col, ctrl = ctrl)
   
   ## Coerce to POSIXlt ##
-  samp[["values"]] <- as.POSIXlt(samp[["values"]], tz = ctrl[["dttm_tz"]])
+  sim[["values"]] <- as.POSIXlt(sim[["values"]], tz = ctrl[["dttm_tz"]])
   
   ## Output ##
-  return(samp)
+  return(sim)
   
 }
 
