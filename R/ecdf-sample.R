@@ -15,7 +15,7 @@ ecdf_sample <- function(col, ...){
 
 
 ### ecdf_sample.default() ###
-ecdf_sample.default <- function(col, ctrl = ctrl){
+ecdf_sample.default <- function(col, ctrl){
   
   ## Warning ##
   warning("No method exists for vector of class: ", class(col)[1])

@@ -6,7 +6,7 @@
 
 
 ### ToDo ###
-# - Assign 'stub' class to output.
+# - Encode the input data structure, e.g. list, data.frame, tbl_df, etc.
 
 
 ### stub() ###
@@ -19,7 +19,7 @@ stub <- function(x, ...){
 
 
 ### stub.default() ###
-stub.default <- function(x, ctrl = list(), ...){
+stub.default <- function(x, rows = lengths(x), ctrl = list(), ...){
   
   ## Attempt List Coercion ##
   l <- tryCatch(expr = as.list(x),
@@ -87,7 +87,7 @@ stub.tbl_df <- function(x, rows = lengths(x), ctrl = list(), ...){
 stub_ <- function(x, rows, ctrl, ...){
   
   ## Create Index ##
-  index = seq_along(x)
+  index <- seq_along(x)
   
   ## Apply gen_attr() ##
   l <- mapply(

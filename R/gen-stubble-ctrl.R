@@ -1,12 +1,12 @@
-#=====================#
-#                     #
-#### GEN ATTR CTRL ####
-#                     #
-#=====================#
+#========================#
+#                        #
+#### GEN STUBBLE CTRL ####
+#                        #
+#========================#
 
 
-### gen_attr_ctrl() ###
-gen_attr_ctrl <- function(
+### gen_stubble_ctrl() ###
+gen_stubble_ctrl <- function(
   p_na = NA_real_, emp_sw = 0.1,
   tail_exc = 0.025, fuzz_ecdf = TRUE,
   n_exc = 10, p_exc = 0.05, fuzz_samp = TRUE, drop_lev = TRUE,

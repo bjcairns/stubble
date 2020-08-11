@@ -11,12 +11,13 @@
 
 
 ### Control Parameters ###
-ctrl <- list(
+old_ctrl <- list(
   n_exc = 0,
   p_exc = 0,
   fuzz_samp = FALSE,
   dttm_tz = "UTC"
 )
+ctrl <- gen_attr_ctrl(old_ctrl = old_ctrl, index = 1L)
 
 
 ### Unsupported Vector Classes ###

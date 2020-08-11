@@ -9,7 +9,7 @@
 gen_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ...){
   
   ## Set Control Parameters ##
-  ctrl <- gen_attr_ctrl(..., old_ctrl = ctrl, index = index)
+  ctrl <- gen_stubble_ctrl(..., old_ctrl = ctrl, index = index)
   
   ## Class ##
   cl <- class(col)[1]
