@@ -18,20 +18,20 @@
 }
 
 
-### .warning_coercion.bit() ###
-.warning_coercion.bit <- function(x){
-  
-  ## Message ##
-  msg <- paste(
-    "Package 'bit' not found.",
-    "'bit' will be coerced to 'logical'",
-    sep = "\n"
-  )
-  
-  ## Output ##
-  return(warning(msg, call. = FALSE))
-  
-}
+# ### .warning_coercion.bit() ###
+# .warning_coercion.bit <- function(x){
+#   
+#   ## Message ##
+#   msg <- paste(
+#     "Package 'bit' not found.",
+#     "'bit' will be coerced to 'logical'",
+#     sep = "\n"
+#   )
+#   
+#   ## Output ##
+#   return(warning(msg, call. = FALSE))
+#   
+# }
 
 
 ### .warning_coercion.data.table() ###

@@ -32,16 +32,16 @@ ecdf_method.default <- function(col, ctrl){
 }
 
 
-### ecdf_method_.bit() ###
-ecdf_method.bit <- function(col, ctrl){
-  
-  ## Use logical Method ##
-  method <- ecdf_method.logical(col = col, ctrl = ctrl)
-  
-  ## Output ##
-  return(method)
-  
-}
+# ### ecdf_method_.bit() ###
+# ecdf_method.bit <- function(col, ctrl){
+#   
+#   ## Use logical Method ##
+#   method <- ecdf_method.logical(col = col, ctrl = ctrl)
+#   
+#   ## Output ##
+#   return(method)
+#   
+# }
 
 
 ### ecdf_method.character() ###

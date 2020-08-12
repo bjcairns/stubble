@@ -35,25 +35,14 @@ ecdf_sample.default <- function(col, ctrl){
 # ### ecdf_sample.bit() ###
 # ecdf_sample.bit <- function(col, ctrl){
 #   
-#   ## Coerce 0-Length Vectors to Logical ##
-#   if (length(col) == 0) col <- logical(0)
-#   
 #   ## Use Logical Method ##
 #   sim <- ecdf_sample.logical(col = col, ctrl = ctrl)
 #   
 #   ## Coerce to Bit ##
 #   if("bit" %in% rownames(installed.packages())){
 #     
-#     sim[["values"]] <- if(length(sim[["values"]]) == 0){
-#       
-#       bit::bit(0)
-#       
-#     } else {
-#       
-#       bit::as.bit(sim[["values"]])
-#       
-#     }
-#     
+#     sim[["values"]] <- bit::as.bit(sim[["values"]])
+# 
 #   } else {
 #     
 #     warning("Package 'bit' not found. bit will be converted to logical.")
@@ -64,29 +53,6 @@ ecdf_sample.default <- function(col, ctrl){
 #   return(sim)
 #   
 # }
-
-
-### ecdf_sample.bit() ###
-ecdf_sample.bit <- function(col, ctrl){
-  
-  ## Use Logical Method ##
-  sim <- ecdf_sample.logical(col = col, ctrl = ctrl)
-  
-  ## Coerce to Bit ##
-  if("bit" %in% rownames(installed.packages())){
-    
-    sim[["values"]] <- bit::as.bit(sim[["values"]])
-
-  } else {
-    
-    warning("Package 'bit' not found. bit will be converted to logical.")
-    
-  }
-  
-  ## Output ##
-  return(sim)
-  
-}
 
 
 ### ecdf_sample.character() ###
@@ -191,40 +157,6 @@ ecdf_sample.integer <- function(col, ctrl){
   return(sim)
   
 }
-
-
-# ### ecdf_sample.integer64() ###
-# ecdf_sample.integer64 <- function(col, ctrl){
-#   
-#   ## Coerce 0-Length Vectors to Double ##
-#   if (length(col) == 0) col <- double(0)
-#   
-#   ## Extract Parameters ##
-#   sim <- ecdf_sample.double(col = col, ctrl = ctrl)
-#   
-#   ## Coerce to Integer64 ##
-#   if("bit64" %in% rownames(installed.packages())){
-#     
-#     sim[["values"]] <- if(length(sim[["values"]]) == 0){
-#       
-#       bit64::integer64(0)
-#       
-#     } else {
-#       
-#       bit64::as.integer64(sim[["values"]])
-#       
-#     }
-#     
-#   } else {
-#     
-#     warning("Package 'bit64' not found. integer64 will be converted to double.")
-#     
-#   }
-#   
-#   ## Output ##
-#   return(sim)
-#   
-# }
 
 
 ### ecdf_sample.integer64() ###

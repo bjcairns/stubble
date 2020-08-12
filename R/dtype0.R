@@ -23,24 +23,36 @@ dtype0.default <- function(x){
 }
 
 
-### dtype0.bit() ###
-dtype0.bit <- function(x){
+# ### dtype0.bit() ###
+# dtype0.bit <- function(x){
+#   
+#   ## Create Object ##
+#   v <- if (is.installed.package("bit")) {
+#     
+#     # 0-Length Vector #
+#     bit::bit(length = 0L)
+#     
+#   } else {
+#     
+#     # Warning #
+#     .warning_coercion(x)
+#     
+#     # 0-Length Vector #
+#     logical(length = 0L)
+#     
+#   }
+#   
+#   ## Output ##
+#   return(v)
+#   
+# }
+
+
+### dtype0.character() ###
+dtype0.character <- function(x){
   
-  ## Create Object ##
-  v <- if (is.installed.package("bit")) {
-    
-    # 0-Length Vector #
-    bit::bit(length = 0L)
-    
-  } else {
-    
-    # Warning #
-    .warning_coercion(x)
-    
-    # 0-Length Vector #
-    logical(length = 0L)
-    
-  }
+  ## 0-Length Vector ##
+  v <- character(length = 0L)
   
   ## Output ##
   return(v)
@@ -186,6 +198,18 @@ dtype0.list <- function(x){
   
   ## Output ##
   return(l)
+  
+}
+
+
+### dtype0.logical() ###
+dtype0.logical <- function(x){
+  
+  ## 0-Length List ##
+  v <- logical(length = 0)
+  
+  ## Output ##
+  return(v)
   
 }
 

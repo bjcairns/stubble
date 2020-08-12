@@ -93,13 +93,22 @@ ble_.data.table <- function(dtype, l){
 }
 
 
+### ble_.list() ###
+ble_.list <- function(dtype, l){
+  
+  ## Output ##
+  return(l)
+  
+}
+
+
 ### ble_.tbl_df() ###
 ble_.tbl_df <- function(dtype, l){
   
   ## Coerce to tbl_df ##
   out <- if ("tibble" %in% rownames(installed.packages())){
     
-    tibble::as.tibble(l)
+    tibble::as_tibble(l)
     
   } else {
     
