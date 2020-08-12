@@ -15,12 +15,17 @@ gen_ble <- function(x, elements, index = 1L, ctrl = list(), ...){
   method <- x[["sim"]][["method"]]
   elements <- if (missing(elements)) x[["n"]] else elements
   
+  ## Generate syn_col ##
   syn_col <- switch(method,
                     sample = gen_sample(x = x, elements = elements, ctrl = ctrl),
                     spline = gen_spline(x = x, elements = elements, ctrl = ctrl))
   
   ## Impute NA Values ##
-  if (!is.na(ctrl[["p_na"]])) syn_col <- impute_na(syn_col, p_na = ctrl[["p_na"]])
+  if (!is.na(ctrl[["p_na"]])) {
+    
+    syn_col <- impute_na(syn_col, p_na = ctrl[["p_na"]])
+    
+  }
   
   ## Output ##
   return(syn_col)

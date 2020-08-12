@@ -52,7 +52,8 @@ ble_ <- function(dtype, ...){
 ### ble_.default() ###
 ble_.default <- function(dtype, l){
   
-  stop("No applicable method for data of class: ", class(dtype)[1])
+  ## Error ##
+  .stop_no_method(dtype)
   
 }
 
@@ -72,14 +73,15 @@ ble_.data.frame <- function(dtype, l){
 ### ble_.data.table() ###
 ble_.data.table <- function(dtype, l){
   
-  ## Coerce to data.frame ##
+  ## Coerce to data.table ##
   out <- if ("data.table" %in% rownames(installed.packages())){
     
     data.table::as.data.table(l)
     
   } else {
     
-    warning("Package 'data.table' not found. 'data.frame' class will be used for output.")
+    # Warning #
+    .warning_coercion(dtype)
     
     as.data.frame(l)
     
@@ -94,14 +96,15 @@ ble_.data.table <- function(dtype, l){
 ### ble_.tbl_df() ###
 ble_.tbl_df <- function(dtype, l){
   
-  ## Coerce to data.frame ##
+  ## Coerce to tbl_df ##
   out <- if ("tibble" %in% rownames(installed.packages())){
     
     tibble::as.tibble(l)
     
   } else {
     
-    warning("Package 'tibble' not found. 'data.frame' class will be used for output.")
+    # Warning #
+    .warning_coercion(dtype)
     
     as.data.frame(l)
     

@@ -12,8 +12,7 @@ gen_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ...
   ctrl <- gen_stubble_ctrl(..., old_ctrl = ctrl, index = index)
   
   ## Class ##
-  cl <- class(col)[1]
-  if (cl == "numeric") cl <- typeof(col)
+  dtype <- dtype0(col)
   
   ## Method ##
   method <- ecdf_method(col = col, ctrl = ctrl)
@@ -29,7 +28,7 @@ gen_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ...
   
   ## Form Output ##
   out <- list(
-    class = cl,
+    dtype = dtype,
     n = elements,
     p_na = p_na,
     sim = sim

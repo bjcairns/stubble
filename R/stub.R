@@ -9,21 +9,33 @@
 # - Add methods for working with Time Series objects.
 # - Add methods for working with groupedData objects. These have the data.frame
 #   class set, but as the last element of the class(x) vector.
-# - Parallelise to_stub() on Unix.
+# - Parallelize to_stub() on Unix.
 # - Preserve rownames from data.frames
+# - Modify gen_attr() or the child functions to ensure that a 0-length variable
+#   of the correct class is embedded in each element of vars. This should make
+#   S3 methods for unpacking variables encoded via ecdf_spline() possible. 
 
 
 ### stub() ###
 stub <- function(x, ctrl = list(), ...){
   
+  ## Data Structure ##
+  dtype <- dtype0(x)
+  
   ## Use S3 Method ##
-  l <- stub_(x = x, ctrl = ctrl, ...)
+  vars <- stub_(x = x, ctrl = ctrl, ...)
+  
+  ## Form Output ##
+  out <- list(
+    dtype = dtype,
+    vars = vars
+  )
   
   ## Assign Class ##
-  class(l) <- "stub"
+  class(out) <- "stub"
   
   ## Output ##
-  return(l)
+  return(out)
   
 }
 
@@ -45,20 +57,11 @@ stub_.default <- function(x, rows = lengths(x), ctrl = list(), ...){
                 error = function(e) stop("Cannot coerce argument 'x' to list."),
                 warning = function(w) warning(w))
   
-  ## Data Structure ##
-  dtype <- list()
-  
   ## Use stub_.list Method ##
   vars <- stub_.list(x, rows = lengths(x), ctrl = ctrl, ...)
   
-  ## Form Output ##
-  out <- list(
-    dtype = dtype,
-    vars = vars
-  )
-  
   ## Output ##
-  return(out)
+  return(vars)
   
 }
 
@@ -66,20 +69,11 @@ stub_.default <- function(x, rows = lengths(x), ctrl = list(), ...){
 ### stub_.data.frame() ###
 stub_.data.frame <- function(x, rows = nrow(x), ctrl = list(), ...){
   
-  ## Data Structure ##
-  dtype <- data.frame()
-  
   ## Variable Structure ##
-  vars <- to_stub(x = x, rows = rows, ctrl = ctrl, ...)
-  
-  ## Form Output ##
-  out <- list(
-    dtype = dtype,
-    vars = vars
-  )
+  vars <- stub_.list(x = x, rows = rows, ctrl = ctrl, ...)
   
   ## Output ##
-  return(out)
+  return(vars)
   
 }
 
@@ -87,30 +81,11 @@ stub_.data.frame <- function(x, rows = nrow(x), ctrl = list(), ...){
 ### stub_.data.table() ###
 stub_.data.table <- function(x, rows = nrow(x), ctrl = list(), ...){
   
-  ## Data Structure ##
-  dtype <- if ("data.table" %in% rownames(installed.packages())){
-    
-    data.table::data.table()
-    
-  } else {
-    
-    warning("Package 'data.table' not found. 'data.frame' class will be set for output.")
-    
-    data.frame()
-    
-  }
-  
   ## Variable Structure ##
-  vars <- to_stub(x = x, rows = rows, ctrl = ctrl, ...)
-  
-  ## Form Output ##
-  out <- list(
-    dtype = dtype,
-    vars = vars
-  )
+  vars <- stub_.list(x = x, rows = rows, ctrl = ctrl, ...)
   
   ## Output ##
-  return(out)
+  return(vars)
   
 }
 
@@ -118,20 +93,11 @@ stub_.data.table <- function(x, rows = nrow(x), ctrl = list(), ...){
 ### stub_.list() ###
 stub_.list <- function(x, rows = lengths(x), ctrl = list(), ...){
   
-  ## Data Structure ##
-  dtype <- list()
-  
   ## Variable Structure ##
   vars <- to_stub(x = x, rows = rows, ctrl = ctrl, ...)
   
-  ## Form Output ##
-  out <- list(
-    dtype = dtype,
-    vars = vars
-  )
-  
   ## Output ##
-  return(out)
+  return(vars)
   
 }
 
@@ -139,30 +105,11 @@ stub_.list <- function(x, rows = lengths(x), ctrl = list(), ...){
 ### stub_.tbl_df() ###
 stub_.tbl_df <- function(x, rows = nrow(x), ctrl = list(), ...){
   
-  ## Data Structure ##
-  dtype <- if ("tibble" %in% rownames(installed.packages())){
-    
-    tibble::tibble()
-    
-  } else {
-    
-    warning("Package 'tibble' not found. 'data.frame' class will be set for output.")
-    
-    data.frame()
-    
-  }
-  
   ## Variable Structure ##
-  vars <- to_stub(x = x, rows = rows, ctrl = ctrl, ...)
-  
-  ## Form Output ##
-  out <- list(
-    dtype = dtype,
-    vars = vars
-  )
+  vars <- stub_.list(x = x, rows = rows, ctrl = ctrl, ...)
   
   ## Output ##
-  return(out)
+  return(vars)
   
 }
 

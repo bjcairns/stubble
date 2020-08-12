@@ -21,14 +21,15 @@ ecdf_spline <- function(col, ...){
 ecdf_spline.default <- function(col, ctrl){
   
   ## Warning ##
-  warning("No method exists for vector of class: ", class(col)[1])
+  .warning_no_method(col)
   
   ## Define Function ##
   f <- function(v){rep(NA_integer_, v)}
   
   ## Form Output ##
   out <- list(
-    fun = f
+    fun = f,
+    sd = NA_real_
   )
   
   ## Output ##
@@ -44,10 +45,10 @@ ecdf_spline.Date <- function(col, ctrl){
   col <- as.integer(col)
   
   ## Define Spline Function ##
-  f <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- ecdf_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
-  return(f)
+  return(out)
   
 }
 
@@ -56,10 +57,10 @@ ecdf_spline.Date <- function(col, ctrl){
 ecdf_spline.double <- function(col, ctrl){
   
   ## Define Spline Function ##
-  f <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- ecdf_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
-  return(f)
+  return(out)
   
 }
 
@@ -68,10 +69,10 @@ ecdf_spline.double <- function(col, ctrl){
 ecdf_spline.integer <- function(col, ctrl){
   
   ## Define Spline Function ##
-  f <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- ecdf_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
-  return(f)
+  return(out)
   
 }
 
@@ -83,33 +84,12 @@ ecdf_spline.integer64 <- function(col, ctrl){
   col <- as.double(col)
 
   ## Define Spline Function ##
-  f <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- ecdf_spline_(col = col, ctrl = ctrl)
 
   ## Output ##
-  return(f)
+  return(out)
 
 }
-
-
-# ### ecdf_spline.ordered() ###
-# ecdf_spline.ordered <- function(col, ctrl){
-#   
-#   ## Extract Labels ##
-#   labels <- levels(col)
-#   
-#   ## Magical VooDoo ##
-#   # HERE!
-#   
-#   ## Coerce to Integer ##
-#   col <- as.integer(col)
-#   
-#   ## Define Spline Function ##
-#   f <- ecdf_spline_(col = col, ctrl = ctrl)
-#   
-#   ## Output ##
-#   return(list(f = f, labels = labels))
-#   
-# }
 
 
 ### ecdf_spline.POSIXct() ###
@@ -119,10 +99,10 @@ ecdf_spline.POSIXct <- function(col, ctrl){
   col <- as.integer(col)
   
   ## Define Spline Function ##
-  f <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- ecdf_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
-  return(f)
+  return(out)
   
 }
 
@@ -134,10 +114,10 @@ ecdf_spline.POSIXlt <- function(col, ctrl){
   col <- as.POSIXct(col)
   
   ## Use POSIXct Method ##
-  f <- ecdf_spline.POSIXct(col = col, ctrl = ctrl)
+  out <- ecdf_spline.POSIXct(col = col, ctrl = ctrl)
   
   ## Output ##
-  return(f)
+  return(out)
   
 }
 
@@ -176,9 +156,13 @@ ecdf_spline_ <- function(col, ctrl){
     
   }
   
+  ## Standard Deviation ##
+  sd <- sd(col, na.rm = TRUE)
+  
   ## Form Output ##
   out <- list(
-    fun = f
+    fun = f,
+    sd = sd
   )
   
   ## Output ##
