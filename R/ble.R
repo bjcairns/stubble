@@ -8,11 +8,17 @@
 ### ble() ###
 ble <- function(stub, rows, ctrl = list(), ...){
   
-  ### Data Structure ###
+  ### Data Extraction ###
   dtype <- stub[["dtype"]]
-  
-  ### Vars ###
   vars <- stub[["vars"]]
+  old_ctrl <- stub[["ctrl"]]
+  
+  ## Control Params ## - Got to be a one-liner for this!
+  ctrl <- c(
+    ctrl[!{names(ctrl) %in% names(old_ctrl)}],
+    ctrl[names(ctrl) %in% names(old_ctrl)],
+    old_ctrl[!{names(old_ctrl) %in% names(ctrl)}]
+  )
   
   ## Create Index ##
   index <- seq_along(vars)

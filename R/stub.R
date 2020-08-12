@@ -11,9 +11,7 @@
 #   class set, but as the last element of the class(x) vector.
 # - Parallelize to_stub() on Unix.
 # - Preserve rownames from data.frames
-# - Modify gen_attr() or the child functions to ensure that a 0-length variable
-#   of the correct class is embedded in each element of vars. This should make
-#   S3 methods for unpacking variables encoded via ecdf_spline() possible. 
+# - Embed a copy of the ctrl parameters used in the stub object.
 
 
 ### stub() ###
@@ -27,6 +25,7 @@ stub <- function(x, ctrl = list(), ...){
   
   ## Form Output ##
   out <- list(
+    ctrl = ctrl,
     dtype = dtype,
     vars = vars
   )
