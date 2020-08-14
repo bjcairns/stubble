@@ -11,14 +11,13 @@
 #   class set, but as the last element of the class(x) vector.
 # - Parallelize to_stub() on Unix.
 # - Preserve rownames from data.frames
-# - Embed a copy of the ctrl parameters used in the stub object.
 
 
 ### stub() ###
 stub <- function(x, ctrl = list(), ...){
   
   ## Data Structure ##
-  dtype <- dtype0(x)
+  dtype <- dtype0(x = x)
   
   ## Use S3 Method ##
   vars <- stub_(x = x, ctrl = ctrl, ...)

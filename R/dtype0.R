@@ -101,7 +101,7 @@ dtype0.data.table <- function(x){
 dtype0.Date <- function(x){
   
   ## 0-Length Vector ##
-  v <- as.Date(character(length = 0L))
+  v <- as.Date(character(length = 0L), tz = "UTC")
   
   ## Output ##
   return(v)
@@ -139,7 +139,7 @@ dtype0.IDate <- function(x){
   ## 0-Length Vector ##
   v <- if (is.installed.package("data.table")) {
     
-    data.table::as.IDate(character(length = 0L))
+    data.table::as.IDate(character(length = 0L), tz = "UTC")
     
   } else {
     
@@ -230,7 +230,7 @@ dtype0.ordered <- function(x){
 dtype0.POSIXct <- function(x){
   
   ## 0-Length Vector ##
-  v <- as.POSIXct(character(length = 0L))
+  v <- as.POSIXct(character(length = 0L), tz = "UTC")
   
   ## Output ##
   return(v)
@@ -242,7 +242,7 @@ dtype0.POSIXct <- function(x){
 dtype0.POSIXlt <- function(x){
   
   ## 0-Length Vector ##
-  v <- as.POSIXlt(character(length = 0L))
+  v <- as.POSIXlt(character(length = 0L), tz = "UTC")
   
   ## Output ##
   return(v)
