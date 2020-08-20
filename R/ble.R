@@ -5,6 +5,10 @@
 #===========#
 
 
+### ToDo ###
+# - Pass all ble_() methods through ble_.list() to avoid code replication.
+
+
 ### ble() ###
 ble <- function(stub, rows, ctrl = list(), ...){
   
@@ -80,7 +84,7 @@ ble_.data.frame <- function(dtype, l){
 ble_.data.table <- function(dtype, l){
   
   ## Coerce to data.table ##
-  out <- if ("data.table" %in% rownames(installed.packages())){
+  out <- if (is.installed.package("data.table")){
     
     data.table::as.data.table(l)
     
@@ -112,7 +116,7 @@ ble_.list <- function(dtype, l){
 ble_.tbl_df <- function(dtype, l){
   
   ## Coerce to tbl_df ##
-  out <- if ("tibble" %in% rownames(installed.packages())){
+  out <- if (is.installed.package("tibble")){
     
     tibble::as_tibble(l)
     

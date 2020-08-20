@@ -181,22 +181,3 @@ gen_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
   return(syn_col)
   
 }
-
-
-# ### Testing ###
-# old_ctrl <- list(
-#   dttm_tz = "UTC",
-#   tail_exc = 0.025,
-#   fuzz_ecdf = TRUE,
-#   p_na = 0.1
-# )
-# ctrl <- gen_stubble_ctrl(old_ctrl = old_ctrl, index = 1L)
-# 
-# moo <- stub(iris, ctrl = ctrl)
-# x <- moo[[1]]
-# y <- moo[1:4]
-# 
-# gen_spline(x, ctrl = ctrl)
-# hist(gen_spline(x, elements = 1e6, ctrl = ctrl), main = "Histogram", xlab = "syn_col")
-# 
-# mapply(FUN = gen_spline, x = y, elements = 1:4, MoreArgs = list(ctrl = ctrl), SIMPLIFY = FALSE, USE.NAMES = TRUE)

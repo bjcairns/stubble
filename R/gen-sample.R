@@ -19,17 +19,3 @@ gen_sample <- function(x, elements, ctrl){
   return(syn_col)
   
 }
-
-
-# ### Testing ###
-# old_ctrl <- list(
-#   dttm_tz = "UTC",
-#   n_exc = 0,
-#   p_exc = 0,
-#   fuzz_samp = FALSE,
-#   p_na = 0.1
-# )
-# ctrl <- gen_stubble_ctrl(old_ctrl = old_ctrl, index = 1L)
-# 
-# moo <- stub(iris, ctrl = ctrl)
-# x <- moo[["Species"]]

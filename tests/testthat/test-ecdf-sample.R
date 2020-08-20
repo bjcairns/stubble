@@ -7,252 +7,319 @@
 
 ### ToDo ###
 # - Assess the 'n_exc' & 'p_exc' control parameters.
-# - Tests for ecdf_sample_().
+# - Assess the 'drop_lev' control parameter.
+# - Assess the 'fuzz_samp' control parameter.
+# - Assess the 'dttm_tz' control parameter.
 
 
-### Control Parameters ###
-old_ctrl <- list(
-  n_exc = 0,
-  p_exc = 0,
-  fuzz_samp = FALSE,
-  dttm_tz = "UTC"
-)
-ctrl <- gen_attr_ctrl(old_ctrl = old_ctrl, index = 1L)
+### Params ###
+## Control ##
+ctrl_def <- gen_stubble_ctrl(index = 1L)[-1]
+
+# ## Vars ##
+# vars_base <- c("character", "Date", "double", "factor", "integer", "logical", "ordered", "POSIXct", "POSIXlt")
 
 
 ### Unsupported Vector Classes ###
-v <- complex(0)
-
 test_that(
-  desc = "Unsupported output classes.",
+  desc = "No method exists for vector of class.",
   code = {
     expect_warning(
-      object = ecdf_sample(v, ctrl = ctrl),
-      regexp = "[nN]o\\s+method\\s+exists"
+      object = ecdf_sample(NULL, ctrl = ctrl_def),
+      regexp = "[nN]o\\s+method\\s+exists",
+      label = "Warning"
     )
-    expect_true(
+    expect_type(
       object = suppressWarnings(
-        is.list(ecdf_sample(v, ctrl = ctrl))
-      )
+        ecdf_sample(NULL, ctrl = ctrl_def)
+      ),
+      type = "list"
+    )
+    expect_length(
+      object = suppressWarnings(
+        ecdf_sample(NULL, ctrl = ctrl_def)
+      ),
+      n = 2L
+    )
+    expect_named(
+      object = suppressWarnings(
+        ecdf_sample(NULL, ctrl = ctrl_def)
+      ),
+      expected = c("values", "wt"),
+      label = "Output names"
     )
   }
-); rm(v)
-
-
-### 0-Length Vectors ###
-l <- list(
-  bit = if (is.installed.package("bit")) bit = bit::bit(0) else NULL,
-  character = character(0),
-  Date = as.Date(character(0)),
-  double = double(0),
-  factor = factor(character(0)),
-  IDate = if (is.installed.package("data.table")) data.table::as.IDate(character(0)) else NULL,
-  integer = integer(0),
-  integer64 = if (is.installed.package("bit64")) bit64::integer64(0) else NULL,
-  logical = logical(0),
-  ordered = ordered(character(0)),
-  POSIXct = as.POSIXct(character(0), tz = ctrl[["dttm_tz"]]),
-  POSIXlt = as.POSIXlt(character(0), tz = ctrl[["dttm_tz"]])
 )
 
+
+### Zero-Length Vectors ###
+## base ##
 test_that(
-  desc = "0-length vectors.",
+  desc = "Zero-length vectors [base].",
   code = {
-    expect_true(
-      object = is.list(ecdf_sample(l[["character"]], ctrl = ctrl)),
-      label = "character"
+    expect_type(
+      object = ecdf_sample(l0[["character"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["Date"]], ctrl = ctrl)),
-      label = "Date"
+    expect_type(
+      object = ecdf_sample(l0[["Date"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["double"]], ctrl = ctrl)),
-      label = "double"
+    expect_type(
+      object = ecdf_sample(l0[["double"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["factor"]], ctrl = ctrl)),
-      label = "factor"
+    expect_type(
+      object = ecdf_sample(l0[["factor"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["integer"]], ctrl = ctrl)),
-      label = "integer"
+    expect_type(
+      object = ecdf_sample(l0[["integer"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["logical"]], ctrl = ctrl)),
-      label = "logical"
+    expect_type(
+      object = ecdf_sample(l0[["logical"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["ordered"]], ctrl = ctrl)),
-      label = "ordered"
+    expect_type(
+      object = ecdf_sample(l0[["ordered"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["POSIXct"]], ctrl = ctrl)),
-      label = "POSIXct"
+    expect_type(
+      object = ecdf_sample(l0[["POSIXct"]], ctrl = ctrl_def),
+      type = "list"
     )
-    expect_true(
-      object = is.list(ecdf_sample(l[["POSIXlt"]], ctrl = ctrl)),
-      label = "POSIXlt"
-    )
-  }
-)
-
-test_that(
-  desc = "0-length vectors (bit).",
-  code = {
-    skip_if_not(is.installed.package("bit"))
-    expect_true(
-      object = is.list(ecdf_sample(l[["bit"]], ctrl = ctrl)),
-      label = "bit"
+    expect_type(
+      object = ecdf_sample(l0[["POSIXlt"]], ctrl = ctrl_def),
+      type = "list"
     )
   }
 )
 
+## bit64 ##
 test_that(
-  desc = "0-length vectors (bit64).",
+  desc = "Zero-length vectors [bit64].",
   code = {
     skip_if_not(is.installed.package("bit64"))
-    expect_true(
-      object = is.list(ecdf_sample(l[["integer64"]], ctrl = ctrl)),
-      label = "integer64"
+    expect_type(
+      object = ecdf_sample(l0[["integer64"]], ctrl = ctrl_def),
+      type = "list"
     )
   }
 )
 
+## data.table ##
 test_that(
-  desc = "0-length vectors (data.table).",
+  desc = "Zero-length vectors [data.table].",
   code = {
     skip_if_not(is.installed.package("data.table"))
-    expect_true(
-      object = is.list(ecdf_sample(l[["IDate"]], ctrl = ctrl)),
-      label = "IDate"
+    expect_type(
+      object = ecdf_sample(l0[["IDate"]], ctrl = ctrl_def),
+      type = "list"
     )
   }
 )
 
-rm(l)
+
+### Missing Data Vectors ###
+## base ##
+test_that(
+  desc = "Missing data vectors [base].",
+  code = {
+    expect_type(
+      object = ecdf_sample(lna[["character"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["Date"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["double"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["factor"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["integer"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["logical"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["ordered"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["POSIXct"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = ecdf_sample(lna[["POSIXlt"]], ctrl = ctrl_def),
+      type = "list"
+    )
+  }
+)
+
+## bit64 ##
+test_that(
+  desc = "Missing data vectors [bit64].",
+  code = {
+    skip_if_not(is.installed.package("bit64"))
+    expect_type(
+      object = ecdf_sample(lna[["integer64"]], ctrl = ctrl_def),
+      type = "list"
+    )
+  }
+)
+
+## data.table ##
+test_that(
+  desc = "Missing data vectors [data.table].",
+  code = {
+    skip_if_not(is.installed.package("data.table"))
+    expect_type(
+      object = ecdf_sample(lna[["IDate"]], ctrl = ctrl_def),
+      type = "list"
+    )
+  }
+)
 
 
 ### Output Classes ###
-l <- list(
-  bit = if (is.installed.package("bit")) bit::as.bit(F) else NULL,
-  character = "",
-  Date = as.Date("1970-01-01"),
-  double = 0,
-  factor = factor(""),
-  IDate = if (is.installed.package("data.table")) data.table::as.IDate("1970-01-01") else NULL,
-  integer = 0L,
-  integer64 = if (is.installed.package("bit64")) bit64::as.integer64(0) else NULL,
-  logical = F,
-  ordered = ordered(""),
-  POSIXct = as.POSIXct("1970-01-01", tz = ctrl[["dttm_tz"]]),
-  POSIXlt = as.POSIXlt("1970-01-01", tz = ctrl[["dttm_tz"]])
-)
-
+## base ##
 test_that(
   desc = "Output Classes (base).",
   code = {
     expect_identical(
-      object = class(ecdf_sample(l[["character"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["character"]], ctrl = ctrl_def)[["values"]]),
       expected = "character",
       label = "character"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["Date"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["Date"]], ctrl = ctrl_def)[["values"]]),
       expected = "Date",
       label = "Date"
     )
     expect_type(
-      object = ecdf_sample(l[["double"]], ctrl = ctrl)[["values"]],
+      object = ecdf_sample(l1[["double"]], ctrl = ctrl_def)[["values"]],
       type = "double"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["factor"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["factor"]], ctrl = ctrl_def)[["values"]]),
       expected = "factor",
       label = "factor"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["integer"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["integer"]], ctrl = ctrl_def)[["values"]]),
       expected = "integer",
       label = "integer"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["logical"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["logical"]], ctrl = ctrl_def)[["values"]]),
       expected = "logical",
       label = "logical"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["ordered"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["ordered"]], ctrl = ctrl_def)[["values"]]),
       expected = c("ordered", "factor"),
       label = "ordered"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["POSIXct"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["POSIXct"]], ctrl = ctrl_def)[["values"]]),
       expected = c("POSIXct", "POSIXt"),
       label = "POSIXct"
     )
     expect_identical(
-      object = class(ecdf_sample(l[["POSIXlt"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["POSIXlt"]], ctrl = ctrl_def)[["values"]]),
       expected = c("POSIXlt", "POSIXt"),
       label = "POSIXlt"
     )
   }
 )
 
+## bit64 ##
 test_that(
-  desc = "Output Classes (bit).",
-  code = {
-    skip_if_not(is.installed.package("bit"))
-    expect_identical(
-      object = class(ecdf_sample(l[["bit"]], ctrl = ctrl)[["values"]]),
-      expected = c("booltype", "bit"),
-      label = "bit"
-    )
-  }
-)
-
-test_that(
-  desc = "Output Classes (bit64).",
+  desc = "Output Classes [bit64].",
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_identical(
-      object = class(ecdf_sample(l[["integer64"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["integer64"]], ctrl = ctrl_def)[["values"]]),
       expected = "integer64",
       label = "integer64")
   }
 )
 
+## data.table ##
 test_that(
-  desc = "Output Classes (data.table).",
+  desc = "Output Classes [data.table].",
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_identical(
-      object = class(ecdf_sample(l[["IDate"]], ctrl = ctrl)[["values"]]),
+      object = class(ecdf_sample(l1[["IDate"]], ctrl = ctrl_def)[["values"]]),
       expected = c("IDate", "Date"),
       label = "IDate"
     )
   }
 )
 
-rm(l)
+
+# ### Category Exclusions ('n_exc' & 'p_exc') ###
+# ## Control ##
+# ctrl <- gen_stubble_ctrl(old_ctrl = list(n_exc = 0, p_exc = 0), index = 1L)[-1]
+# 
+# ## Data ##
+# v <- c(NA, 1L)
+# l <- list(
+#   na00 = rep(v, times = c(0, 10)),
+#   na01 = rep(v, times = c(1, 9)),
+#   na02 = rep(v, times = c(2, 8)),
+#   na03 = rep(v, times = c(3, 7)),
+#   na04 = rep(v, times = c(4, 6)),
+#   na05 = rep(v, times = c(5, 5)),
+#   na06 = rep(v, times = c(6, 4)),
+#   n07 = rep(v, times = c(7, 3)),
+#   na08 = rep(v, times = c(8, 2)),
+#   na09 = rep(v, times = c(9, 1)),
+#   na10 = rep(v, times = c(10, 0))
+# ); rm(v)
+# 
+# ## Test ##
+# test_that(
+#   desc = "",
+#   code = {
+#     
+#   }
+# )
+# 
+# ## Tidy Up ##
+# rm(ctrl, l)
 
 
-### Category Exclusions ('n_exc' & 'p_exc') ###
-v <- c(NA, 1L)
-l <- list(
-  m00 = rep(v, times = c(0, 10)),
-  m01 = rep(v, times = c(1, 9)),
-  m02 = rep(v, times = c(2, 8)),
-  m03 = rep(v, times = c(3, 7)),
-  m04 = rep(v, times = c(4, 6)),
-  m05 = rep(v, times = c(5, 5)),
-  m06 = rep(v, times = c(6, 4)),
-  m07 = rep(v, times = c(7, 3)),
-  m08 = rep(v, times = c(8, 2)),
-  mo9 = rep(v, times = c(9, 1)),
-  m10 = rep(v, times = c(10, 0))
-); rm(v)
+### ecdf_sample_() output ###
+test_that(
+  desc = "ecdf_sample_() output.",
+  code = {
+    expect_type(
+      object = ecdf_sample_(NULL, ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_length(
+      object = ecdf_sample_(NULL, ctrl = ctrl_def),
+      n = 2L
+    )
+    expect_named(
+      object = ecdf_sample_(NULL, ctrl = ctrl_def),
+      expected = c("values", "wt"),
+      label = "Output names"
+    )
+  }
+)
 
 
 ### Tidy Up ###
-rm(ctrl)
+rm(ctrl_def) # vars_base

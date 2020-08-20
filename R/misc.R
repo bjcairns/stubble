@@ -6,14 +6,7 @@
 
 
 ### ToDo ###
-# - Make imput_na() an S3 Method with an impute_na.bit() method that coerces the
-#   vector to type logical where p_na != 0 and a default method.
-# - Alter fuzz() to accept syn_col, sd, elements and ctrl as parameters.
-
-
-### Notes ###
-# - Missing values are not possible for vectors of class 'bit'. They will need
-#   to be coerced to logical.
+# - Assess need to use ctrl[["dttm_tz]] in POSIXc2lt(). Could be overridden elsewhere.
 
 
 ### impute_na() ###
@@ -50,54 +43,12 @@ is.installed.package <- function(pkg, ...){
 
 ### fuzz() ###
 fuzz <- function(syn_col, col_sd, elements, ctrl){
-# fuzz <- function(col, syn_col, elements, ctrl){
   
-  ## Limits ##
-  # limits <- range(col, na.rm = TRUE) # No
-  
-  ## SD ##
-  # col_sd <- sd(col, na.rm = TRUE)
-  syn_col_sd <- sd(syn_col, na.rm = TRUE)
-  fuzz_sd <- abs(col_sd - syn_col_sd)
+  ## Calculate Fuzz SD ##
+  fuzz_sd <- col_sd*ctrl[["fuzz_ecdf_sca"]]
   
   ## Apply Fuzzing ##
   fuzz_col <- syn_col + rnorm(elements, fuzz_sd)
-  
-  # ## Check OOB ##
-  # oob <- length(fuzz_col[fuzz_col < limits[1] | fuzz_col > limits[2]])
-  # 
-  # i <- 1L
-  # 
-  # while(oob != 0){
-  #   
-  #   ## Indices to Fuzz ##
-  #   ind <- which(fuzz_col <  limits[1] | fuzz_col > limits[2])
-  #   
-  #   ## Re-Fuzz ECDF Data ##
-  #   fuzz_col[ind] <- syn_col[ind] + rnorm(oob, 0, fuzz_sd)
-  #   
-  #   ## Check OOB ##
-  #   oob <- length(fuzz_col[fuzz_col <  limits[1] | fuzz_col > limits[2]])
-  #   
-  #   ## Break Clause ##
-  #   if (i == 1e3) {
-  #     
-  #     warning(
-  #       paste(
-  #         "Maximum number of iterations reached.",
-  #         "Some values will be outside the range of the source data.",
-  #         sep = "\n"
-  #       )
-  #     )
-  #     
-  #     break
-  #     
-  #   }
-  #   
-  #   ## Iterate ##
-  #   i <- i + 1L
-  #   
-  # }
   
   ## Output ##
   return(fuzz_col)

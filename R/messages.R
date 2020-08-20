@@ -82,6 +82,22 @@
 }
 
 
+# ### .warning_coercion.POSIXlt() ###
+# .warning_coercion.POSIXlt <- function(x){
+#   
+#   ## Message ##
+#   msg <- paste(
+#     "'POSIXlt' variables are not compatible with objects of class 'data.frame'.",
+#     "'POSIXlt' will be coerced to 'POSIXct'",
+#     sep = "\n"
+#   )
+#   
+#   ## Output ##
+#   return(warning(msg, call. = FALSE))
+#   
+# }
+
+
 ### .warning_coercion.tbl_df() ###
 .warning_coercion.tbl_df <- function(x){
   

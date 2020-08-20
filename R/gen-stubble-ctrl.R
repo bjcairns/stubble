@@ -8,7 +8,7 @@
 ### gen_stubble_ctrl() ###
 gen_stubble_ctrl <- function(
   p_na = NA_real_, emp_sw = 0.1,
-  tail_exc = 0.025, fuzz_ecdf = TRUE,
+  tail_exc = 0.025, fuzz_ecdf = TRUE, fuzz_ecdf_sca = 0.05,
   n_exc = 10, p_exc = 0.05, fuzz_samp = TRUE, drop_lev = TRUE,
   dttm_tz = "UTC",
   old_ctrl = list(),
