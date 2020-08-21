@@ -91,7 +91,9 @@
 #' 
 #' @export
 stubblise <- function(x, ...) {
+  
   UseMethod("stubblise", x)
+  
 }
 
 
@@ -121,7 +123,9 @@ stubblise.default <- function(x, rows = nrow(x), method = "empirical", control =
 #' @rdname stubblise
 #' @export
 stubblise.data.frame <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+  
   as.data.frame(stbls_(x, rows, method = method, control, ...))
+  
 }
 
 
@@ -129,8 +133,9 @@ stubblise.data.frame <- function(x, rows = nrow(x), method = "empirical", contro
 #' @rdname stubblise
 #' @export
 stubblise.tbl_df <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+  
   tibble::as_tibble(stbls_(x, rows, method = method, control, ...))
-
+  
 }
 
 
@@ -138,21 +143,27 @@ stubblise.tbl_df <- function(x, rows = nrow(x), method = "empirical", control = 
 #' @rdname stubblise
 #' @export
 stubblise.data.table <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+  
   data.table::as.data.table(stbls_(x, rows, method = method, control, ...))
+  
 }
 
 
 # Lists
 #' @rdname stubblise
 #' @export
-stubblise.list <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
-  as.data.frame(stbls_(x, rows, method = method, control, ...))
+stubblise.list <- function(x, rows = lengths(x), method = "empirical", control = list(), ...) {
+  
+  stbls_(x, rows, method = method, control, ...)
+  
 }
 
 
 # Internals
 stbls_ <- function(x, rows = rows, method = method, control = list(), ...) {
-  if (!is.list(control)) stop("Argument `control` must be a list")
+  
+  if (!is.list(control)) stop("Argument 'control' must be a list")
+  
   index <- 1:length(x)
     
   if (method == "empirical") {
@@ -175,7 +186,7 @@ stbls_ <- function(x, rows = rows, method = method, control = list(), ...) {
     
   } else {
     
-    stop("Argument `method` must be either 'empirical' or 'naive'")
+    stop("Argument 'method must be either 'empirical' or 'naive'")
     
   }
 }
