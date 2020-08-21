@@ -1,13 +1,14 @@
 #' @title
-#' Control parameters for emperor()
-#'
+#' Control parameters for stubble
+#' 
 #' @description
 #' This help file describes the available parameters to control the output of
-#' [stubblise()]. The function which assembles these parameters into a list,
-#' `emperor_control()`, is accessible to users but often will not need to be
-#' called directly.
-#'
-#' @param p_na Proportion of values set to `NA`; defaults to `NA`.
+#' [stubble()]. The function is accessible to users but often will not need to
+#' be called directly.
+#' 
+#' @param p_na Proportion of values set to `NA`; defaults to `NA`, meaning that
+#' the proportions present in any generated data will roughly match those of the
+#' source data.
 #' @param emp_sw Value determining whether spline or resampling methods are used
 #' in the the generation of synthetic data. When the unique fraction of a column
 #' is above this value spline-based methods will be used. Conversely, when it is
@@ -19,12 +20,18 @@
 #' @param tail_exc Quantile tail size to be omitted from sampling at each end
 #' of the empirical cumulative distribution function. Defaults to 2.5% (`0.025`)
 #' at each end (tail) of the distribution.
-#' @param fuzz_ecdf Should the values sampled from the ECDF be 'fuzzed'
-#' through the addition of random normal noise? Defaults to `TRUE`.
+#' @param fuzz_spl Should the values sampled from the ECDF by [`ble_spline`]
+#' be 'fuzzed' through the addition of random normal noise? Defaults to `TRUE`.
+#' @param fuzz_spl_sca The scaling factor for the standard deviation of the
+#' random noise applied when `fuzz_spl` is set to `TRUE`. Defaults to `0.05`,
+#' i.e. 5% of the standard deviation of the source data.
 #' @param n_exc Observation prevalence below which values will be excluded from
 #' simulations. Defaults to 10.
 #' @param p_exc Observation prevalence below which values will be excluded from
 #' simulations. Defaults to 1% (`0.01`)
+#' @param fuzz_samp Should the probability weights sampled from the distribution
+#' of values by [`stub_sample`] be 'fuzzed' through the addition of random
+#' normal noise? Defaults to `TRUE`.
 #' @param drop_lev Parameter indicating whether empty factor levels should be
 #' dropped from simlated factors and ordered factors. Defauls to `TRUE`
 #' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but
@@ -35,52 +42,24 @@
 #' which elements apply to a single column (i.e. elements are not necessarily
 #' lists). Mostly for internal use to handle passing control parameters between
 #' `emperor_` S3 methods.
-#' @param ... Further control parameters permitting extension of the `emperor_`
+#' @param ... Further control parameters permitting extension of the `stubble`
 #' S3 methods.
-#'
-#' @details
-#' Generation of synthetic data in stubble is very simple. Numbers,
-#' dates and times are sampled uniformly within a range, while strings and
-#' factors are constructed from lists of symbols or levels sampled with equal
-#' probability.
-#'
-#' Various control parameters allow some user influence over the sets of
-#' allowed values. Available parameters are listed and described above. In
-#' addition to `emperor_control()`, these parameters are exposed directly via
-#' [stubblise()] and [emperor()], and may be passed as arguments with the names
-#' given above to either function.
-#'
-#' Control parameters may be common to all or may be specified per-column.
-#' Arguments passed to `emperor_control()` or directly via `stubblise()` or
-#' `emperor()` are interpreted according to type:
-#' \itemize{
-#'   \item *Single-element vectors* mean that the same parameter value applies
-#'   to each column;
-#'   \item *Multi-element vectors* mean that each element is matched (with
-#'   recycling) as the parameter for the corresponding column;
-#' }
-#' To pass a vector parameter for a column, such as a vector of allowed factor
-#' levels, wrap the vector in a list, e.g. `list(letters[1:4])`. (Internally,
-#' all arguments passed to `emperor_control()`, whether directly or indirectly,
-#' are sanitised with `as.list()`.)
 #' 
 #' @seealso
-#' [emperor()]
+#' [stubble()]
 
 
+### stubble_ctrl() ###
 #' @export
-emperor_control <- function(
-  p_na = NA_real_, emp_sw = 0.5,
-  tail_exc = 0.025, fuzz_ecdf = TRUE,
-  n_exc = 10, p_exc = 0.01, drop_lev = TRUE,
+stubble_ctrl <- function(
+  p_na = NA_real_, emp_sw = 0.1,
+  tail_exc = 0.025, fuzz_spl = TRUE, fuzz_spl_sca = 0.05,
+  n_exc = 10, p_exc = 0.05, fuzz_samp = TRUE, drop_lev = TRUE,
   dttm_tz = "UTC",
-  old_ctrl = as.list(NULL),
+  old_ctrl = list(),
   index = NA_integer_,
   ...
 ){
-  
-  ## Checks ##
-  if (tail_exc < 0 | tail_exc >= 0.5) stop("'tail_exc' must be a positive value < 0.5.")
   
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())
@@ -106,11 +85,8 @@ emperor_control <- function(
 }
 
 
-#' @rdname emperor_control
-#' @name control
-NULL
-
-
+### get_ctrl_element() ###
+#' @noRd
 get_ctrl_element <- function(item, index){
   item_base <- length(item)
   item_idx <- index %% item_base

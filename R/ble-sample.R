@@ -1,12 +1,13 @@
 #==================#
 #                  #
-#### GEN SAMPLE ####
+#### BLE SAMPLE ####
 #                  #
 #==================#
 
 
-### gen_sample() ###
-gen_sample <- function(x, elements, ctrl){
+### ble_sample() ###
+#' @noRd
+ble_sample <- function(x, elements, ctrl){
   
   ## Extract Values ##
   val <- x[["sim"]][["values"]]

@@ -1,17 +1,17 @@
 #==================#
 #                  #
-#### GEN SPLINE ####
+#### BLE SPLINE ####
 #                  #
 #==================#
 
 
 ### ToDo ###
-# - Implement fuzz().
 # - Evaluate need for setting the origin when coercing from POSIXct to POSIXlt.
 
 
-### gen_spline() ###
-gen_spline <- function(x, elements, ctrl){
+### ble_spline() ###
+#' @noRd
+ble_spline <- function(x, elements, ctrl){
   
   ## Extract stub Params ##
   dtype <- x[["dtype"]]
@@ -23,10 +23,10 @@ gen_spline <- function(x, elements, ctrl){
   syn_col <- f(v = v)
   
   ## Coerce Output ##
-  syn_col <- gen_spline_(dtype = dtype, syn_col = syn_col, ctrl = ctrl)
+  syn_col <- ble_spline_(dtype = dtype, syn_col = syn_col, ctrl = ctrl)
   
   ## Fuzz ##
-  if (ctrl[["fuzz_ecdf"]]){
+  if (ctrl[["fuzz_spl"]]){
     
     syn_col <- fuzz(syn_col = syn_col, col_sd = col_sd, elements = elements, ctrl = ctrl)
     
@@ -38,17 +38,19 @@ gen_spline <- function(x, elements, ctrl){
 }
 
 
-### gen_spline_() ###
-gen_spline_ <- function(dtype, ...){
+### ble_spline_() ###
+#' @noRd
+ble_spline_ <- function(dtype, ...){
   
   ## Define S3 Method ##
-  UseMethod("gen_spline_", dtype)
+  UseMethod("ble_spline_", dtype)
   
 }
 
 
-### gen_spline_.default() ###
-gen_spline_.default <- function(dtype, ...){
+### ble_spline_.default() ###
+#' @noRd
+ble_spline_.default <- function(dtype, ...){
   
   ## Error ##
   .stop_no_method(dtype)
@@ -56,8 +58,9 @@ gen_spline_.default <- function(dtype, ...){
 }
 
 
-### gen_spline_.Date() ###
-gen_spline_.Date <- function(dtype, syn_col, ctrl){
+### ble_spline_.Date() ###
+#' @noRd
+ble_spline_.Date <- function(dtype, syn_col, ctrl){
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -70,8 +73,9 @@ gen_spline_.Date <- function(dtype, syn_col, ctrl){
   
 }
 
-### gen_spline_.double() ###
-gen_spline_.double <- function(dtype, syn_col, ctrl){
+### ble_spline_.double() ###
+#' @noRd
+ble_spline_.double <- function(dtype, syn_col, ctrl){
   
   ## Coerce to double ##
   syn_col <- as.double(syn_col)
@@ -82,8 +86,9 @@ gen_spline_.double <- function(dtype, syn_col, ctrl){
 }
 
 
-### gen_spline_.IDate() ###
-gen_spline_.IDate <- function(dtype, syn_col, ctrl){
+### ble_spline_.IDate() ###
+#' @noRd
+ble_spline_.IDate <- function(dtype, syn_col, ctrl){
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -108,8 +113,9 @@ gen_spline_.IDate <- function(dtype, syn_col, ctrl){
   
 }
 
-### gen_spline_.integer() ###
-gen_spline_.integer <- function(dtype, syn_col, ctrl){
+### ble_spline_.integer() ###
+#' @noRd
+ble_spline_.integer <- function(dtype, syn_col, ctrl){
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -123,8 +129,9 @@ gen_spline_.integer <- function(dtype, syn_col, ctrl){
 }
 
 
-### gen_spline_.integer64() ###
-gen_spline_.integer64 <- function(dtype, syn_col, ctrl){
+### ble_spline_.integer64() ###
+#' @noRd
+ble_spline_.integer64 <- function(dtype, syn_col, ctrl){
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -150,8 +157,9 @@ gen_spline_.integer64 <- function(dtype, syn_col, ctrl){
 }
 
 
-### gen_spline_.POSIXct() ###
-gen_spline_.POSIXct <- function(dtype, syn_col, ctrl){
+### ble_spline_.POSIXct() ###
+#' @noRd
+ble_spline_.POSIXct <- function(dtype, syn_col, ctrl){
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -165,8 +173,9 @@ gen_spline_.POSIXct <- function(dtype, syn_col, ctrl){
 }
 
 
-### gen_spline_.POSIXlt() ###
-gen_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
+### ble_spline_.POSIXlt() ###
+#' @noRd
+ble_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -179,5 +188,20 @@ gen_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
   
   ## Output ##
   return(syn_col)
+  
+}
+
+### fuzz() ###
+#' @noRd
+fuzz <- function(syn_col, col_sd, elements, ctrl){
+  
+  ## Calculate Fuzz SD ##
+  fuzz_sd <- col_sd*ctrl[["fuzz_spl_sca"]]
+  
+  ## Apply Fuzzing ##
+  fuzz_col <- syn_col + rnorm(elements, fuzz_sd)
+  
+  ## Output ##
+  return(fuzz_col)
   
 }

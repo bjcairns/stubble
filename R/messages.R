@@ -10,6 +10,7 @@
 
 
 ### .warning_coercion() ###
+#' @noRd
 .warning_coercion <- function(x, ...){
   
   ## Define S3 Method ##
@@ -18,23 +19,8 @@
 }
 
 
-# ### .warning_coercion.bit() ###
-# .warning_coercion.bit <- function(x){
-#   
-#   ## Message ##
-#   msg <- paste(
-#     "Package 'bit' not found.",
-#     "'bit' will be coerced to 'logical'",
-#     sep = "\n"
-#   )
-#   
-#   ## Output ##
-#   return(warning(msg, call. = FALSE))
-#   
-# }
-
-
 ### .warning_coercion.data.table() ###
+#' @noRd
 .warning_coercion.data.table <- function(x){
   
   ## Message ##
@@ -51,6 +37,7 @@
 
 
 ### .warning_coercion.IDate() ###
+#' @noRd
 .warning_coercion.IDate <- function(x){
   
   ## Message ##
@@ -67,6 +54,7 @@
 
 
 ### .warning_coercion.integer64() ###
+#' @noRd
 .warning_coercion.integer64 <- function(x){
   
   ## Message ##
@@ -82,23 +70,8 @@
 }
 
 
-# ### .warning_coercion.POSIXlt() ###
-# .warning_coercion.POSIXlt <- function(x){
-#   
-#   ## Message ##
-#   msg <- paste(
-#     "'POSIXlt' variables are not compatible with objects of class 'data.frame'.",
-#     "'POSIXlt' will be coerced to 'POSIXct'",
-#     sep = "\n"
-#   )
-#   
-#   ## Output ##
-#   return(warning(msg, call. = FALSE))
-#   
-# }
-
-
 ### .warning_coercion.tbl_df() ###
+#' @noRd
 .warning_coercion.tbl_df <- function(x){
   
   ## Message ##
@@ -115,6 +88,7 @@
 
 
 ### .warning_no_method() ###
+#' @noRd
 .warning_no_method <- function(x){
   
   ## First Class ##
@@ -130,6 +104,7 @@
 
 
 ### .stop_no_method() ###
+#' @noRd
 .stop_no_method <- function(x){
   
   ## First Class ##

@@ -1,6 +1,6 @@
 #===================#
 #                   #
-#### ECDF SPLINE ####
+#### STUB SPLINE ####
 #                   #
 #===================#
 
@@ -9,16 +9,18 @@
 # - Create a method for ordered factors.
 
 
-### ecdf_spline() ###
-ecdf_spline <- function(col, ...){
+### stub_spline() ###
+#' @noRd
+stub_spline <- function(col, ...){
   
-  UseMethod("ecdf_spline", col)
+  UseMethod("stub_spline", col)
   
 }
 
 
-### ecdf_spline.default() ###
-ecdf_spline.default <- function(col, ctrl){
+### stub_spline.default() ###
+#' @noRd
+stub_spline.default <- function(col, ctrl){
   
   ## Warning ##
   .warning_no_method(col)
@@ -38,14 +40,15 @@ ecdf_spline.default <- function(col, ctrl){
 }
 
 
-### ecdf_spline.Date() ###
-ecdf_spline.Date <- function(col, ctrl){
+### stub_spline.Date() ###
+#' @noRd
+stub_spline.Date <- function(col, ctrl){
   
   ## Coerce to Integer ##
   col <- as.integer(col)
   
   ## Define Spline Function ##
-  out <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- stub_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
   return(out)
@@ -53,11 +56,12 @@ ecdf_spline.Date <- function(col, ctrl){
 }
 
 
-### ecdf_spline.double() ###
-ecdf_spline.double <- function(col, ctrl){
+### stub_spline.double() ###
+#' @noRd
+stub_spline.double <- function(col, ctrl){
   
   ## Define Spline Function ##
-  out <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- stub_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
   return(out)
@@ -65,11 +69,12 @@ ecdf_spline.double <- function(col, ctrl){
 }
 
 
-### ecdf_spline.integer() ###
-ecdf_spline.integer <- function(col, ctrl){
+### stub_spline.integer() ###
+#' @noRd
+stub_spline.integer <- function(col, ctrl){
   
   ## Define Spline Function ##
-  out <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- stub_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
   return(out)
@@ -77,14 +82,15 @@ ecdf_spline.integer <- function(col, ctrl){
 }
 
 
-### ecdf_spline.integer64() ###
-ecdf_spline.integer64 <- function(col, ctrl){
+### stub_spline.integer64() ###
+#' @noRd
+stub_spline.integer64 <- function(col, ctrl){
 
   ## Coerce to Double ##
   col <- as.double(col)
 
   ## Define Spline Function ##
-  out <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- stub_spline_(col = col, ctrl = ctrl)
 
   ## Output ##
   return(out)
@@ -92,14 +98,15 @@ ecdf_spline.integer64 <- function(col, ctrl){
 }
 
 
-### ecdf_spline.POSIXct() ###
-ecdf_spline.POSIXct <- function(col, ctrl){
+### stub_spline.POSIXct() ###
+#' @noRd
+stub_spline.POSIXct <- function(col, ctrl){
   
   ## Coerce to Integer ##
   col <- as.integer(col)
   
   ## Define Spline Function ##
-  out <- ecdf_spline_(col = col, ctrl = ctrl)
+  out <- stub_spline_(col = col, ctrl = ctrl)
   
   ## Output ##
   return(out)
@@ -107,14 +114,15 @@ ecdf_spline.POSIXct <- function(col, ctrl){
 }
 
 
-### ecdf_spline.POSIXlt() ###
-ecdf_spline.POSIXlt <- function(col, ctrl){
+### stub_spline.POSIXlt() ###
+#' @noRd
+stub_spline.POSIXlt <- function(col, ctrl){
   
   ## Coerce to POSIXct ##
   col <- as.POSIXct(col)
   
   ## Use POSIXct Method ##
-  out <- ecdf_spline.POSIXct(col = col, ctrl = ctrl)
+  out <- stub_spline.POSIXct(col = col, ctrl = ctrl)
   
   ## Output ##
   return(out)
@@ -122,8 +130,9 @@ ecdf_spline.POSIXlt <- function(col, ctrl){
 }
 
 
-### ecdf_spline_() ###
-ecdf_spline_ <- function(col, ctrl){
+### stub_spline_() ###
+#' @noRd
+stub_spline_ <- function(col, ctrl){
   
   ## Checks ##
   if (!is.numeric(ctrl[["tail_exc"]])) stop("The 'tail_exc' control parameter must be of class numeric.")
@@ -169,40 +178,3 @@ ecdf_spline_ <- function(col, ctrl){
   return(out)
   
 }
-
-
-# ### Testing ###
-# ctrl <- list(
-#   tail_exc = 0,
-#   fuzz_ecdf = FALSE,
-#   dttm_tz = "UTC"
-# )
-# 
-# list_test0 <- list(
-#   Date = as.Date(character(0)),
-#   double = double(0),
-#   IDate = data.table::as.IDate(character(0)),
-#   integer = integer(0),
-#   integer64 = bit64::integer64(0),
-#   POSIXct = as.POSIXct(character(0), tz = ctrl[["dttm_tz"]]),
-#   POSIXlt = as.POSIXlt(character(0), tz = ctrl[["dttm_tz"]])
-# )
-# 
-# lapply(list_test0, ecdf_spline, ctrl = ctrl)
-# 
-# set.seed(10)
-# 
-# n <- 100
-# list_test <- list(
-#   Date = as.Date("1970-01-01") + rpois(n, 10),
-#   double = rnorm(n),
-#   iDate = data.table::as.IDate("1970-01-01") + rpois(n, 10),
-#   integer = rpois(n, 10),
-#   integer64 = bit64::as.integer64(rpois(n, 10)),
-#   POSIXct = as.POSIXct("1970-01-01", tz = ctrl[["dttm_tz"]]) + runif(n, 0, 1e9),
-#   POSIXlt = as.POSIXlt(as.POSIXct("1970-01-01", tz = ctrl[["dttm_tz"]]) + runif(n, 0, 1e9))
-# ); rm(n)
-# 
-# str(list_test)
-# 
-# lapply(list_test, ecdf_spline, ctrl = ctrl)
