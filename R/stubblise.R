@@ -104,7 +104,7 @@ stubblize <- stubblise
 # Default
 #' @rdname stubblise
 #' @export
-stubblise.default <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+stubblise.default <- function(x, rows = nrow(x), method = "naive", control = list(), ...) {
 
   tryCatch(
     x <- as.list(x),
@@ -120,7 +120,7 @@ stubblise.default <- function(x, rows = nrow(x), method = "empirical", control =
 # Data frames
 #' @rdname stubblise
 #' @export
-stubblise.data.frame <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+stubblise.data.frame <- function(x, rows = nrow(x), method = "naive", control = list(), ...) {
   as.data.frame(stbls_(x, rows, method = method, control, ...))
 }
 
@@ -128,7 +128,7 @@ stubblise.data.frame <- function(x, rows = nrow(x), method = "empirical", contro
 # Tibbles
 #' @rdname stubblise
 #' @export
-stubblise.tbl_df <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+stubblise.tbl_df <- function(x, rows = nrow(x), method = "naive", control = list(), ...) {
   tibble::as_tibble(stbls_(x, rows, method = method, control, ...))
 
 }
@@ -137,7 +137,7 @@ stubblise.tbl_df <- function(x, rows = nrow(x), method = "empirical", control = 
 # Data tables
 #' @rdname stubblise
 #' @export
-stubblise.data.table <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+stubblise.data.table <- function(x, rows = nrow(x), method = "naive", control = list(), ...) {
   data.table::as.data.table(stbls_(x, rows, method = method, control, ...))
 }
 
@@ -145,7 +145,7 @@ stubblise.data.table <- function(x, rows = nrow(x), method = "empirical", contro
 # Lists
 #' @rdname stubblise
 #' @export
-stubblise.list <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
+stubblise.list <- function(x, rows = nrow(x), method = "naive", control = list(), ...) {
   as.data.frame(stbls_(x, rows, method = method, control, ...))
 }
 
@@ -155,16 +155,16 @@ stbls_ <- function(x, rows = rows, method = method, control = list(), ...) {
   if (!is.list(control)) stop("Argument `control` must be a list")
   index <- 1:length(x)
     
-  if (method == "empirical") {
-    
-    mapply(
-      emperor, col = x, index = index,
-      MoreArgs = list(elements = rows, control = control, ...),
-      SIMPLIFY = FALSE,
-      USE.NAMES = TRUE
-    )
-    
-  } else if (method == "naive") {
+  # if (method == "empirical") {
+  #   
+  #   mapply(
+  #     emperor, col = x, index = index,
+  #     MoreArgs = list(elements = rows, control = control, ...),
+  #     SIMPLIFY = FALSE,
+  #     USE.NAMES = TRUE
+  #   )
+  #   
+  # } else if (method == "naive") {
     
     mapply(
       gen_col, col = x, index = index,
@@ -173,9 +173,10 @@ stbls_ <- function(x, rows = rows, method = method, control = list(), ...) {
       USE.NAMES = TRUE
     )
     
-  } else {
-    
-    stop("Argument `method` must be either 'empirical' or 'naive'")
-    
-  }
+  # } else {
+  #   
+  #   stop("Argument `method` must be either 'empirical' or 'naive'")
+  #   
+  # }
+  
 }

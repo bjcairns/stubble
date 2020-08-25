@@ -1,8 +1,8 @@
-#================#
-#                #
-#### MESSAGES ####
-#                #
-#================#
+#' @title
+#' Errors, warnings and messages
+#' 
+#' @description
+#' Commonly used `stop()`, `warning()` and `message()` functions in stubble.
 
 
 ### ToDo ###

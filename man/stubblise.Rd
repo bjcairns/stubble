@@ -15,15 +15,15 @@ stubblise(x, ...)
 
 stubblize(x, ...)
 
-\method{stubblise}{default}(x, rows = nrow(x), method = "empirical", control = list(), ...)
+\method{stubblise}{default}(x, rows = nrow(x), method = "naive", control = list(), ...)
 
-\method{stubblise}{data.frame}(x, rows = nrow(x), method = "empirical", control = list(), ...)
+\method{stubblise}{data.frame}(x, rows = nrow(x), method = "naive", control = list(), ...)
 
-\method{stubblise}{tbl_df}(x, rows = nrow(x), method = "empirical", control = list(), ...)
+\method{stubblise}{tbl_df}(x, rows = nrow(x), method = "naive", control = list(), ...)
 
-\method{stubblise}{data.table}(x, rows = nrow(x), method = "empirical", control = list(), ...)
+\method{stubblise}{data.table}(x, rows = nrow(x), method = "naive", control = list(), ...)
 
-\method{stubblise}{list}(x, rows = nrow(x), method = "empirical", control = list(), ...)
+\method{stubblise}{list}(x, rows = nrow(x), method = "naive", control = list(), ...)
 }
 \arguments{
 \item{x}{the data frame-like object to emulate. Can have 0 rows.}

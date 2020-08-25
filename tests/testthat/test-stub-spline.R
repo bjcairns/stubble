@@ -1,6 +1,6 @@
 #========================#
 #                        #
-#### TEST ECDF SPLINE ####
+#### TEST STUB SPLINE ####
 #                        #
 #========================#
 
@@ -12,7 +12,7 @@
 
 ### Params ###
 ## Control ##
-ctrl_def <- gen_stubble_ctrl(index = 1L)[-1]
+ctrl_def <- stubble_ctrl(index = 1L)[-1]
 
 # ## Vars ##
 # vars_spl <- c("Date", "double", "integer", "POSIXct", "POSIXlt")
@@ -23,25 +23,25 @@ test_that(
   desc = "Unsupported output classes.",
   code = {
     expect_warning(
-      object = ecdf_spline(NULL, ctrl = ctrl_def),
+      object = stub_spline(NULL, ctrl = ctrl_def),
       regexp = "[nN]o\\s+method\\s+exists",
       label = "Warning"
     )
     expect_type(
       object = suppressWarnings(
-        ecdf_spline(NULL, ctrl = ctrl_def)
+        stub_spline(NULL, ctrl = ctrl_def)
       ),
       type = "list"
     )
     expect_length(
       object = suppressWarnings(
-        ecdf_spline(NULL, ctrl = ctrl_def)
+        stub_spline(NULL, ctrl = ctrl_def)
       ),
       n = 2L
     )
     expect_named(
       object = suppressWarnings(
-        ecdf_spline(NULL, ctrl = ctrl_def)
+        stub_spline(NULL, ctrl = ctrl_def)
       ),
       expected = c("fun", "sd"),
       label = "Output names"
@@ -56,23 +56,23 @@ test_that(
   desc = "Zero-length vectors [base].",
   code = {
     expect_type(
-      object = ecdf_spline(l0[["Date"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["Date"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(l0[["double"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["double"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(l0[["integer"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["integer"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(l0[["POSIXct"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["POSIXct"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(l0[["POSIXlt"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["POSIXlt"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -84,7 +84,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_type(
-      object = ecdf_spline(l0[["integer64"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["integer64"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -96,7 +96,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_type(
-      object = ecdf_spline(l0[["IDate"]], ctrl = ctrl_def),
+      object = stub_spline(l0[["IDate"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -108,23 +108,23 @@ test_that(
   desc = "Missing data vectors [base].",
   code = {
     expect_type(
-      object = ecdf_spline(lna[["Date"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["Date"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(lna[["double"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["double"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(lna[["integer"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["integer"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(lna[["POSIXct"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["POSIXct"]], ctrl = ctrl_def),
       type = "list"
     )
     expect_type(
-      object = ecdf_spline(lna[["POSIXlt"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["POSIXlt"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -136,7 +136,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_type(
-      object = ecdf_spline(lna[["integer64"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["integer64"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -148,7 +148,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_type(
-      object = ecdf_spline(lna[["IDate"]], ctrl = ctrl_def),
+      object = stub_spline(lna[["IDate"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -159,21 +159,21 @@ test_that(
 # - Todo!
 
 
-### ecdf_spline_() output ###
+### stub_spline_() output ###
 ## length(col) < 2L ##
 test_that(
-  desc = "ecdf_spline_() output (length(col) < 2L).",
+  desc = "stub_spline_() output (length(col) < 2L).",
   code = {
     expect_type(
-      object = ecdf_spline_(NULL, ctrl = ctrl_def),
+      object = stub_spline_(NULL, ctrl = ctrl_def),
       type = "list"
     )
     expect_length(
-      object = ecdf_spline_(NULL, ctrl = ctrl_def),
+      object = stub_spline_(NULL, ctrl = ctrl_def),
       n = 2L
     )
     expect_named(
-      object = ecdf_spline_(NULL, ctrl = ctrl_def),
+      object = stub_spline_(NULL, ctrl = ctrl_def),
       expected = c("fun", "sd"),
       label = "Output names"
     )
@@ -182,18 +182,18 @@ test_that(
 
 ## length(col) >= 2L ##
 test_that(
-  desc = "ecdf_spline_() output (length(col) >= 2L).",
+  desc = "stub_spline_() output (length(col) >= 2L).",
   code = {
     expect_type(
-      object = ecdf_spline_(1:10, ctrl = ctrl_def),
+      object = stub_spline_(1:10, ctrl = ctrl_def),
       type = "list"
     )
     expect_length(
-      object = ecdf_spline_(1:10, ctrl = ctrl_def),
+      object = stub_spline_(1:10, ctrl = ctrl_def),
       n = 2L
     )
     expect_named(
-      object = ecdf_spline_(1:10, ctrl = ctrl_def),
+      object = stub_spline_(1:10, ctrl = ctrl_def),
       expected = c("fun", "sd"),
       label = "Output names"
     )

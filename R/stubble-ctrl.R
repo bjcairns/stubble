@@ -41,7 +41,7 @@
 #' @param index Default `NA`. If not `NA`, the function will return list in
 #' which elements apply to a single column (i.e. elements are not necessarily
 #' lists). Mostly for internal use to handle passing control parameters between
-#' `emperor_` S3 methods.
+#' S3 methods.
 #' @param ... Further control parameters permitting extension of the `stubble`
 #' S3 methods.
 #' 

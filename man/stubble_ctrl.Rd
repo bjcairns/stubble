@@ -67,7 +67,7 @@ overwritten in the current call.}
 \item{index}{Default \code{NA}. If not \code{NA}, the function will return list in
 which elements apply to a single column (i.e. elements are not necessarily
 lists). Mostly for internal use to handle passing control parameters between
-\code{emperor_} S3 methods.}
+S3 methods.}
 
 \item{...}{Further control parameters permitting extension of the \code{stubble}
 S3 methods.}

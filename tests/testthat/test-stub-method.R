@@ -1,6 +1,6 @@
 #========================#
 #                        #
-#### TEST ECDF METHOD ####
+#### TEST STUB METHOD ####
 #                        #
 #========================#
 
@@ -12,7 +12,7 @@
 
 ### Params ###
 ## Control ##
-ctrl_def <- gen_stubble_ctrl(index = 1L)[-1]
+ctrl_def <- stubble_ctrl(index = 1L)[-1]
 
 ## Vars ##
 vars_base <- c("character", "Date", "double", "factor", "integer", "logical", "ordered", "POSIXct", "POSIXlt")
@@ -23,12 +23,12 @@ test_that(
   desc = "Unsupported vector classes.",
   code = {
     expect_warning(
-      object = ecdf_method(NULL, ctrl = ctrl_def),
+      object = stub_method(NULL, ctrl = ctrl_def),
       regexp = "[nN]o\\s+method\\s+exists"
     )
     expect_identical(
       object = suppressWarnings(
-        ecdf_method(NULL, ctrl = ctrl_def)
+        stub_method(NULL, ctrl = ctrl_def)
       ),
       expected = "sample"
     )
@@ -42,7 +42,7 @@ test_that(
   desc = "Zero-length vectors [base].",
   code = {
     expect_equivalent(
-      object = sapply(X = l0[vars_base], FUN = ecdf_method, ctrl = ctrl_def),
+      object = sapply(X = l0[vars_base], FUN = stub_method, ctrl = ctrl_def),
       expected = rep("sample", length(l0[vars_base]))
     )
   }
@@ -54,7 +54,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_identical(
-      object = ecdf_method(l0[["integer64"]], ctrl = ctrl_def),
+      object = stub_method(l0[["integer64"]], ctrl = ctrl_def),
       expected = "sample"
     )
   }
@@ -66,7 +66,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_identical(
-      object = ecdf_method(l0[["IDate"]], ctrl = ctrl_def),
+      object = stub_method(l0[["IDate"]], ctrl = ctrl_def),
       expected = "sample"
     )
   }
@@ -79,7 +79,7 @@ test_that(
   desc = "Missing data vectors [base].",
   code = {
     expect_equivalent(
-      object = sapply(X = lna[vars_base], FUN = ecdf_method, ctrl = ctrl_def),
+      object = sapply(X = lna[vars_base], FUN = stub_method, ctrl = ctrl_def),
       expected = rep("sample", length(lna[vars_base]))
     )
   }
@@ -91,7 +91,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_identical(
-      object = ecdf_method(lna[["integer64"]], ctrl = ctrl_def),
+      object = stub_method(lna[["integer64"]], ctrl = ctrl_def),
       expected = "sample"
     )
   }
@@ -103,7 +103,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_identical(
-      object = ecdf_method(lna[["IDate"]], ctrl = ctrl_def),
+      object = stub_method(lna[["IDate"]], ctrl = ctrl_def),
       expected = "sample"
     )
   }
@@ -112,7 +112,7 @@ test_that(
 
 ### Class-Associated Methods (Always 'sample') ###
 ## Control ##
-ctrl <- gen_stubble_ctrl(old_ctrl = list(emp_sw = 0), index = 1L)[-1]
+ctrl <- stubble_ctrl(old_ctrl = list(emp_sw = 0), index = 1L)[-1]
 
 ## Vars ##
 vars <- c("character", "factor", "logical", "ordered")
@@ -122,7 +122,7 @@ test_that(
   desc = "Class-associated methods.",
   code = {
     expect_equivalent(
-      object = sapply(X = luniq[vars], FUN = ecdf_method, ctrl = ctrl),
+      object = sapply(X = luniq[vars], FUN = stub_method, ctrl = ctrl),
       expected = rep("sample", length(luniq[vars]))
     )
   }
@@ -131,7 +131,7 @@ test_that(
 
 ### Empirical Switch (Sample) ###
 ## Control ##
-ctrl <- gen_stubble_ctrl(old_ctrl = list(emp_sw = 1), index = 1L)[-1]
+ctrl <- stubble_ctrl(old_ctrl = list(emp_sw = 1), index = 1L)[-1]
 
 ## Vars ##
 vars <- c("Date", "double", "integer", "POSIXct", "POSIXlt")
@@ -141,7 +141,7 @@ test_that(
   desc = "Empirical switch control parameter (always sample) [base]",
   code = {
     expect_equivalent(
-      object = sapply(X = luniq[vars], FUN = ecdf_method, ctrl = ctrl),
+      object = sapply(X = luniq[vars], FUN = stub_method, ctrl = ctrl),
       expected = rep("sample", length(luniq[vars]))
     )
   }
@@ -153,7 +153,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_identical(
-      object = ecdf_method(luniq[["integer64"]], ctrl = ctrl),
+      object = stub_method(luniq[["integer64"]], ctrl = ctrl),
       expected = "sample"
     )
   }
@@ -165,7 +165,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_identical(
-      object = ecdf_method(luniq[["IDate"]], ctrl = ctrl),
+      object = stub_method(luniq[["IDate"]], ctrl = ctrl),
       expected = "sample"
     )
   }
@@ -177,7 +177,7 @@ rm(ctrl, vars)
 
 ## Empirical Switch (Spline) ##
 ## Control ##
-ctrl <- gen_stubble_ctrl(old_ctrl = list(emp_sw = 0), index = 1L)[-1]
+ctrl <- stubble_ctrl(old_ctrl = list(emp_sw = 0), index = 1L)[-1]
 
 ## Vars ##
 vars <- c("Date", "double", "integer", "POSIXct", "POSIXlt")
@@ -187,7 +187,7 @@ test_that(
   desc = "Empirical switch control parameter (always spline) [base]",
   code = {
     expect_equivalent(
-      object = sapply(X = l1[vars], FUN = ecdf_method, ctrl = ctrl),
+      object = sapply(X = l1[vars], FUN = stub_method, ctrl = ctrl),
       expected = rep("spline", length(l1[vars]))
     )
   }
@@ -199,7 +199,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("bit64"))
     expect_identical(
-      object = ecdf_method(l1[["integer64"]], ctrl = ctrl),
+      object = stub_method(l1[["integer64"]], ctrl = ctrl),
       expected = "spline"
     )
   }
@@ -211,7 +211,7 @@ test_that(
   code = {
     skip_if_not(is.installed.package("data.table"))
     expect_identical(
-      object = ecdf_method(l1[["IDate"]], ctrl = ctrl),
+      object = stub_method(l1[["IDate"]], ctrl = ctrl),
       expected = "spline"
     )
   }
@@ -221,16 +221,16 @@ test_that(
 rm(ctrl, vars)
 
 
-### ecdf_method_() Output ###
+### stub_method_() Output ###
 test_that(
-  desc = "ecdf_method_() output.",
+  desc = "stub_method_() output.",
   code = {
     expect_type(
-      object = ecdf_method_(NULL, ctrl = ctrl_def),
+      object = stub_method_(NULL, ctrl = ctrl_def),
       type = "character"
     )
     expect_length(
-      object = ecdf_method_(NULL, ctrl = ctrl_def),
+      object = stub_method_(NULL, ctrl = ctrl_def),
       n = 1L
     )
   }

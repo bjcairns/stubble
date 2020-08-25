@@ -61,13 +61,13 @@
 
 ### stub() ###
 #' @export
-stub <- function(x, ctrl = list(), ...){
+stub <- function(x, rows = lengths(x), ctrl = list(), ...){
   
   ## Data Structure ##
   dtype <- dtype0(x = x)
   
   ## Use S3 Method ##
-  vars <- stub_(x = x, ctrl = ctrl, ...)
+  vars <- stub_(x = x, rows = rows, ctrl = ctrl, ...)
   
   ## Form Output ##
   out <- list(
@@ -97,7 +97,7 @@ stub_ <- function(x, ...){
 
 ### stub_.default() ###
 #' @noRd
-stub_.default <- function(x, rows = lengths(x), ctrl = list(), ...){
+stub_.default <- function(x, rows, ctrl, ...){
   
   ## Attempt List Coercion ##
   l <- tryCatch(expr = as.list(x),
@@ -105,7 +105,7 @@ stub_.default <- function(x, rows = lengths(x), ctrl = list(), ...){
                 warning = function(w) warning(w))
   
   ## Use stub_.list Method ##
-  vars <- stub_.list(x, rows = lengths(x), ctrl = ctrl, ...)
+  vars <- stub_.list(x, rows = rows, ctrl = ctrl, ...)
   
   ## Output ##
   return(vars)
@@ -115,7 +115,7 @@ stub_.default <- function(x, rows = lengths(x), ctrl = list(), ...){
 
 ### stub_.data.frame() ###
 #' @noRd
-stub_.data.frame <- function(x, rows = nrow(x), ctrl = list(), ...){
+stub_.data.frame <- function(x, rows, ctrl, ...){
   
   ## Variable Structure ##
   vars <- stub_.list(x = x, rows = rows, ctrl = ctrl, ...)
@@ -128,7 +128,7 @@ stub_.data.frame <- function(x, rows = nrow(x), ctrl = list(), ...){
 
 ### stub_.data.table() ###
 #' @noRd
-stub_.data.table <- function(x, rows = nrow(x), ctrl = list(), ...){
+stub_.data.table <- function(x, rows = rows, ctrl, ...){
   
   ## Variable Structure ##
   vars <- stub_.list(x = x, rows = rows, ctrl = ctrl, ...)
@@ -141,7 +141,7 @@ stub_.data.table <- function(x, rows = nrow(x), ctrl = list(), ...){
 
 ### stub_.list() ###
 #' @noRd
-stub_.list <- function(x, rows = lengths(x), ctrl = list(), ...){
+stub_.list <- function(x, rows = rows, ctrl, ...){
   
   ## Variable Structure ##
   vars <- to_stub(x = x, rows = rows, ctrl = ctrl, ...)
@@ -154,7 +154,7 @@ stub_.list <- function(x, rows = lengths(x), ctrl = list(), ...){
 
 ### stub_.tbl_df() ###
 #' @noRd
-stub_.tbl_df <- function(x, rows = nrow(x), ctrl = list(), ...){
+stub_.tbl_df <- function(x, rows = rows, ctrl, ...){
   
   ## Variable Structure ##
   vars <- stub_.list(x = x, rows = rows, ctrl = ctrl, ...)

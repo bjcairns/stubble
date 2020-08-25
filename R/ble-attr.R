@@ -1,8 +1,17 @@
-#================#
-#                #
-#### BLE ATTR ####
-#                #
-#================#
+#' @title
+#' Decode vector attributes
+#' 
+#' @description
+#' Internal function to decode list attributes into a vector.
+#' 
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen
 
 
 ### ble_attr() ###

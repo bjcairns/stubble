@@ -4,18 +4,18 @@
 \alias{stub}
 \title{Generate a stub object from which synthetic data may be generated}
 \usage{
-stub(x, ctrl = list(), ...)
+stub(x, rows = lengths(x), ctrl = list(), ...)
 }
 \arguments{
 \item{x}{the vector from which the type of the synthetic data is taken.}
+
+\item{rows}{the number of elements to generate.}
 
 \item{ctrl}{a named list of control parameters for generating the synthetic
 data. See \link{ctrl}.}
 
 \item{...}{named individual control parameters, which take precedence over
 those in the \code{ctrl} list.}
-
-\item{rows}{the number of elements to generate.}
 }
 \value{
 A list containing three elements:

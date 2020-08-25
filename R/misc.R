@@ -1,8 +1,11 @@
-#===============================#
-#                               #
-#### MISCELLANEOUS FUNCTIONS ####
-#                               #
-#===============================#
+#' @title
+#' Miscellaneous internal functions
+#' 
+#' @description
+#' Internal functions for various stubble functions.
+#' 
+#' @importFrom stats rbinom
+#' @importFrom utils installed.packages
 
 
 ### impute_na() ###

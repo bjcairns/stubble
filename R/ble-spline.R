@@ -1,8 +1,20 @@
-#==================#
-#                  #
-#### BLE SPLINE ####
-#                  #
-#==================#
+#' @title
+#' Generate synthetic data using linear spline interpolation
+#' 
+#' @description
+#' Internal function for generating synthetic data using linear spline
+#' interpolation of the empirical cumulative distribution function.
+#' 
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen
+#' 
+#' @importFrom stats rnorm runif
 
 
 ### ToDo ###

@@ -1,11 +1,22 @@
-#=================#
-#                 #
-#### STUB ATTR ####
-#                 #
-#=================#
+#' @title
+#' Encode vector attributes
+#' 
+#' @description
+#' Internal function to encode vector attributes into a list.
+#' 
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen
+
 
 ### Notes ###
-# - stub_method_.ordered() may need to change if stub_method_.ordered() is finalised.
+# - stub_method.ordered() may need to change if stub_method_.ordered() is finalised.
+
 
 ### stub_attr() ###
 #' @noRd
@@ -54,7 +65,7 @@ stub_method <- function(col, ...){
 
 ### stub_method.default() ###
 #' @noRd
-stub_method.default <- function(col, ctrl){
+stub_method.default <- function(col, ...){
   
   ## Warning ##
   .warning_no_method(col)
@@ -84,7 +95,7 @@ stub_method.character <- function(col, ctrl){
 #' @noRd
 stub_method.Date <- function(col, ctrl){
   
-  ## Use numeric Method ##
+  ## Determine Method ##
   method <- stub_method_(col = col, ctrl = ctrl)
   
   ## Output ##
@@ -110,7 +121,7 @@ stub_method.factor <- function(col, ctrl){
 #' @noRd
 stub_method.integer64 <- function(col, ctrl){
   
-  ## Use numeric Method ##
+  ## Determine Method ##
   method <- stub_method_(col = col, ctrl = ctrl)
   
   ## Output ##
@@ -149,7 +160,7 @@ stub_method.numeric <- function(col, ctrl){
 #' @noRd
 stub_method.POSIXct <- function(col, ctrl){
   
-  ## Use numeric Method ##
+  ## Determine Method ##
   method <- stub_method_(col = col, ctrl = ctrl)
   
   ## Output ##

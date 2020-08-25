@@ -1,9 +1,23 @@
-#===================#
-#                   #
-#### STUB SPLINE ####
-#                   #
-#===================#
-
+#' @title
+#' Derive functions to generate synthetic data using linear spline interpolation
+#' 
+#' @description
+#' Internal function for producing functions to generate synthetic data using
+#' linear spline interpolation of the empirical cumulative distribution
+#' function.
+#' 
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen
+#' 
+#' @importFrom grDevices nclass.FD
+#' @importFrom graphics hist
+#' @importFrom stats approxfun quantile sd
 
 ### ToDo ###
 # - Create a method for ordered factors.
@@ -20,7 +34,7 @@ stub_spline <- function(col, ...){
 
 ### stub_spline.default() ###
 #' @noRd
-stub_spline.default <- function(col, ctrl){
+stub_spline.default <- function(col, ...){
   
   ## Warning ##
   .warning_no_method(col)

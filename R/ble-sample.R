@@ -1,8 +1,17 @@
-#==================#
-#                  #
-#### BLE SAMPLE ####
-#                  #
-#==================#
+#' @title
+#' Generate synthetic data using resampling methods
+#' 
+#' @description
+#' Internal function for generating synthetic data using resampling methods.
+#' 
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen
 
 
 ### ble_sample() ###

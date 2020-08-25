@@ -1,8 +1,17 @@
-#===================#
-#                   #
-#### STUB SAMPLE ####
-#                   #
-#===================#
+#' @title
+#' Derive parameters for use in resampling methods
+#' 
+#' @description
+#' Internal function for producing parameters to feed into resampling methods.
+#' 
+#' @concept empirical
+#' @concept ecdf
+#' @concept resample
+#' @concept simulate
+#' @concept simulated
+#' @concept simulation
+#' 
+#' @keywords datagen
 
 
 ### stub_sample() ###

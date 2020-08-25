@@ -96,7 +96,7 @@ ble_ <- function(dtype, ...){
 
 ### ble_.default() ###
 #' @noRd
-ble_.default <- function(dtype, l){
+ble_.default <- function(dtype, ...){
   
   ## Error ##
   .stop_no_method(dtype)
