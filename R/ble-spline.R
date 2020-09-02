@@ -40,7 +40,9 @@ ble_spline <- function(x, elements, ctrl){
   ## Fuzz ##
   if (ctrl[["fuzz_spl"]]){
 
-    syn_col <- fuzz(syn_col = syn_col, col_sd = col_sd, elements = elements, ctrl = ctrl)
+    syn_col <- fuzz(
+      syn_col = syn_col, col_sd = col_sd, elements = elements, ctrl = ctrl
+    )
 
   }
 
