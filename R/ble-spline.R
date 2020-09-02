@@ -31,7 +31,7 @@ ble_spline <- function(x, elements, ctrl){
   col_sd <- x[["sim"]][["sd"]]
 
   ## Generate Data ##
-  v <- runif(n = elements, min = 0 + ctrl[["tail_exc"]], max = 1 - ctrl[["tail_exc"]])
+  v <- runif(n = elements)
   syn_col <- f(v = v)
 
   ## Coerce Output ##
