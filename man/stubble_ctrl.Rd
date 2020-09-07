@@ -5,6 +5,7 @@
 \title{Control parameters for stubble}
 \usage{
 stubble_ctrl(
+  rng_kind = "Wichmann-Hill",
   p_na = NA_real_,
   emp_sw = 0.1,
   tail_exc = 0.025,
@@ -21,6 +22,10 @@ stubble_ctrl(
 )
 }
 \arguments{
+\item{rng_kind}{The random number generation algorithm to use. Takes values
+allowed by \code{\link[=RNGkind]{RNGkind()}}. Defaults to \code{"Wichmann-Hill"}, which is slower than
+other generators but is much less likely to produce duplicate values.}
+
 \item{p_na}{Proportion of values set to \code{NA}; defaults to \code{NA}, meaning that
 the proportions present in any generated data will roughly match those of the
 source data.}

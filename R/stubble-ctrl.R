@@ -6,6 +6,9 @@
 #' [stubble()]. The function is accessible to users but often will not need to
 #' be called directly.
 #' 
+#' @param rng_kind The random number generation algorithm to use. Takes values
+#' allowed by [RNGkind()]. Defaults to `"Wichmann-Hill"`, which is slower than
+#' other generators but is much less likely to produce duplicate values.
 #' @param p_na Proportion of values set to `NA`; defaults to `NA`, meaning that
 #' the proportions present in any generated data will roughly match those of the
 #' source data.
@@ -52,6 +55,7 @@
 ### stubble_ctrl() ###
 #' @export
 stubble_ctrl <- function(
+  rng_kind = "Wichmann-Hill",
   p_na = NA_real_, emp_sw = 0.1,
   tail_exc = 0.025, fuzz_spl = TRUE, fuzz_spl_sca = 0.05,
   n_exc = 10, p_exc = 0.05, fuzz_samp = TRUE, drop_lev = TRUE,

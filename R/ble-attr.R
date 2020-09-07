@@ -25,6 +25,12 @@ ble_attr <- function(x, elements, index = 1L, ctrl = list(), ...){
   method <- x[["sim"]][["method"]]
   elements <- if (missing(elements)) x[["n"]] else elements
   
+  ## Set RNG ##
+  rng_kind <- ctrl[["rng_kind"]]
+  old_kind <- RNGkind()[1]
+  on.exit(RNGkind(kind = old_kind))
+  RNGkind(kind = rng_kind)
+  
   ## Generate syn_col ##
   syn_col <- switch(method,
                     sample = ble_sample(x = x, elements = elements, ctrl = ctrl),
