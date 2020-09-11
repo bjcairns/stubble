@@ -80,7 +80,7 @@ ble_spline_.Date <- function(dtype, syn_col, ctrl){
   syn_col <- round(syn_col)
 
   ## Coerce to Date ##
-  syn_col <- as.Date(syn_col, origin = "1970-01-01", tz = ctrl[["dttm_tz"]])
+  syn_col <- as.Date(syn_col, origin = "1970-01-01")
 
   ## Output ##
   return(syn_col)
@@ -110,7 +110,7 @@ ble_spline_.IDate <- function(dtype, syn_col, ctrl){
   ## Attempt Coercion to IDate ##
   syn_col <- if (is.installed.package("data.table")) {
 
-    data.table::as.IDate(syn_col, origin = "1970-01-01", tz = ctrl[["dttm_tz"]])
+    data.table::as.IDate(syn_col, origin = "1970-01-01")
 
   } else {
 

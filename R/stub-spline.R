@@ -19,6 +19,7 @@
 #' @importFrom graphics hist
 #' @importFrom stats approxfun quantile sd
 
+
 ### ToDo ###
 # - Create a method for ordered factors.
 
@@ -133,7 +134,7 @@ stub_spline.POSIXct <- function(col, ctrl){
 stub_spline.POSIXlt <- function(col, ctrl){
 
   ## Coerce to POSIXct ##
-  col <- as.POSIXct(col)
+  col <- as.POSIXct(col, tz = ctrl[["dttm_tz"]])
 
   ## Use POSIXct Method ##
   out <- stub_spline.POSIXct(col = col, ctrl = ctrl)

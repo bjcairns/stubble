@@ -25,7 +25,7 @@ stub_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ..
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)
 
-  ## Data extraction
+  ## Data Extraction ##
   p_na <- ctrl[["p_na"]]
 
   ## Class ##
@@ -41,7 +41,7 @@ stub_attr <- function(col, elements = length(col), index = 1L, ctrl = list(), ..
   sim <- append(list(method = method), sim)
 
   ## Missing Values ##
-  p_na <- ifelse(is.na(p_na), sum(is.na(col))/length(col), p_na)
+  p_na <- if (is.na(p_na)) sum(is.na(col))/length(col) else p_na
 
   ## Form Output ##
   out <- list(

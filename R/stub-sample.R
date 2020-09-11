@@ -29,7 +29,7 @@ stub_sample <- function(col, ...){
 stub_sample.default <- function(col, ctrl){
   
   ## Warning ##
-  warning("No method exists for vector of class: ", class(col)[1])
+  .warning_no_method(col)
   
   ## Form Output ##
   sim <- list(
@@ -121,13 +121,14 @@ stub_sample.IDate <- function(col, ctrl){
   sim <- NextMethod(col)
   
   ## Coerce to IDate ##
-  if("data.table" %in% rownames(installed.packages())){
+  if(is.installed.package("data.table")){
     
     sim[["values"]] <- data.table::as.IDate(sim[["values"]])
     
   } else {
     
-    warning("Package 'data.table' not found. IDate will be converted to Date.")
+    # Warning #
+    .warning_coercion(col)
     
   }
   
@@ -161,13 +162,14 @@ stub_sample.integer64 <- function(col, ctrl){
   sim <- stub_sample.double(col = col, ctrl = ctrl)
   
   ## Coerce to Integer64 ##
-  if("bit64" %in% rownames(installed.packages())){
+  if(is.installed.package("bit64")){
     
     sim[["values"]] <- bit64::as.integer64(sim[["values"]])
     
   } else {
     
-    warning("Package 'bit64' not found. integer64 will be converted to double.")
+    # Warning #
+    .warning_coercion(col)
     
   }
   
@@ -197,7 +199,7 @@ stub_sample.logical <- function(col, ctrl){
 #' @noRd
 stub_sample.ordered <- function(col, ctrl){
   
-  ## Use Factor Method ##
+  ## Use factor Method ##
   sim <- NextMethod(col)
   
   ## Coerce to Ordered Factor ##
