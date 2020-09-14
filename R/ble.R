@@ -22,7 +22,7 @@
 #' An object of the same class used in [`stub`].
 #' 
 #' @seealso 
-#' [stubble_control]
+#' [stubble_ctrl]
 #' 
 #' @examples
 #' ble(stub(iris))
@@ -40,16 +40,20 @@
 
 ### ToDo ###
 # - Pass all ble_() methods through ble_.list() to avoid code replication.
+# - Force the use of `method` = "agnostic", where this is present in the stub
+#   object. Print a warning in such cases.
 
 
 ### ble() ###
 #' @export
-ble <- function(stub, rows, ctrl = list(), ...){
+ble <- function(stub, rows, method, ctrl = list(), ...){
   
   ### Data Extraction ###
   dtype <- stub[["dtype"]]
   vars <- stub[["vars"]]
   old_ctrl <- stub[["ctrl"]]
+  if (missing(rows)) rows <- sapply(vars, `[[`, "n")
+  if (missing(method)) method <- sapply(lapply(vars, `[[`, "sim"), `[[`, "method")
   
   ## Control Params ## - Got to be a one-liner for this!
   ctrl <- c(
@@ -61,14 +65,12 @@ ble <- function(stub, rows, ctrl = list(), ...){
   ## Create Index ##
   index <- seq_along(vars)
   
-  ### Rows ###
-  if (missing(rows)) rows <- sapply(vars, `[[`, "n")
-  
   ## Apply ble_attr() ##
   l <- mapply(
     FUN = ble_attr,
     x = vars,
     elements = rows,
+    method = method,
     index = index,
     MoreArgs = list(ctrl = ctrl, ...),
     SIMPLIFY = FALSE,
@@ -95,7 +97,7 @@ ble_ <- function(dtype, ...){
 
 
 ### ble_.default() ###
-#' @noRd
+#' @export
 ble_.default <- function(dtype, ...){
   
   ## Error ##
@@ -105,7 +107,7 @@ ble_.default <- function(dtype, ...){
 
 
 ### ble_.data.frame() ###
-#' @noRd
+#' @export
 ble_.data.frame <- function(dtype, l){
   
   ## Coerce to data.frame ##
@@ -118,7 +120,7 @@ ble_.data.frame <- function(dtype, l){
 
 
 ### ble_.data.table() ###
-#' @noRd
+#' @export
 ble_.data.table <- function(dtype, l){
   
   ## Coerce to data.table ##
@@ -142,7 +144,7 @@ ble_.data.table <- function(dtype, l){
 
 
 ### ble_.list() ###
-#' @noRd
+#' @export
 ble_.list <- function(dtype, l){
   
   ## Output ##
@@ -152,7 +154,7 @@ ble_.list <- function(dtype, l){
 
 
 ### ble_.tbl_df() ###
-#' @noRd
+#' @export
 ble_.tbl_df <- function(dtype, l){
   
   ## Coerce to tbl_df ##

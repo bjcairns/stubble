@@ -34,7 +34,7 @@ stub_spline <- function(col, ...){
 
 
 ### stub_spline.default() ###
-#' @noRd
+#' @export
 stub_spline.default <- function(col, ...){
 
   ## Warning ##
@@ -56,7 +56,7 @@ stub_spline.default <- function(col, ...){
 
 
 ### stub_spline.Date() ###
-#' @noRd
+#' @export
 stub_spline.Date <- function(col, ctrl){
 
   ## Coerce to Integer ##
@@ -72,7 +72,7 @@ stub_spline.Date <- function(col, ctrl){
 
 
 ### stub_spline.double() ###
-#' @noRd
+#' @export
 stub_spline.double <- function(col, ctrl){
 
   ## Define Spline Function ##
@@ -85,7 +85,7 @@ stub_spline.double <- function(col, ctrl){
 
 
 ### stub_spline.integer() ###
-#' @noRd
+#' @export
 stub_spline.integer <- function(col, ctrl){
 
   ## Define Spline Function ##
@@ -98,7 +98,7 @@ stub_spline.integer <- function(col, ctrl){
 
 
 ### stub_spline.integer64() ###
-#' @noRd
+#' @export
 stub_spline.integer64 <- function(col, ctrl){
 
   ## Coerce to Double ##
@@ -114,7 +114,7 @@ stub_spline.integer64 <- function(col, ctrl){
 
 
 ### stub_spline.POSIXct() ###
-#' @noRd
+#' @export
 stub_spline.POSIXct <- function(col, ctrl){
 
   ## Coerce to Integer ##
@@ -130,7 +130,7 @@ stub_spline.POSIXct <- function(col, ctrl){
 
 
 ### stub_spline.POSIXlt() ###
-#' @noRd
+#' @export
 stub_spline.POSIXlt <- function(col, ctrl){
 
   ## Coerce to POSIXct ##

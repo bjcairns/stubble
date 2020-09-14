@@ -23,7 +23,7 @@ ble_agnostic <- function(dtype, ...){
 
 
 ### ble_agnostic.default() ###
-#' @noRd
+#' @export
 ble_agnostic.default <- function(dtype, elements, ...){
   
   ## Warning ##
@@ -39,7 +39,7 @@ ble_agnostic.default <- function(dtype, elements, ...){
 
 
 ### ble_agnostic.character() ###
-#' @noRd
+#' @export
 ble_agnostic.character <- function(dtype, elements, ctrl){
   
   ## Checks ##
@@ -128,7 +128,7 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.Date() ###
-#' @noRd
+#' @export
 ble_agnostic.Date <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
@@ -151,7 +151,7 @@ ble_agnostic.Date <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.double() ###
-#' @noRd
+#' @export
 ble_agnostic.double <- function(dtype, elements, ctrl){
   
   ## Draw From Uniform Distribution ##
@@ -170,7 +170,7 @@ ble_agnostic.double <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.factor() ###
-#' @noRd
+#' @export
 ble_agnostic.factor <- function(dtype, elements, ctrl){
   
   ## Checks ##
@@ -206,7 +206,7 @@ ble_agnostic.factor <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.IDate() ###
-#' @noRd
+#' @export
 ble_agnostic.IDate <- function(dtype, elements, ctrl){
   
   ## Use Date Method ##
@@ -231,7 +231,7 @@ ble_agnostic.IDate <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.integer() ###
-#' @noRd
+#' @export
 ble_agnostic.integer <- function(dtype, elements, ctrl){
   
   ## Checks ##
@@ -266,7 +266,7 @@ ble_agnostic.integer <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.integer64() ###
-#' @noRd
+#' @export
 ble_agnostic.integer64 <- function(dtype, elements, ctrl){
   
   ## Use double Method ##
@@ -291,7 +291,7 @@ ble_agnostic.integer64 <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.logical() ###
-#' @noRd
+#' @export
 ble_agnostic.logical <- function(dtype, elements, ctrl){
   
   ## Checks ##
@@ -318,7 +318,7 @@ ble_agnostic.logical <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.ordered() ###
-#' @noRd
+#' @export
 ble_agnostic.ordered <- function(dtype, elements, ctrl){
   
   ## Use factor Method ##
@@ -334,7 +334,7 @@ ble_agnostic.ordered <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.POSIXct() ###
-#' @noRd
+#' @export
 ble_agnostic.POSIXct <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
@@ -357,7 +357,7 @@ ble_agnostic.POSIXct <- function(dtype, elements, ctrl){
 
 
 ### ble_agnostic.POSIXlt() ###
-#' @noRd
+#' @export
 ble_agnostic.POSIXlt <- function(dtype, elements, ctrl){
   
   ## Use POSIXct Method ##

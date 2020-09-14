@@ -4,44 +4,27 @@
 \alias{stubble}
 \alias{stubblise}
 \alias{stubblize}
-\alias{stubblise.default}
-\alias{stubblise.data.frame}
-\alias{stubblise.tbl_df}
-\alias{stubblise.data.table}
-\alias{stubblise.list}
-\title{Create simple synthetic data from a data frame-like objects}
+\title{Create simple synthetic data from a data frame-like objects
+
+\code{stubblise()} (equivalently, \code{stubblize()}) generates synthetic (i.e.
+simulated) data to match the structure of a given data frame-like object
+(including data.frames, tibbles, data.tables, and lists). See also
+\link{stubble_ctrl} for information on user-modifiable parameters.}
 \usage{
-stubblise(x, ...)
+stubblise(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
 
-stubblize(x, ...)
-
-\method{stubblise}{default}(x, rows = nrow(x), method = "naive", control = list(), ...)
-
-\method{stubblise}{data.frame}(x, rows = nrow(x), method = "naive", control = list(), ...)
-
-\method{stubblise}{tbl_df}(x, rows = nrow(x), method = "naive", control = list(), ...)
-
-\method{stubblise}{data.table}(x, rows = nrow(x), method = "naive", control = list(), ...)
-
-\method{stubblise}{list}(x, rows = nrow(x), method = "naive", control = list(), ...)
+stubblize(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
 }
 \arguments{
 \item{x}{the data frame-like object to emulate. Can have 0 rows.}
 
-\item{...}{named individual control parameters, which take precedence over
-those in the \code{control} list.}
-
 \item{rows}{the number of rows to generate.}
 
-\item{method}{the method to use in simulating data. Possible values can be
-\code{"empirical"} or \code{"naive"}. When set to \code{"empirical"} (default) simulated
-data will mimmic the empirical distributions present within the data. When
-set to \code{"naive"} simulated data will share some properties with the source
-data, such as the range or possible values, but will be distributed
-uniformally.}
-
-\item{control}{a named list of control parameters for generating the
+\item{ctrl}{a named list of control parameters for generating the
 synthetic data. See \link{control}.}
+
+\item{...}{named individual control parameters, which take precedence over
+those in the \code{control} list.}
 }
 \value{
 A data frame-like object with the same class as \code{x} (unless \code{x} is a
@@ -51,11 +34,12 @@ a standard vector type will have \code{NA} for all rows and the column type will
 be \code{numeric}, i.e. not the original vector type.
 }
 \description{
+Create simple synthetic data from a data frame-like objects
+
 \code{stubblise()} (equivalently, \code{stubblize()}) generates synthetic (i.e.
 simulated) data to match the structure of a given data frame-like object
 (including data.frames, tibbles, data.tables, and lists). See also
-\link{gen_col}, which does the work, and \link{control} for information on
-user-modifiable parameters.
+\link{stubble_ctrl} for information on user-modifiable parameters.
 }
 \details{
 One intended use of \code{stubblise()} is in generating test data for R

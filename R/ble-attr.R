@@ -16,13 +16,14 @@
 
 ### ble_attr() ###
 #' @noRd
-ble_attr <- function(x, elements, index = 1L, ctrl = list(), ...){
+ble_attr <- function(x, elements, method, index = 1L, ctrl = list(), ...){
   
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)
   
   ## Extract Params ##
-  method <- x[["sim"]][["method"]]
+  dtype <- x[["dtype"]]
+  if (missing(method)) method <- x[["sim"]][["method"]]
   elements <- if (missing(elements)) x[["n"]] else elements
   
   ## Set RNG ##
@@ -33,6 +34,7 @@ ble_attr <- function(x, elements, index = 1L, ctrl = list(), ...){
   
   ## Generate syn_col ##
   syn_col <- switch(method,
+                    agnostic = ble_agnostic(dtype = dtype, elements = elements, ctrl = ctrl),
                     sample = ble_sample(x = x, elements = elements, ctrl = ctrl),
                     spline = ble_spline(x = x, elements = elements, ctrl = ctrl))
   

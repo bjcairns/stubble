@@ -4,7 +4,7 @@
 \alias{ble}
 \title{Generate a synthetic data from a stub precursor object}
 \usage{
-ble(stub, rows, ctrl = list(), ...)
+ble(stub, rows, method, ctrl = list(), ...)
 }
 \arguments{
 \item{stub}{the stub object which synthetic data is generated.}
@@ -36,7 +36,7 @@ ble(stub(iris), rows = 10)
 
 }
 \seealso{
-\link{stubble_control}
+\link{stubble_ctrl}
 }
 \concept{ecdf}
 \concept{empirical}

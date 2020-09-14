@@ -63,7 +63,7 @@ ble_spline_ <- function(dtype, ...){
 
 
 ### ble_spline_.default() ###
-#' @noRd
+#' @export
 ble_spline_.default <- function(dtype, ...){
 
   ## Error ##
@@ -73,7 +73,7 @@ ble_spline_.default <- function(dtype, ...){
 
 
 ### ble_spline_.Date() ###
-#' @noRd
+#' @export
 ble_spline_.Date <- function(dtype, syn_col, ctrl){
 
   ## Round ##
@@ -88,7 +88,7 @@ ble_spline_.Date <- function(dtype, syn_col, ctrl){
 }
 
 ### ble_spline_.double() ###
-#' @noRd
+#' @export
 ble_spline_.double <- function(dtype, syn_col, ctrl){
 
   ## Coerce to double ##
@@ -101,7 +101,7 @@ ble_spline_.double <- function(dtype, syn_col, ctrl){
 
 
 ### ble_spline_.IDate() ###
-#' @noRd
+#' @export
 ble_spline_.IDate <- function(dtype, syn_col, ctrl){
 
   ## Round ##
@@ -128,7 +128,7 @@ ble_spline_.IDate <- function(dtype, syn_col, ctrl){
 }
 
 ### ble_spline_.integer() ###
-#' @noRd
+#' @export
 ble_spline_.integer <- function(dtype, syn_col, ctrl){
 
   ## Round ##
@@ -144,7 +144,7 @@ ble_spline_.integer <- function(dtype, syn_col, ctrl){
 
 
 ### ble_spline_.integer64() ###
-#' @noRd
+#' @export
 ble_spline_.integer64 <- function(dtype, syn_col, ctrl){
 
   ## Round ##
@@ -172,7 +172,7 @@ ble_spline_.integer64 <- function(dtype, syn_col, ctrl){
 
 
 ### ble_spline_.POSIXct() ###
-#' @noRd
+#' @export
 ble_spline_.POSIXct <- function(dtype, syn_col, ctrl){
 
   ## Round ##
@@ -188,7 +188,7 @@ ble_spline_.POSIXct <- function(dtype, syn_col, ctrl){
 
 
 ### ble_spline_.POSIXlt() ###
-#' @noRd
+#' @export
 ble_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
 
   ## Round ##

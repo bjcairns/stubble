@@ -53,7 +53,7 @@ dtype0 <- function(x, ...){
 
 
 ### dtype0.default() ###
-#' @noRd
+#' @export
 dtype0.default <- function(x){
   
   ## Error ##
@@ -63,7 +63,7 @@ dtype0.default <- function(x){
 
 
 ### dtype0.character() ###
-#' @noRd
+#' @export
 dtype0.character <- function(x){
   
   ## 0-Length Vector ##
@@ -76,7 +76,7 @@ dtype0.character <- function(x){
 
 
 ### dtype0.data.frame() ###
-#' @noRd
+#' @export
 dtype0.data.frame <- function(x){
   
   ## 0-Row data.frame ##
@@ -89,7 +89,7 @@ dtype0.data.frame <- function(x){
 
 
 ### dtype0.data.table() ###
-#' @noRd
+#' @export
 dtype0.data.table <- function(x){
   
   ## Create Object ##
@@ -115,7 +115,7 @@ dtype0.data.table <- function(x){
 
 
 ### dtype0.Date() ###
-#' @noRd
+#' @export
 dtype0.Date <- function(x){
   
   ## 0-Length Vector ##
@@ -128,7 +128,7 @@ dtype0.Date <- function(x){
 
 
 ### dtype0.double() ###
-#' @noRd
+#' @export
 dtype0.double <- function(x){
   
   ## 0-Length Vector ##
@@ -141,7 +141,7 @@ dtype0.double <- function(x){
 
 
 ### dtype0.factor() ###
-#' @noRd
+#' @export
 dtype0.factor <- function(x){
   
   ## 0-Length Vector ##
@@ -154,7 +154,7 @@ dtype0.factor <- function(x){
 
 
 ### dtype0.IDate() ###
-#' @noRd
+#' @export
 dtype0.IDate <- function(x){
   
   ## 0-Length Vector ##
@@ -175,7 +175,7 @@ dtype0.IDate <- function(x){
 
 
 ### dtype0.integer() ###
-#' @noRd
+#' @export
 dtype0.integer <- function(x){
   
   ## 0-Length Vector ##
@@ -188,7 +188,7 @@ dtype0.integer <- function(x){
 
 
 ### dtype0.integer64() ###
-#' @noRd
+#' @export
 dtype0.integer64 <- function(x){
   
   ## Create Object ##
@@ -214,7 +214,7 @@ dtype0.integer64 <- function(x){
 
 
 ### dtype0.list() ###
-#' @noRd
+#' @export
 dtype0.list <- function(x){
   
   ## 0-Length List ##
@@ -227,7 +227,7 @@ dtype0.list <- function(x){
 
 
 ### dtype0.logical() ###
-#' @noRd
+#' @export
 dtype0.logical <- function(x){
   
   ## 0-Length List ##
@@ -240,7 +240,7 @@ dtype0.logical <- function(x){
 
 
 ### dtype0.ordered() ###
-#' @noRd
+#' @export
 dtype0.ordered <- function(x){
   
   ## 0-Length Vector ##
@@ -253,7 +253,7 @@ dtype0.ordered <- function(x){
 
 
 ### dtype0.POSIXct() ###
-#' @noRd
+#' @export
 dtype0.POSIXct <- function(x){
   
   ## 0-Length Vector ##
@@ -266,7 +266,7 @@ dtype0.POSIXct <- function(x){
 
 
 ### dtype0.POSIXlt() ###
-#' @noRd
+#' @export
 dtype0.POSIXlt <- function(x){
   
   ## 0-Length Vector ##
@@ -279,7 +279,7 @@ dtype0.POSIXlt <- function(x){
 
 
 ### dtype0.tbl_df() ###
-#' @noRd
+#' @export
 dtype0.tbl_df <- function(x){
   
   

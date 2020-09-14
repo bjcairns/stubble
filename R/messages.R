@@ -20,7 +20,7 @@
 
 
 ### .warning_coercion.data.table() ###
-#' @noRd
+#' @export
 .warning_coercion.data.table <- function(x){
   
   ## Message ##
@@ -37,7 +37,7 @@
 
 
 ### .warning_coercion.IDate() ###
-#' @noRd
+#' @export
 .warning_coercion.IDate <- function(x){
   
   ## Message ##
@@ -54,7 +54,7 @@
 
 
 ### .warning_coercion.integer64() ###
-#' @noRd
+#' @export
 .warning_coercion.integer64 <- function(x){
   
   ## Message ##
@@ -71,7 +71,7 @@
 
 
 ### .warning_coercion.tbl_df() ###
-#' @noRd
+#' @export
 .warning_coercion.tbl_df <- function(x){
   
   ## Message ##

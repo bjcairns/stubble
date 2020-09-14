@@ -25,7 +25,7 @@ stub_sample <- function(col, ...){
 
 
 ### stub_sample.default() ###
-#' @noRd
+#' @export
 stub_sample.default <- function(col, ctrl){
   
   ## Warning ##
@@ -44,7 +44,7 @@ stub_sample.default <- function(col, ctrl){
 
 
 ### stub_sample.character() ###
-#' @noRd
+#' @export
 stub_sample.character <- function(col, ctrl){
   
   ## Extract Parameters ##
@@ -57,7 +57,7 @@ stub_sample.character <- function(col, ctrl){
 
 
 ### stub_sample.Date() ###
-#' @noRd
+#' @export
 stub_sample.Date <- function(col, ctrl){
   
   ## Extract Value Labels ##
@@ -76,7 +76,7 @@ stub_sample.Date <- function(col, ctrl){
 
 
 ### stub_sample.double() ###
-#' @noRd
+#' @export
 stub_sample.double <- function(col, ctrl){
   
   ## Extract Parameters ##
@@ -92,7 +92,7 @@ stub_sample.double <- function(col, ctrl){
 
 
 ### stub_sample.factor() ###
-#' @noRd
+#' @export
 stub_sample.factor <- function(col, ctrl){
   
   ## Extract Value Labels ##
@@ -114,7 +114,7 @@ stub_sample.factor <- function(col, ctrl){
 
 
 ### stub_sample.IDate() ###
-#' @noRd
+#' @export
 stub_sample.IDate <- function(col, ctrl){
   
   ## Use Date Method ##
@@ -139,7 +139,7 @@ stub_sample.IDate <- function(col, ctrl){
 
 
 ### stub_sample.integer() ###
-#' @noRd
+#' @export
 stub_sample.integer <- function(col, ctrl){
   
   ## Extract Parameters ##
@@ -155,7 +155,7 @@ stub_sample.integer <- function(col, ctrl){
 
 
 ### stub_sample.integer64() ###
-#' @noRd
+#' @export
 stub_sample.integer64 <- function(col, ctrl){
   
   ## Extract Parameters ##
@@ -180,7 +180,7 @@ stub_sample.integer64 <- function(col, ctrl){
 
 
 ### stub_sample.logical() ###
-#' @noRd
+#' @export
 stub_sample.logical <- function(col, ctrl){
   
   ## Extract Parameters ##
@@ -196,7 +196,7 @@ stub_sample.logical <- function(col, ctrl){
 
 
 ### stub_sample.ordered() ###
-#' @noRd
+#' @export
 stub_sample.ordered <- function(col, ctrl){
   
   ## Use factor Method ##
@@ -212,7 +212,7 @@ stub_sample.ordered <- function(col, ctrl){
 
 
 ### stub_sample.POSIXct() ###
-#' @noRd
+#' @export
 stub_sample.POSIXct <- function(col, ctrl){
   
   ## Extract Parameters ##
@@ -228,7 +228,7 @@ stub_sample.POSIXct <- function(col, ctrl){
 
 
 ### stub_sample.POSIXlt() ###
-#' @noRd
+#' @export
 stub_sample.POSIXlt <- function(col, ctrl){
   
   ## Coerce to POSIXct ##

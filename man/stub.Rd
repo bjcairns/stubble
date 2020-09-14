@@ -4,7 +4,7 @@
 \alias{stub}
 \title{Generate a stub object from which synthetic data may be generated}
 \usage{
-stub(x, rows = lengths(x), ctrl = list(), ...)
+stub(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
 }
 \arguments{
 \item{x}{the vector from which the type of the synthetic data is taken.}
@@ -50,7 +50,7 @@ stub(iris, rows = 10)
 
 }
 \seealso{
-\link{stubble_control}
+\link{stubble_ctrl}
 }
 \concept{ecdf}
 \concept{empirical}
