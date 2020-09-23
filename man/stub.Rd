@@ -45,8 +45,8 @@ currently captured by \code{stub()} and will not be reproduced in any data
 generated from the resulting \code{stub} object.
 }
 \examples{
-stub(iris)
-stub(iris, rows = 10)
+stub(penguins_ext)
+stub(penguins_ext, rows = 10)
 
 }
 \seealso{

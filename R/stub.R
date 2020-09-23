@@ -38,8 +38,8 @@
 #' [stubble_ctrl]
 #'
 #' @examples
-#' stub(iris)
-#' stub(iris, rows = 10)
+#' stub(penguins_ext)
+#' stub(penguins_ext, rows = 10)
 #'
 #' @concept empirical
 #' @concept ecdf

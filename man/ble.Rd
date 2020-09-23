@@ -31,8 +31,8 @@ methods for the \code{list} and \code{data.frame} base R data types, in addition
 \emph{tibble} packages are installed.
 }
 \examples{
-ble(stub(iris))
-ble(stub(iris), rows = 10)
+ble(stub(penguins_ext))
+ble(stub(penguins_ext), rows = 10)
 
 }
 \seealso{
