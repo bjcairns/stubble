@@ -122,7 +122,7 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
   }
   
   ## Output ##
-  return(syn_col)
+  return(as.character(syn_col))
   
 }
 

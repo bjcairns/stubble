@@ -5,12 +5,12 @@ use_seed <- 237892342L
 
 # Synthesise a reference data.frame
 set.seed(use_seed)
-iris_stbl_df <- stubblise(iris, rows = 100L)
+penguins_stbl_df <- stubblise(penguins, rows = 100L)
 
 test_that("stubblise maintains structure", {
 
-  expect_identical(lapply(iris, names), lapply(stubblise(iris), names))
-  expect_identical(lapply(iris, class), lapply(stubblise(iris), class))
+  expect_identical(lapply(penguins, names), lapply(stubblise(penguins), names))
+  expect_identical(lapply(penguins, class), lapply(stubblise(penguins), class))
 
   expect_identical(lapply(mtcars, names), lapply(stubblise(mtcars), names))
   expect_identical(lapply(mtcars, class), lapply(stubblise(mtcars), class))
@@ -19,19 +19,19 @@ test_that("stubblise maintains structure", {
 
 test_that("stubblise can return data with 0 rows or many",{
 
-  iris_stbl0 <- stubblise(iris, rows = 0L)
+  penguins_stbl0 <- stubblise(penguins, rows = 0L)
 
-  expect_identical(lapply(iris, names), lapply(iris_stbl0, names))
-  expect_identical(lapply(iris, class), lapply(iris_stbl0, class))
+  expect_identical(names(penguins), names(penguins_stbl0))
+  expect_identical(lapply(penguins, class), lapply(penguins_stbl0, class))
 
   expect_true(
-    dim(iris_stbl0)[1] == 0L
+    dim(penguins_stbl0)[1] == 0L
   )
 
   nr <- as.integer(Sys.time()) %% 100 + 1
-  iris_stbln <- stubblise(iris, rows = nr)
+  penguins_stbln <- stubblise(penguins, rows = nr)
   expect_true(
-    dim(iris_stbln)[1] == nr
+    dim(penguins_stbln)[1] == nr
   )
 
 })
@@ -40,11 +40,11 @@ test_that("stubblise handles tibbles", {
 
   skip_if_not_installed("tibble")
 
-  iris_tbl_df <- tibble::as_tibble(iris)
+  penguins_tbl_df <- tibble::as_tibble(penguins)
   set.seed(use_seed)
   expect_identical(
-    iris_stbl_df,
-    as.data.frame(stubblise(iris_tbl_df, rows = 100L))
+    penguins_stbl_df,
+    as.data.frame(stubblise(penguins_tbl_df, rows = 100L))
   )
 
 })
@@ -52,11 +52,11 @@ test_that("stubblise handles tibbles", {
 test_that("stubblise handles data.tables", {
 
   # data.tables
-  iris_dt <- data.table::as.data.table(iris)
+  penguins_dt <- data.table::as.data.table(penguins)
   set.seed(use_seed)
   expect_identical(
-    iris_stbl_df,
-    as.data.frame(stubblise(iris_dt, rows = 100L))
+    penguins_stbl_df,
+    as.data.frame(stubblise(penguins_dt, rows = 100L))
   )
 
 })
@@ -64,22 +64,22 @@ test_that("stubblise handles data.tables", {
 test_that("stubblise handles lists", {
 
   # Standard list
-  iris_list <- as.list(iris)
+  penguins_list <- as.list(penguins)
 
   # List of vectors without identical lengths
-  iris_list_uneven <- iris_list
-  iris_list_uneven[[2]] <- iris_list_uneven[[2]][1:10]
+  penguins_list_uneven <- penguins_list
+  penguins_list_uneven[[2]] <- penguins_list_uneven[[2]][1:10]
 
   set.seed(use_seed)
   expect_identical(
-    iris_stbl_df,
-    as.data.frame(stubblise(iris_list, rows = 100L))
+    penguins_stbl_df,
+    as.data.frame(stubblise(penguins_list, rows = 100L))
   )
 
   set.seed(use_seed)
   expect_identical(
-    iris_stbl_df,
-    as.data.frame(stubblise(iris_list_uneven, rows = 100L))
+    penguins_stbl_df,
+    as.data.frame(stubblise(penguins_list_uneven, rows = 100L))
   )
 
 })
@@ -87,26 +87,26 @@ test_that("stubblise handles lists", {
 test_that("stubblise correctly handles control lists", {
 
   set.seed(2342343)
-  syn_iris_1 <- stubblise(
-    iris,
-    fct_lvls = list(levels(iris$Species))
+  syn_penguins_1 <- stubblise(
+    penguins,
+    fct_lvls = list(levels(penguins$species))
   )
 
   set.seed(2342343)
-  syn_iris_2 <- stubblise(
-    iris,
-    ctrl = list(fct_lvls = list(levels(iris$Species)))
+  syn_penguins_2 <- stubblise(
+    penguins,
+    ctrl = list(fct_lvls = list(levels(penguins$species)))
   )
 
   set.seed(2342343)
-  syn_iris_3 <- stubblise(
-    iris,
+  syn_penguins_3 <- stubblise(
+    penguins,
     ctrl = list(fct_lvls = list(letters[1:3])),
-    fct_lvls = list(levels(iris$Species))
+    fct_lvls = list(levels(penguins$species))
   )
 
-  expect_identical(syn_iris_1, syn_iris_2)
-  expect_identical(syn_iris_1, syn_iris_3)
+  expect_identical(syn_penguins_1, syn_penguins_2)
+  expect_identical(syn_penguins_1, syn_penguins_3)
 
 })
 
