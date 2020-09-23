@@ -95,13 +95,13 @@ test_that("stubblise correctly handles control lists", {
   set.seed(2342343)
   syn_iris_2 <- stubblise(
     iris,
-    control = list(fct_lvls = list(levels(iris$Species)))
+    ctrl = list(fct_lvls = list(levels(iris$Species)))
   )
 
   set.seed(2342343)
   syn_iris_3 <- stubblise(
     iris,
-    control = list(fct_lvls = list(letters[1:3])),
+    ctrl = list(fct_lvls = list(letters[1:3])),
     fct_lvls = list(levels(iris$Species))
   )
 
