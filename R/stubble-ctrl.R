@@ -39,7 +39,7 @@
 #' dropped from simlated factors and ordered factors. Defauls to `TRUE`
 #' @param unique Single logical value or logical vector indicating whether
 #' synthetic values should be unique within the column. When a vector, the
-#' relevant element is chosen by the `index` argument to [gen_col].
+#' relevant element is chosen by the `index` argument to [`ble_agnostic`].
 #' @param int_min Minmium values for integer generation.
 #' @param int_max Maximum values for integer generation.
 #' @param int_list An integer vector of allowed values for integer generation.
@@ -81,7 +81,9 @@
 #' (usually equal to 2) is greater than or equal to the `elements` argument
 #' of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
 #' @param date_origin The reference date for generated dates and times.
+#' @param date_min Min value for generated dates.
 #' @param date_max Max value for generated dates.
+#' @param dttm_min Min value for generated dates.
 #' @param dttm_max Max value for generated date-times.
 #' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but
 #' [Sys.timezone()] may be more appropriate for some users.
@@ -116,7 +118,10 @@ stubble_ctrl <- function(
   chr_sep = "", chr_try_unique = FALSE, chr_try_unique_attempts = 10L, chr_duplicated_nmax = NA,
   fct_lvls = list(letters[1:4]), fct_use_lvls = NULL, fct_force_unique = FALSE,
   lgl_force_unique = FALSE,
-  date_origin = "1970-01-01", date_max = Sys.Date(), dttm_max = Sys.time(), dttm_tz = "UTC",
+  date_origin = "1970-01-01",
+  date_min = date_origin, date_max = Sys.Date(),
+  dttm_min = date_origin, dttm_max = Sys.time(),
+  dttm_tz = "UTC",
   old_ctrl = list(),
   index = NA_integer_,
   ...

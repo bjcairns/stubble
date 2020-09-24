@@ -137,6 +137,19 @@ stub_method.integer64 <- function(col, ctrl){
 }
 
 
+### stub_method.ITime() ###
+#' @export
+stub_method.ITime <- function(col, ctrl){
+  
+  ## Determine Method ##
+  method <- stub_method_(col = col, ctrl = ctrl)
+  
+  ## Output ##
+  return(method)
+  
+}
+
+
 ### stub_method.logical() ###
 #' @export
 stub_method.logical <- function(col, ctrl){

@@ -7,8 +7,10 @@
 #' 
 #' @param stub the stub object which synthetic data is generated.
 #' @param rows the number of elements to generate.
+#' @param method the method to use in the generation of synthetic data. Must be
+#' one of `"agnostic"` (default) or `"empirical"`.
 #' @param ctrl a named list of control parameters for generating the synthetic
-#' data. See [ctrl].
+#' data. See [`stubble_ctrl`].
 #' @param ... named individual control parameters, which take precedence over
 #' those in the `ctrl` list.
 #'

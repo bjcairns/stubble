@@ -213,9 +213,9 @@ dtype0.integer64 <- function(x){
 }
 
 
-### dtype.ITime() ###
+### dtype0.ITime() ###
 #' @export
-dtype.ITime <- function(x){
+dtype0.ITime <- function(x){
   
   ## Create Object ##
   v <- if(is.installed.package("data.table")) {

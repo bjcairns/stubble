@@ -6,10 +6,9 @@
 
 
 ### Notes ###
-# - Use a combination of sample() and runif() to derive agnostic data from
-#   parameters embedded in stub list element. All values should be able to be
-#   overridden by user when passing ctrl parameters to ble().
-#   specified values in stubble_ctrl().
+# - Should ctrl params exist for dttm_min and date_min?
+# - IDates are currently passed to the integer method, whereas Dates are passed
+#   to the double method. This is correct, but will it confuse people?
 
 
 ### ble_agnostic() ###
@@ -27,7 +26,7 @@ ble_agnostic <- function(dtype, ...){
 ble_agnostic.default <- function(dtype, elements, ...){
   
   ## Warning ##
-  .warn_no_method(dtype)
+  .warning_no_method(dtype)
   
   ## Generate NA Data ##
   syn_col <- rep(NA_integer_, elements)
@@ -75,7 +74,7 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
     try_attempts <- try_attempts - 1
     
     syn_col_repl <- ble_agnostic.character(
-      ble = ble,
+      dtype = dtype,
       elements = ndups,
       ctrl = ctrl
     )
@@ -110,13 +109,17 @@ ble_agnostic.Date <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
-    int_min = 0L, int_max = as.integer(ctrl[["date_max"]]),
+    dbl_min = as.double(as.Date(ctrl[["date_min"]])),
+    dbl_max = as.double(as.Date(ctrl[["date_max"]])),
     old_ctrl = lapply(ctrl, list),
     index = 1L
   )
   
-  ## Use integer Method ##
-  syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
+  ## Use double Method ##
+  syn_col <- ble_agnostic.double(dtype = dtype, elements = elements, ctrl = ctrl)
+  
+  ## Round ##
+  syn_col <- round(syn_col)
   
   ## Coerce to Date ##
   syn_col <- as.Date(syn_col, origin = ctrl[["date_origin"]], tz = ctrl[["dttm_tz"]])
@@ -186,18 +189,30 @@ ble_agnostic.factor <- function(dtype, elements, ctrl){
 #' @export
 ble_agnostic.IDate <- function(dtype, elements, ctrl){
   
-  ## Use Date Method ##
-  syn_col <- NextMethod(dtype)
+  ## Redefine Control Parameters ##
+  ctrl <- stubble_ctrl(
+    int_min = as.integer(as.Date(ctrl[["date_min"]])),
+    int_max = as.integer(as.Date(ctrl[["date_max"]])),
+    old_ctrl = lapply(ctrl, list),
+    index = 1L
+  )
   
-  ## Coerce to IDate ##
+  ## Use integer Method ##
+  syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
+  
+  ## Attempt Coercion to IDate ##
   syn_col <- if (is.installed.package("data.table")){
     
+    # Coerce to IDate #
     data.table::as.IDate(syn_col, origin = ctrl[["date_origin"]])
     
   } else {
     
     # Warning #
     .warning_coercion(dtype)
+    
+    # Coerce to Date #
+    as.Date(syn_col, origin = ctrl[["date_origin"]])
     
   }
   
@@ -249,15 +264,53 @@ ble_agnostic.integer64 <- function(dtype, elements, ctrl){
   ## Use double Method ##
   syn_col <- ble_agnostic.double(dtype = dtype, elements = elements, ctrl = ctrl)
   
-  ## Coerce to integer64 ##
+  ## Round ##
+  syn_col <- round(syn_col)
+  
+  ## Attempt Coercion to integer64 ##
   syn_col <- if (is.installed.package("bit64")) {
     
-    bit64::as.integer64(round(syn_col))
+    # Coerce to integer64 #
+    bit64::as.integer64(syn_col)
     
   } else {
     
     # Warning #
     .warning_coercion(dtype)
+    
+  }
+  
+  ## Output ##
+  return(syn_col)
+  
+}
+
+
+### ble_agnostic.ITime() ###
+#' @export
+ble_agnostic.ITime <- function(dtype, elements, ctrl){
+  
+  ## Redefine Control Parameters ##
+  ctrl <- stubble_ctrl(
+    int_min = 0L,
+    int_max = 86399L,
+    old_ctrl = lapply(ctrl, list),
+    index = 1L
+  )
+  
+  ## Use integer Method ##
+  syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
+  
+  ## Attempt Coercion to ITime ##
+  syn_col <- if (is.installed.package("data.table")) {
+    
+    # Coerce to ITime #
+    data.table::as.ITime(syn_col)
+    
+  } else {
+    
+    # Coerce to POSIXct #
+    as.POSIXct(syn_col, origin = ctrl[["date_origin"]], tz = ctrl[["dttm_tz"]])
     
   }
   
@@ -316,7 +369,8 @@ ble_agnostic.POSIXct <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
-    dbl_min = 0, dbl_max = as.double(ctrl[["dttm_max"]]),
+    dbl_min = as.double(as.POSIXct(ctrl[["dttm_min"]], tz = ctrl[["dttm_tz"]])),
+    dbl_max = as.double(as.POSIXct(ctrl[["dttm_max"]], tz = ctrl[["dttm_tz"]])),
     old_ctrl = lapply(ctrl, list),
     index = 1L
   )

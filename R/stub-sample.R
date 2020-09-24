@@ -120,9 +120,10 @@ stub_sample.IDate <- function(col, ctrl){
   ## Use Date Method ##
   sim <- NextMethod(col)
   
-  ## Coerce to IDate ##
-  if(is.installed.package("data.table")){
+  ## Attempt Coercion to IDate ##
+  if (is.installed.package("data.table")) {
     
+    # Coerce to IDate #
     sim[["values"]] <- data.table::as.IDate(sim[["values"]])
     
   } else {
@@ -161,15 +162,45 @@ stub_sample.integer64 <- function(col, ctrl){
   ## Extract Parameters ##
   sim <- stub_sample.double(col = col, ctrl = ctrl)
   
-  ## Coerce to Integer64 ##
-  if(is.installed.package("bit64")){
+  ## Attempt Coercion to integer64 ##
+  if (is.installed.package("bit64")) {
     
+    # Coerce to Integer64 #
     sim[["values"]] <- bit64::as.integer64(sim[["values"]])
     
   } else {
     
     # Warning #
     .warning_coercion(col)
+    
+  }
+  
+  ## Output ##
+  return(sim)
+  
+}
+
+
+### stub_sample.ITime() ###
+#' @export
+stub_sample.ITime <- function(col, ctrl){
+  
+  ## Extract Parameters ##
+  sim <- stub_sample.integer(col = col, ctrl = ctrl)
+  
+  ## Attempt Coercion to ITime ##
+  if (is.installed.package("data.table")) {
+    
+    # Coerce to ITime #
+    sim[["values"]] <- data.table::as.ITime(sim[["values"]])
+    
+  } else {
+    
+    # Warning #
+    .warning_coercion(col)
+    
+    # Coerce to POSIXct #
+    sim[["values"]] <- as.POSIXct(sim[["values"]], tz = ctrl[["dttm_tz"]])
     
   }
   

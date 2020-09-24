@@ -26,7 +26,7 @@ stubble_ctrl(
   chr_min = 0L,
   chr_max = 10L,
   chr_sym = list(c(letters, LETTERS, 0:9,
-    unlist(strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", "")))),
+    strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", "")[[1]])),
   chr_sep = "",
   chr_try_unique = FALSE,
   chr_try_unique_attempts = 10L,
@@ -36,7 +36,9 @@ stubble_ctrl(
   fct_force_unique = FALSE,
   lgl_force_unique = FALSE,
   date_origin = "1970-01-01",
+  date_min = date_origin,
   date_max = Sys.Date(),
+  dttm_min = date_origin,
   dttm_max = Sys.time(),
   dttm_tz = "UTC",
   old_ctrl = list(),
@@ -88,7 +90,7 @@ dropped from simlated factors and ordered factors. Defauls to \code{TRUE}}
 
 \item{unique}{Single logical value or logical vector indicating whether
 synthetic values should be unique within the column. When a vector, the
-relevant element is chosen by the \code{index} argument to \link{gen_col}.}
+relevant element is chosen by the \code{index} argument to \code{\link{ble_agnostic}}.}
 
 \item{int_min}{Minmium values for integer generation.}
 
@@ -150,7 +152,11 @@ of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise(
 
 \item{date_origin}{The reference date for generated dates and times.}
 
+\item{date_min}{Min value for generated dates.}
+
 \item{date_max}{Max value for generated dates.}
+
+\item{dttm_min}{Min value for generated dates.}
 
 \item{dttm_max}{Max value for generated date-times.}
 

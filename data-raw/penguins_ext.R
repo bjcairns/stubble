@@ -42,7 +42,7 @@ penguins_ext <- p[
 ]
 
 save(penguins_ext, 
-     file = "data/penguins_ext.RData", 
+     file = "data/penguins_ext.rda", 
      compress = "xz", 
      version = 2
 )

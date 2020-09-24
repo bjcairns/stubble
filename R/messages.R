@@ -70,6 +70,23 @@
 }
 
 
+### .warning_coercion.ITime() ###
+#' @export
+.warning_coercion.ITime <- function(x){
+  
+  ## Message ##
+  msg <- paste(
+    "Package 'data.table' not found.",
+    "'ITime' will be coerced to 'POSIXct'",
+    sep = "\n"
+  )
+  
+  ## Output ##
+  return(warning(msg, call. = FALSE))
+  
+}
+
+
 ### .warning_coercion.tbl_df() ###
 #' @export
 .warning_coercion.tbl_df <- function(x){

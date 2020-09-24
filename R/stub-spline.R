@@ -101,7 +101,7 @@ stub_spline.integer <- function(col, ctrl){
 #' @export
 stub_spline.integer64 <- function(col, ctrl){
 
-  ## Coerce to Double ##
+  ## Coerce to double ##
   col <- as.double(col)
 
   ## Define Spline Function ##
@@ -110,6 +110,22 @@ stub_spline.integer64 <- function(col, ctrl){
   ## Output ##
   return(out)
 
+}
+
+
+### stub_spline.ITime() ###
+#' @export
+stub_spline.ITime <- function(col, ctrl){
+  
+  ## Coerce to integer ##
+  col <- as.integer(col)
+  
+  ## Define Spline Function ##
+  out <- stub_spline_(col = col, ctrl = ctrl)
+  
+  ## Output ##
+  return(out)
+  
 }
 
 
