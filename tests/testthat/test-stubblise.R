@@ -1,5 +1,3 @@
-context("stubblise()")
-
 # seed for common results
 use_seed <- 237892342L
 
