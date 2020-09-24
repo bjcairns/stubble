@@ -52,35 +52,12 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
   try_attempts <- as.integer(ctrl[["chr_try_unique_attempts"]])
   dups_nmax <- as.integer(ctrl[["chr_duplicates_nmax"]])
   
-  # ## Sample Symbols ##
-  # syn_col <- replicate(
-  #   n = elements,
-  #   expr = paste(
-  #     sample(
-  #       x = chr_sym,
-  #       size = sample(
-  #         x = chr_min:chr_max,
-  #         size = 1,
-  #         replace = TRUE
-  #       ),
-  #       replace = TRUE
-  #     ),
-  #     collapse = chr_sep)
-  # )
-  
-  ## Lengths of Each String in the Synthetic Character Vector ##
-  char_lengths <- sample(chr_min:chr_max, size = elements, replace = TRUE)
-  
-  ## Sample Symbols the Number of Times Given by char_lengths ##
-  syn_col <- sapply(
-    lapply(char_lengths,
-           sample,
-           x = chr_sym,
-           replace = TRUE),
-    paste0,
-    collapse = chr_sep,
-    simplify = TRUE
-  )
+  ## Sample Symbols ##
+  syn_col <- sample_chars(x = chr_sym,
+                          size = elements,
+                          nchar_min = chr_min,
+                          nchar_max = chr_max,
+                          chr_sep = chr_sep)
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
@@ -122,7 +99,7 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
   }
   
   ## Output ##
-  return(as.character(syn_col))
+  return(syn_col)
   
 }
 

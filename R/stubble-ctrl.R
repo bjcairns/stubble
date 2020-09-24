@@ -111,7 +111,7 @@ stubble_ctrl <- function(
   chr_min = 0L, chr_max = 10L,
   chr_sym = list(c(
     letters, LETTERS, 0:9,
-    unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
+    strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", "")[[1]]
   )),
   chr_sep = "", chr_try_unique = FALSE, chr_try_unique_attempts = 10L, chr_duplicated_nmax = NA,
   fct_lvls = list(letters[1:4]), fct_use_lvls = NULL, fct_force_unique = FALSE,

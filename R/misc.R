@@ -213,6 +213,29 @@ dtype0.integer64 <- function(x){
 }
 
 
+### dtype.ITime() ###
+#' @export
+dtype.ITime <- function(x){
+  
+  ## Create Object ##
+  v <- if(is.installed.package("data.table")) {
+    
+    # 0-Length Vector #
+    data.table::as.ITime(character(length = 0L))
+    
+  } else {
+    
+    # Warning #
+    .warning_coercion(x)
+    
+    # 0-Length Vector #
+    as.POSIXct(character(length = 0L), tz = "UTC")
+    
+  }
+  
+}
+
+
 ### dtype0.list() ###
 #' @export
 dtype0.list <- function(x){
@@ -300,5 +323,27 @@ dtype0.tbl_df <- function(x){
   
   ## Output ##
   return(d)
+  
+}
+
+
+### sample_chars() ###
+#' @noRd
+sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, chr_sep = ""){
+  
+  ## Character Number Range ##
+  nchar_range <- nchar_min:nchar_max
+  
+  ## Lengths of Each String in the Synthetic Character Vector ##
+  nchars <- nchar_range[sample.int(n = length(nchar_range), size = size, replace = TRUE)]
+  
+  ## Generate List of Character Vectors of Lengths == nchars ##
+  char_list <- lapply(X = nchars, FUN = sample, x = x, replace = TRUE)
+  
+  ## Collapse List of Character Vectors ##
+  char_vec <- vapply(X = char_list, FUN = paste0, FUN.VALUE = character(1), collapse = chr_sep)
+  
+  ## Output ##
+  return(char_vec)
   
 }
