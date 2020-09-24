@@ -84,23 +84,24 @@ non-sensitive values.
 
 \examples{
 # A simple examples producing nonsense data
-syn_iris_0 <- stubblise(iris)
+syn_penguins_ext_0 <- stubblise(penguins_ext)
 
-# Example with Species factor levels
-syn_iris_1 <- stubblise(
-  iris,
-  fct_lvls = list(levels(iris$Species))
+# Example with species factor levels
+syn_penguins_ext_1 <- stubblise(
+  penguins_ext,
+  fct_lvls = list(levels(penguins_ext$species))
 )
 
-# Example producing data more comparable to the real iris
-mins <- as.numeric(dplyr::summarise_if(iris, is.numeric, min))
-maxs <- as.numeric(dplyr::summarise_if(iris, is.numeric, max))
-lvls <- levels(iris$Species)
-rows <- dplyr::count(iris, Species)$n
-syn_iris_2 <- purrr::map2_dfr(
+# Example producing data more comparable to the real penguins_ext
+# Uses dplyr
+mins <- as.numeric(dplyr::summarise_if(penguins_ext, is.numeric, min))
+maxs <- as.numeric(dplyr::summarise_if(penguins_ext, is.numeric, max))
+lvls <- levels(penguins_ext$species)
+rows <- dplyr::count(penguins_ext, species)$n
+syn_penguins_ext_2 <- purrr::map2_dfr(
   rows, lvls,
   ~ stubblise(
-    iris, rows = .x,
+    penguins_ext, rows = .x,
     control = list(
       dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
       fct_lvls = list(lvls), fct_use_lvls = list(.y)

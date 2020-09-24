@@ -50,7 +50,4 @@ The data include the following variables:
 \examples{
 summary(penguins_ext)
 }
-\seealso{
-
-}
 \keyword{datasets}

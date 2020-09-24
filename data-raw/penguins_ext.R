@@ -41,4 +41,8 @@ penguins_ext <- p[
   )
 ]
 
-save(penguins_ext, file = "data/penguins_ext.Rdata", compress = "xz")
+save(penguins_ext, 
+     file = "data/penguins_ext.RData", 
+     compress = "xz", 
+     version = 2
+)

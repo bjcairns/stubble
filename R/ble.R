@@ -25,8 +25,8 @@
 #' [stubble_ctrl]
 #' 
 #' @examples
-#' ble(stub(iris))
-#' ble(stub(iris), rows = 10)
+#' ble(stub(penguins_ext))
+#' ble(stub(penguins_ext), rows = 10)
 #' 
 #' @concept empirical
 #' @concept ecdf

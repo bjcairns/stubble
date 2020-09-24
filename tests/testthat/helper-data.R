@@ -63,3 +63,5 @@ luniq <- list(
   POSIXct = as.POSIXct(1:1e2, origin = "1970-01-01", tz = "UTC"),
   POSIXlt = as.POSIXlt(1:1e2, origin = "1970-01-01", tz = "UTC")
 )
+
+penguins <- penguins_ext
