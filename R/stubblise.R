@@ -8,6 +8,8 @@
 #'
 #' @param x the data frame-like object to emulate. Can have 0 rows.
 #' @param rows the number of rows to generate.
+#' @param method the method to use in the generation of synthetic data. Must be
+#' one of `"agnostic"` (default) or `"empirical"`.
 #' @param ctrl a named list of control parameters for generating the
 #' synthetic data. See [control].
 #' @param ... named individual control parameters, which take precedence over

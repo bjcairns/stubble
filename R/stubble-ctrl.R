@@ -23,7 +23,7 @@
 #' @param tail_exc Quantile tail size to be omitted from sampling at each end
 #' of the empirical cumulative distribution function. Defaults to 2.5% (`0.025`)
 #' at each end (tail) of the distribution.
-#' @param fuzz_spl Should the values sampled from the ECDF by [`ble_spline`]
+#' @param fuzz_spl Should the values sampled from the ECDF by `ble_spline`
 #' be 'fuzzed' through the addition of random normal noise? Defaults to `TRUE`.
 #' @param fuzz_spl_sca The scaling factor for the standard deviation of the
 #' random noise applied when `fuzz_spl` is set to `TRUE`. Defaults to `0.05`,
@@ -33,13 +33,13 @@
 #' @param p_exc Observation prevalence below which values will be excluded from
 #' simulations. Defaults to 1% (`0.01`)
 #' @param fuzz_samp Should the probability weights sampled from the distribution
-#' of values by [`stub_sample`] be 'fuzzed' through the addition of random
-#' normal noise? Defaults to `TRUE`.
+#' of values by `stub_sample` be 'fuzzed' through the addition of random normal
+#' noise? Defaults to `TRUE`.
 #' @param drop_lev Parameter indicating whether empty factor levels should be
 #' dropped from simlated factors and ordered factors. Defauls to `TRUE`
 #' @param unique Single logical value or logical vector indicating whether
 #' synthetic values should be unique within the column. When a vector, the
-#' relevant element is chosen by the `index` argument to [`ble_agnostic`].
+#' relevant element is chosen by the `index` argument to `ble_agnostic`.
 #' @param int_min Minmium values for integer generation.
 #' @param int_max Maximum values for integer generation.
 #' @param int_list An integer vector of allowed values for integer generation.

@@ -68,7 +68,7 @@ used.}
 of the empirical cumulative distribution function. Defaults to 2.5\% (\code{0.025})
 at each end (tail) of the distribution.}
 
-\item{fuzz_spl}{Should the values sampled from the ECDF by \code{\link{ble_spline}}
+\item{fuzz_spl}{Should the values sampled from the ECDF by \code{ble_spline}
 be 'fuzzed' through the addition of random normal noise? Defaults to \code{TRUE}.}
 
 \item{fuzz_spl_sca}{The scaling factor for the standard deviation of the
@@ -82,15 +82,15 @@ simulations. Defaults to 10.}
 simulations. Defaults to 1\% (\code{0.01})}
 
 \item{fuzz_samp}{Should the probability weights sampled from the distribution
-of values by \code{\link{stub_sample}} be 'fuzzed' through the addition of random
-normal noise? Defaults to \code{TRUE}.}
+of values by \code{stub_sample} be 'fuzzed' through the addition of random normal
+noise? Defaults to \code{TRUE}.}
 
 \item{drop_lev}{Parameter indicating whether empty factor levels should be
 dropped from simlated factors and ordered factors. Defauls to \code{TRUE}}
 
 \item{unique}{Single logical value or logical vector indicating whether
 synthetic values should be unique within the column. When a vector, the
-relevant element is chosen by the \code{index} argument to \code{\link{ble_agnostic}}.}
+relevant element is chosen by the \code{index} argument to \code{ble_agnostic}.}
 
 \item{int_min}{Minmium values for integer generation.}
 

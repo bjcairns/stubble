@@ -20,6 +20,9 @@ stubblize(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
 
 \item{rows}{the number of rows to generate.}
 
+\item{method}{the method to use in the generation of synthetic data. Must be
+one of \code{"agnostic"} (default) or \code{"empirical"}.}
+
 \item{ctrl}{a named list of control parameters for generating the
 synthetic data. See \link{control}.}
 
@@ -108,5 +111,4 @@ syn_penguins_ext_2 <- purrr::map2_dfr(
     )
   )
 )
-
 }
