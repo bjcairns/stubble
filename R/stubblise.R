@@ -1,25 +1,20 @@
+#' @title
 #' Create simple synthetic data from a data frame-like objects
 #'
 #' `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
 #' simulated) data to match the structure of a given data frame-like object
 #' (including data.frames, tibbles, data.tables, and lists). See also
-#' [gen_col], which does the work, and [control] for information on
-#' user-modifiable parameters.
+#' [stubble_ctrl] for information on user-modifiable parameters.
 #'
 #' @param x the data frame-like object to emulate. Can have 0 rows.
 #' @param rows the number of rows to generate.
-#' @param method the method to use in simulating data. Possible values can be
-#' `"empirical"` or `"naive"`. When set to `"empirical"` (default) simulated
-#' data will mimmic the empirical distributions present within the data. When
-#' set to `"naive"` simulated data will share some properties with the source
-#' data, such as the range or possible values, but will be distributed
-#' uniformally.
-#' @param control a named list of control parameters for generating the
+#' @param ctrl a named list of control parameters for generating the
 #' synthetic data. See [control].
 #' @param ... named individual control parameters, which take precedence over
 #' those in the `control` list.
 #'
-#' @details One intended use of `stubblise()` is in generating test data for R
+#' @details
+#' One intended use of `stubblise()` is in generating test data for R
 #' package development. The function can create very simple synthetic data from
 #' most data frame-like objects where columns have base R vector types. Lists
 #' of vectors of unequal lengths (i.e. not coerceable to `data.frame`) are
@@ -42,7 +37,8 @@
 #'
 #' The function `stubblize()` is a synonym for `stubblise()`.
 #'
-#' @return A data frame-like object with the same class as `x` (unless `x` is a
+#' @return
+#' A data frame-like object with the same class as `x` (unless `x` is a
 #' `list` or otherwise is coerceable to a `data.frame`, in which case the
 #' result is a `data.frame`). Any columns which are not recognised as being of
 #' a standard vector type will have `NA` for all rows and the column type will
@@ -65,128 +61,52 @@
 #'
 #' @examples
 #' # A simple examples producing nonsense data
-#' syn_iris_0 <- stubblise(iris)
+#' syn_penguins_ext_0 <- stubblise(penguins_ext)
 #'
-#' # Example with Species factor levels
-#' syn_iris_1 <- stubblise(
-#'   iris,
-#'   fct_lvls = list(levels(iris$Species))
+#' # Example with species factor levels
+#' syn_penguins_ext_1 <- stubblise(
+#'   penguins_ext,
+#'   fct_lvls = list(levels(penguins_ext$species))
 #' )
 #'
-#' # Example producing data more comparable to the real iris
-#' mins <- as.numeric(dplyr::summarise_if(iris, is.numeric, min))
-#' maxs <- as.numeric(dplyr::summarise_if(iris, is.numeric, max))
-#' lvls <- levels(iris$Species)
-#' rows <- dplyr::count(iris, Species)$n
-#' syn_iris_2 <- purrr::map2_dfr(
+#' # Example producing data more comparable to the real penguins_ext
+#' # Uses dplyr
+#' mins <- as.numeric(dplyr::summarise_if(penguins_ext, is.numeric, min))
+#' maxs <- as.numeric(dplyr::summarise_if(penguins_ext, is.numeric, max))
+#' lvls <- levels(penguins_ext$species)
+#' rows <- dplyr::count(penguins_ext, species)$n
+#' syn_penguins_ext_2 <- purrr::map2_dfr(
 #'   rows, lvls,
 #'   ~ stubblise(
-#'     iris, rows = .x,
+#'     penguins_ext, rows = .x,
 #'     control = list(
 #'       dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
 #'       fct_lvls = list(lvls), fct_use_lvls = list(.y)
 #'     )
 #'   )
 #' )
-#' 
+
+
+### stubblise() ###
 #' @export
-stubblise <- function(x, ...) {
+stubblise <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
   
-  UseMethod("stubblise", x)
+  ## Checks ##
+  if (!is.list(ctrl)) stop("Argument `control` must be a list")
+  
+  ## Generate stub Object ##
+  s <- stub(x = x, method = method, ctrl = ctrl)
+  
+  ## Use stub Object For Data Genesis ##
+  out <- ble(stub = s, rows = rows, method = method, ctrl = ctrl, ...)
+  
+  ## Output ##
+  return(out)
   
 }
 
 
-# US spelling
+### US Spelling ###
 #' @rdname stubblise
 #' @export
 stubblize <- stubblise
-
-
-# Default
-#' @rdname stubblise
-#' @export
-stubblise.default <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
-
-  tryCatch(
-    x <- as.list(x),
-    error = function(err) stop("Cannot coerce argument 'x' to data.frame"),
-    warning = function(warn) warning(warn)
-  )
-
-  as.data.frame(stbls_(x, rows, method = method, control, ...))
-
-}
-
-
-# Data frames
-#' @rdname stubblise
-#' @export
-stubblise.data.frame <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
-  
-  as.data.frame(stbls_(x, rows, method = method, control, ...))
-  
-}
-
-
-# Tibbles
-#' @rdname stubblise
-#' @export
-stubblise.tbl_df <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
-  
-  tibble::as_tibble(stbls_(x, rows, method = method, control, ...))
-  
-}
-
-
-# Data tables
-#' @rdname stubblise
-#' @export
-stubblise.data.table <- function(x, rows = nrow(x), method = "empirical", control = list(), ...) {
-  
-  data.table::as.data.table(stbls_(x, rows, method = method, control, ...))
-  
-}
-
-
-# Lists
-#' @rdname stubblise
-#' @export
-stubblise.list <- function(x, rows = lengths(x), method = "empirical", control = list(), ...) {
-  
-  stbls_(x, rows, method = method, control, ...)
-  
-}
-
-
-# Internals
-stbls_ <- function(x, rows = rows, method = method, control = list(), ...) {
-  
-  if (!is.list(control)) stop("Argument 'control' must be a list")
-  
-  index <- 1:length(x)
-    
-  if (method == "empirical") {
-    
-    mapply(
-      emperor, col = x, index = index,
-      MoreArgs = list(elements = rows, control = control, ...),
-      SIMPLIFY = FALSE,
-      USE.NAMES = TRUE
-    )
-    
-  } else if (method == "naive") {
-    
-    mapply(
-      gen_col, col = x, index = index,
-      MoreArgs = list(elements = rows, control = control, ...),
-      SIMPLIFY = FALSE,
-      USE.NAMES = TRUE
-    )
-    
-  } else {
-    
-    stop("Argument 'method must be either 'empirical' or 'naive'")
-    
-  }
-}

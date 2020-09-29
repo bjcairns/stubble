@@ -1,14 +1,45 @@
-#' Control parameters for gen_col()
-#'
+#' @title
+#' Control parameters for stubble
+#' 
+#' @description
 #' This help file describes the available parameters to control the output of
-#' [stubblise()]. The function which assembles these parameters into a list,
-#' `gen_col_control()`, is accessible to users but often will not need to be
-#' called directly.
-#'
+#' [stubble()]. The function is accessible to users but often will not need to
+#' be called directly.
+#' 
+#' @param rng_kind The random number generation algorithm to use. Takes values
+#' allowed by [RNGkind()]. Defaults to `"Wichmann-Hill"`, which is slower than
+#' other generators but is much less likely to produce duplicate values.
+#' @param p_na Proportion of values set to `NA`; defaults to `NA`, meaning that
+#' the proportions present in any generated data will roughly match those of the
+#' source data.
+#' @param emp_sw Value determining whether spline or resampling methods are used
+#' in the the generation of synthetic data. When the unique fraction of a column
+#' is above this value spline-based methods will be used. Conversely, when it is
+#' below this value resampling methods will be used. Hence, setting it to 1 will
+#' ensure that resampling methods will always be used, while setting it to 0
+#' will ensure that spline-based methods will always be used. Defaults to 50%
+#' (`0.5`). will always be used. When set to 0 ECDF-based methods will always be
+#' used.
+#' @param tail_exc Quantile tail size to be omitted from sampling at each end
+#' of the empirical cumulative distribution function. Defaults to 2.5% (`0.025`)
+#' at each end (tail) of the distribution.
+#' @param fuzz_spl Should the values sampled from the ECDF by [`ble_spline`]
+#' be 'fuzzed' through the addition of random normal noise? Defaults to `TRUE`.
+#' @param fuzz_spl_sca The scaling factor for the standard deviation of the
+#' random noise applied when `fuzz_spl` is set to `TRUE`. Defaults to `0.05`,
+#' i.e. 5% of the standard deviation of the source data.
+#' @param n_exc Observation prevalence below which values will be excluded from
+#' simulations. Defaults to 10.
+#' @param p_exc Observation prevalence below which values will be excluded from
+#' simulations. Defaults to 1% (`0.01`)
+#' @param fuzz_samp Should the probability weights sampled from the distribution
+#' of values by [`stub_sample`] be 'fuzzed' through the addition of random
+#' normal noise? Defaults to `TRUE`.
+#' @param drop_lev Parameter indicating whether empty factor levels should be
+#' dropped from simlated factors and ordered factors. Defauls to `TRUE`
 #' @param unique Single logical value or logical vector indicating whether
 #' synthetic values should be unique within the column. When a vector, the
-#' relevant element is chosen by the `index` argument to [gen_col].
-#' @param p_na Proportion of values set to `NA`; defaults to `0`.
+#' relevant element is chosen by the `index` argument to [`ble_agnostic`].
 #' @param int_min Minmium values for integer generation.
 #' @param int_max Maximum values for integer generation.
 #' @param int_list An integer vector of allowed values for integer generation.
@@ -16,10 +47,6 @@
 #' overrides `int_min`/`int_max`.
 #' @param dbl_min Minimum values for real/numeric/double generation
 #' @param dbl_max Maximum values for real/numeric/double generation
-#' @param dbl_rng_kind The random number generation algorithm to use for
-#' real/numeric/double values. Takes values allowed by [RNGkind()]. Defaults to
-#' `"Wichmann-Hill"`, which is slower than other generators but is much less
-#' likely to produce duplicate values.
 #' @param dbl_round Number of decimal places to round to. [round()] and then
 #' [signif()] are applied in sequence (see `dbl_signif`, below). If `NA`
 #' (default), no rounding is applied.
@@ -54,113 +81,82 @@
 #' (usually equal to 2) is greater than or equal to the `elements` argument
 #' of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
 #' @param date_origin The reference date for generated dates and times.
+#' @param date_min Min value for generated dates.
 #' @param date_max Max value for generated dates.
+#' @param dttm_min Min value for generated dates.
 #' @param dttm_max Max value for generated date-times.
 #' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but
 #' [Sys.timezone()] may be more appropriate for some users.
-#' @param def_class A default vector class to return when all else fails.
-#' Currently not used.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly
 #' overwritten in the current call.
 #' @param index Default `NA`. If not `NA`, the function will return list in
 #' which elements apply to a single column (i.e. elements are not necessarily
 #' lists). Mostly for internal use to handle passing control parameters between
-#' `gen_col_` S3 methods.
-#' @param ... Further control parameters permitting extension of the `gen_col_`
 #' S3 methods.
-#'
-#' @details Generation of synthetic data in stubble is very simple. Numbers,
-#' dates and times are sampled uniformly within a range, while strings and
-#' factors are constructed from lists of symbols or levels sampled with equal
-#' probability.
-#'
-#' Various control parameters allow some user influence over the sets of
-#' allowed values. Available parameters are listed and described above. In
-#' addition to `gen_col_control()`, these parameters are exposed directly via
-#' [stubblise()] and [gen_col()], and may be passed as arguments with the names
-#' given above to either function.
-#'
-#' Control parameters may be common to all or may be specified per-column.
-#' Arguments passed to `gen_col_control()` or directly via `stubblise()` or
-#' `gen_col()` are interpreted according to type:
-#' \itemize{
-#'   \item *Single-element vectors* mean that the same parameter value applies
-#'   to each column;
-#'   \item *Multi-element vectors* mean that each element is matched (with
-#'   recycling) as the parameter for the corresponding column;
-#' }
-#' To pass a vector parameter for a column, such as a vector of allowed factor
-#' levels, wrap the vector in a list, e.g. `list(letters[1:4])`. (Internally,
-#' all arguments passed to `gen_col_control()`, whether directly or indirectly,
-#' are sanitised with `as.list()`.)
+#' @param ... Further control parameters permitting extension of the `stubble`
+#' S3 methods.
+#' 
+#' @seealso
+#' [stubble()]
 
+
+### stubble_ctrl() ###
 #' @export
-gen_col_control <- function(
+stubble_ctrl <- function(
+  rng_kind = "Wichmann-Hill",
+  p_na = NA_real_, emp_sw = 0.1,
+  tail_exc = 0.025, fuzz_spl = TRUE, fuzz_spl_sca = 0.05,
+  n_exc = 10, p_exc = 0.05, fuzz_samp = TRUE, drop_lev = TRUE,
   unique = FALSE,
-  p_na = 0,
   int_min = 0L, int_max = 100L, int_list = NA,
-  dbl_min = 0, dbl_max = 100,
-  dbl_rng_kind = "Wichmann-Hill",
-  dbl_round = NA, dbl_signif = NA,
+  dbl_min = 0, dbl_max = 100, dbl_round = NA, dbl_signif = NA,
   chr_min = 0L, chr_max = 10L,
   chr_sym = list(c(
-    letters, LETTERS, as.character(0:9),
-    unlist(strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", ""))
+    letters, LETTERS, 0:9,
+    strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", "")[[1]]
   )),
-  chr_sep = "",
-  chr_try_unique = FALSE,
-  chr_try_unique_attempts = 10L,
-  chr_duplicated_nmax = NA,
-  fct_lvls = list(letters[1:4]),
-  fct_use_lvls = NULL,
-  fct_force_unique = FALSE,
+  chr_sep = "", chr_try_unique = FALSE, chr_try_unique_attempts = 10L, chr_duplicated_nmax = NA,
+  fct_lvls = list(letters[1:4]), fct_use_lvls = NULL, fct_force_unique = FALSE,
   lgl_force_unique = FALSE,
   date_origin = "1970-01-01",
-  date_max = Sys.Date(),
-  dttm_max = Sys.time(),
+  date_min = date_origin, date_max = Sys.Date(),
+  dttm_min = date_origin, dttm_max = Sys.time(),
   dttm_tz = "UTC",
-  def_class = "numeric",
-  old_ctrl = as.list(NULL),
-  index = NA,
+  old_ctrl = list(),
+  index = NA_integer_,
   ...
-) {
-
-  if (!is.list(old_ctrl)) stop("Argument `old_ctrl` must be a list")
-
+){
+  
   args <- as.list(sys.frame(sys.nframe()))
   args <- lapply(args, eval, parent.frame())
   args <- lapply(args, as.list)
-
+  
   cargs <- as.list(match.call())[-1L]
   cargs <- lapply(cargs, eval, parent.frame())
   cargs <- lapply(cargs, as.list)
-
+  
   args[["old_ctrl"]] <- NULL
   cargs[["old_ctrl"]] <- NULL
-
+  
   all_args <- append(old_ctrl, args[!(names(args) %in% names(old_ctrl))])
   all_args <- append(cargs, all_args[!(names(all_args) %in% names(cargs))])
-
+  
   # Return control parameters for a single column if required
-  if (!is.na(index)) {
+  if(!is.na(index)){
     all_args <- lapply(all_args, get_ctrl_element, index = index)
   }
-
-  invisible(all_args)
-
+  
+  return(invisible(all_args))
+  
 }
 
 
-#' @rdname gen_col_control
-#' @name control
-NULL
-
-
-get_ctrl_element <- function(item, index) {
+### get_ctrl_element() ###
+#' @noRd
+get_ctrl_element <- function(item, index){
   item_base <- length(item)
   item_idx <- index %% item_base
   item_idx <- ifelse(item_idx == 0, item_base, item_idx)
   elem <- item[[item_idx]]
   return(elem)
 }
-
