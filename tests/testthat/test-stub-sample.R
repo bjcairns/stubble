@@ -6,9 +6,9 @@
 
 
 ### ToDo ###
-# - Assess the 'n_exc' & 'p_exc' control parameters.
-# - Assess the 'drop_lev' control parameter.
-# - Assess the 'fuzz_samp' control parameter.
+# - Assess the 'emp_n_exc' & 'emp_p_exc' control parameters.
+# - Assess the 'emp_drop_lev' control parameter.
+# - Assess the 'emp_fuzz_samp' control parameter.
 # - Assess the 'dttm_tz' control parameter.
 
 
@@ -268,9 +268,9 @@ test_that(
 )
 
 
-# ### Category Exclusions ('n_exc' & 'p_exc') ###
+# ### Category Exclusions ('emp_n_exc' & 'emp_p_exc') ###
 # ## Control ##
-# ctrl <- stubble_ctrl(old_ctrl = list(n_exc = 0, p_exc = 0), index = 1L)[-1]
+# ctrl <- stubble_ctrl(old_ctrl = list(emp_n_exc = 0, emp_p_exc = 0), index = 1L)[-1]
 # 
 # ## Data ##
 # v <- c(NA, 1L)

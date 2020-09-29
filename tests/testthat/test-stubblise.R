@@ -87,20 +87,20 @@ test_that("stubblise correctly handles control lists", {
   set.seed(2342343)
   syn_penguins_1 <- stubblise(
     penguins,
-    fct_lvls = list(levels(penguins$species))
+    agn_fct_lvls = list(levels(penguins$species))
   )
 
   set.seed(2342343)
   syn_penguins_2 <- stubblise(
     penguins,
-    ctrl = list(fct_lvls = list(levels(penguins$species)))
+    ctrl = list(agn_fct_lvls = list(levels(penguins$species)))
   )
 
   set.seed(2342343)
   syn_penguins_3 <- stubblise(
     penguins,
-    ctrl = list(fct_lvls = list(letters[1:3])),
-    fct_lvls = list(levels(penguins$species))
+    ctrl = list(agn_fct_lvls = list(letters[1:3])),
+    agn_fct_lvls = list(levels(penguins$species))
   )
 
   expect_identical(syn_penguins_1, syn_penguins_2)

@@ -38,7 +38,7 @@ ble_spline <- function(x, elements, ctrl){
   syn_col <- ble_spline_(dtype = dtype, syn_col = syn_col, ctrl = ctrl)
   
   ## Fuzz ##
-  if (ctrl[["fuzz_spl"]]){
+  if (ctrl[["emp_fuzz_spl"]]){
     
     syn_col <- fuzz(
       syn_col = syn_col, col_sd = col_sd, elements = elements, ctrl = ctrl
@@ -244,7 +244,7 @@ ble_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
 fuzz <- function(syn_col, col_sd, elements, ctrl){
   
   ## Calculate Fuzz SD ##
-  fuzz_sd <- col_sd*ctrl[["fuzz_spl_sca"]]
+  fuzz_sd <- col_sd*ctrl[["emp_fuzz_spl_sca"]]
   
   ## Apply Fuzzing ##
   fuzz_col <- syn_col + rnorm(n = elements, mean = 0, sd = fuzz_sd)

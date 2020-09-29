@@ -8,38 +8,38 @@ stubble_ctrl(
   rng_kind = "Wichmann-Hill",
   p_na = NA_real_,
   emp_sw = 0.1,
-  tail_exc = 0.025,
-  fuzz_spl = TRUE,
-  fuzz_spl_sca = 0.05,
-  n_exc = 10,
-  p_exc = 0.05,
-  fuzz_samp = TRUE,
-  drop_lev = TRUE,
+  emp_tail_exc = 0.025,
+  emp_fuzz_spl = TRUE,
+  emp_fuzz_spl_sca = 0.05,
+  emp_n_exc = 10,
+  emp_p_exc = 0.05,
+  emp_fuzz_samp = TRUE,
+  emp_drop_lev = TRUE,
   unique = FALSE,
-  int_min = 0L,
-  int_max = 100L,
-  int_list = NA,
-  dbl_min = 0,
-  dbl_max = 100,
-  dbl_round = NA,
-  dbl_signif = NA,
-  chr_min = 0L,
-  chr_max = 10L,
-  chr_sym = list(c(letters, LETTERS, 0:9,
+  agn_int_min = 0L,
+  agn_int_max = 100L,
+  agn_int_list = NA,
+  agn_dbl_min = 0,
+  agn_dbl_max = 100,
+  agn_dbl_round = NA,
+  agn_dbl_signif = NA,
+  agn_chr_min = 0L,
+  agn_chr_max = 10L,
+  agn_chr_sym = list(c(letters, LETTERS, 0:9,
     strsplit("!\\"#$\%&'()*+, -./:;<=>?@[]^_`{|}~", "")[[1]])),
-  chr_sep = "",
-  chr_try_unique = FALSE,
-  chr_try_unique_attempts = 10L,
-  chr_duplicated_nmax = NA,
-  fct_lvls = list(letters[1:4]),
-  fct_use_lvls = NULL,
-  fct_force_unique = FALSE,
-  lgl_force_unique = FALSE,
+  agn_chr_sep = "",
+  agn_chr_try_unique = FALSE,
+  agn_chr_try_unique_attempts = 10L,
+  agn_chr_duplicated_nmax = NA,
+  agn_fct_lvls = list(letters[1:4]),
+  agn_fct_use_lvls = NULL,
+  agn_fct_force_unique = FALSE,
+  agn_lgl_force_unique = FALSE,
   date_origin = "1970-01-01",
-  date_min = date_origin,
-  date_max = Sys.Date(),
-  dttm_min = date_origin,
-  dttm_max = Sys.time(),
+  agn_date_min = date_origin,
+  agn_date_max = Sys.Date(),
+  agn_dttm_min = date_origin,
+  agn_dttm_max = Sys.time(),
   dttm_tz = "UTC",
   old_ctrl = list(),
   index = NA_integer_,
@@ -64,101 +64,101 @@ will ensure that spline-based methods will always be used. Defaults to 50\%
 (\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
 used.}
 
-\item{tail_exc}{Quantile tail size to be omitted from sampling at each end
+\item{emp_tail_exc}{Quantile tail size to be omitted from sampling at each end
 of the empirical cumulative distribution function. Defaults to 2.5\% (\code{0.025})
 at each end (tail) of the distribution.}
 
-\item{fuzz_spl}{Should the values sampled from the ECDF by \code{ble_spline}
+\item{emp_fuzz_spl}{Should the values sampled from the ECDF by \code{ble_spline}
 be 'fuzzed' through the addition of random normal noise? Defaults to \code{TRUE}.}
 
-\item{fuzz_spl_sca}{The scaling factor for the standard deviation of the
-random noise applied when \code{fuzz_spl} is set to \code{TRUE}. Defaults to \code{0.05},
+\item{emp_fuzz_spl_sca}{The scaling factor for the standard deviation of the
+random noise applied when \code{emp_fuzz_spl} is set to \code{TRUE}. Defaults to \code{0.05},
 i.e. 5\% of the standard deviation of the source data.}
 
-\item{n_exc}{Observation prevalence below which values will be excluded from
+\item{emp_n_exc}{Observation prevalence below which values will be excluded from
 simulations. Defaults to 10.}
 
-\item{p_exc}{Observation prevalence below which values will be excluded from
+\item{emp_p_exc}{Observation prevalence below which values will be excluded from
 simulations. Defaults to 1\% (\code{0.01})}
 
-\item{fuzz_samp}{Should the probability weights sampled from the distribution
+\item{emp_fuzz_samp}{Should the probability weights sampled from the distribution
 of values by \code{stub_sample} be 'fuzzed' through the addition of random normal
 noise? Defaults to \code{TRUE}.}
 
-\item{drop_lev}{Parameter indicating whether empty factor levels should be
+\item{emp_drop_lev}{Parameter indicating whether empty factor levels should be
 dropped from simlated factors and ordered factors. Defauls to \code{TRUE}}
 
 \item{unique}{Single logical value or logical vector indicating whether
 synthetic values should be unique within the column. When a vector, the
 relevant element is chosen by the \code{index} argument to \code{ble_agnostic}.}
 
-\item{int_min}{Minmium values for integer generation.}
+\item{agn_int_min}{Minmium values for integer generation.}
 
-\item{int_max}{Maximum values for integer generation.}
+\item{agn_int_max}{Maximum values for integer generation.}
 
-\item{int_list}{An integer vector of allowed values for integer generation.
-If \code{NA} (the default), this is ignored. If non-\code{NA}, \code{int_list}
-overrides \code{int_min}/\code{int_max}.}
+\item{agn_int_list}{An integer vector of allowed values for integer generation.
+If \code{NA} (the default), this is ignored. If non-\code{NA}, \code{agn_int_list}
+overrides \code{agn_int_min}/\code{agn_int_max}.}
 
-\item{dbl_min}{Minimum values for real/numeric/double generation}
+\item{agn_dbl_min}{Minimum values for real/numeric/double generation}
 
-\item{dbl_max}{Maximum values for real/numeric/double generation}
+\item{agn_dbl_max}{Maximum values for real/numeric/double generation}
 
-\item{dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then
-\code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_signif}, below). If \code{NA}
+\item{agn_dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then
+\code{\link[=signif]{signif()}} are applied in sequence (see \code{agn_dbl_signif}, below). If \code{NA}
 (default), no rounding is applied.}
 
-\item{dbl_signif}{Number of significant digits to round to. \code{\link[=round]{round()}} and
-then \code{\link[=signif]{signif()}} are applied in sequence (see \code{dbl_round}). If \code{NA}
+\item{agn_dbl_signif}{Number of significant digits to round to. \code{\link[=round]{round()}} and
+then \code{\link[=signif]{signif()}} are applied in sequence (see \code{agn_dbl_round}). If \code{NA}
 (default), no rounding is applied.}
 
-\item{chr_min}{The minimum number of characters in a generated string.}
+\item{agn_chr_min}{The minimum number of characters in a generated string.}
 
-\item{chr_max}{The maximum number of characters in a generated string.}
+\item{agn_chr_max}{The maximum number of characters in a generated string.}
 
-\item{chr_sym}{A character vector of allowed symbols for generated strings.}
+\item{agn_chr_sym}{A character vector of allowed symbols for generated strings.}
 
-\item{chr_sep}{A separator for symbols in generated strings; defaults to
+\item{agn_chr_sep}{A separator for symbols in generated strings; defaults to
 \code{""} (an empty string).}
 
-\item{chr_try_unique}{Logical value indicating whether, after a failure to
+\item{agn_chr_try_unique}{Logical value indicating whether, after a failure to
 generate a unique synthetic character vector, the algorithm should attempt
-to regenerate duplicates. If \code{TRUE}, there will be \code{chr_try_unique_attempts}
+to regenerate duplicates. If \code{TRUE}, there will be \code{agn_chr_try_unique_attempts}
 attempts.}
 
-\item{chr_try_unique_attempts}{Number of attempts to make to generate a
+\item{agn_chr_try_unique_attempts}{Number of attempts to make to generate a
 unique synthetic character vector.}
 
-\item{chr_duplicated_nmax}{Value (greater than one) for the \code{nmax} parameter
+\item{agn_chr_duplicated_nmax}{Value (greater than one) for the \code{nmax} parameter
 of \code{\link[=duplicated]{duplicated()}} when enforcing uniqueness. Defaults to \code{NA}, the default
 for \code{duplicated()}.}
 
-\item{fct_lvls}{Levels attribute for synthetic factors. Should always be a
+\item{agn_fct_lvls}{Levels attribute for synthetic factors. Should always be a
 list with character vectors as elements.}
 
-\item{fct_use_lvls}{Allowed levels for synthetic factor data. Should always
-be a list with character vectors as elements. Each element of \code{fct_use_lvls}
-should be a subset of the corresponding element of \code{fct_lvls}.}
+\item{agn_fct_use_lvls}{Allowed levels for synthetic factor data. Should always
+be a list with character vectors as elements. Each element of \code{agn_fct_use_lvls}
+should be a subset of the corresponding element of \code{agn_fct_lvls}.}
 
-\item{fct_force_unique}{Force \code{gen_col()} to attempt to return a factor
+\item{agn_fct_force_unique}{Force \code{gen_col()} to attempt to return a factor
 vector with unique elements. Will return an error unless
-\code{length(fct_use_lvls)} is greater than or equal to the \code{elements} argument
+\code{length(agn_fct_use_lvls)} is greater than or equal to the \code{elements} argument
 of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
 
-\item{lgl_force_unique}{Force \code{gen_col()} to attempt to return a logical
+\item{agn_lgl_force_unique}{Force \code{gen_col()} to attempt to return a logical
 vector with unique elements. Will return an error unless \code{length(lgl_lvls)}
 (usually equal to 2) is greater than or equal to the \code{elements} argument
 of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
 
 \item{date_origin}{The reference date for generated dates and times.}
 
-\item{date_min}{Min value for generated dates.}
+\item{agn_date_min}{Min value for generated dates.}
 
-\item{date_max}{Max value for generated dates.}
+\item{agn_date_max}{Max value for generated dates.}
 
-\item{dttm_min}{Min value for generated dates.}
+\item{agn_dttm_min}{Min value for generated dates.}
 
-\item{dttm_max}{Max value for generated date-times.}
+\item{agn_dttm_max}{Max value for generated date-times.}
 
 \item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but
 \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some users.}

@@ -105,7 +105,7 @@ stub_sample.factor <- function(col, ctrl){
   sim[["values"]] <- factor(sim[["values"]], levels = labels)
   
   ## Drop Empty Levels ##
-  if (ctrl[["drop_lev"]]) sim[["values"]] <- droplevels(sim[["values"]])
+  if (ctrl[["emp_drop_lev"]]) sim[["values"]] <- droplevels(sim[["values"]])
   
   ## Output ##
   return(sim)
@@ -282,24 +282,24 @@ stub_sample.POSIXlt <- function(col, ctrl){
 stub_sample_ <- function(col, ctrl){
   
   ## Checks ##
-  if (any(!is.numeric(ctrl[["n_exc"]]), !is.numeric(ctrl[["p_exc"]]))) stop("The 'n_exc' and 'p_exc' control parameters must be of class numeric.")
-  if (ctrl[["n_exc"]] %% 1 != 0 | ctrl[["n_exc"]] < 0) stop("The 'n_exc' control parameter must be a positive whole number.")
-  if (ctrl[["p_exc"]] < 0 | ctrl[["p_exc"]] > 1) stop("The 'p_exc' control parameter must be between 0 and 1.")
-  if (!is.logical(ctrl[["fuzz_samp"]])) stop("The 'fuzz_samp' control parameter must be of class logical.")
+  if (any(!is.numeric(ctrl[["emp_n_exc"]]), !is.numeric(ctrl[["emp_p_exc"]]))) stop("The 'emp_n_exc' and 'emp_p_exc' control parameters must be of class numeric.")
+  if (ctrl[["emp_n_exc"]] %% 1 != 0 | ctrl[["emp_n_exc"]] < 0) stop("The 'emp_n_exc' control parameter must be a positive whole number.")
+  if (ctrl[["emp_p_exc"]] < 0 | ctrl[["emp_p_exc"]] > 1) stop("The 'emp_p_exc' control parameter must be between 0 and 1.")
+  if (!is.logical(ctrl[["emp_fuzz_samp"]])) stop("The 'emp_fuzz_samp' control parameter must be of class logical.")
   
   ## Tabulate Values ##
   n_obs <- table(col)
   p_obs <- prop.table(n_obs)
   
   ## Omit Low Counts/Prop from Resimulation ##
-  wt <- p_obs[n_obs >= ctrl[["n_exc"]] & p_obs >= ctrl[["p_exc"]]]
+  wt <- p_obs[n_obs >= ctrl[["emp_n_exc"]] & p_obs >= ctrl[["emp_p_exc"]]]
   
   ## Extract Params ##
   values <- names(wt)
   wt <- as.vector(wt)
   
   ## Obfuscation ##
-  if (ctrl[["fuzz_samp"]]) wt <- wt + runif(length(wt), -1e-3, 1e-3)
+  if (ctrl[["emp_fuzz_samp"]]) wt <- wt + runif(length(wt), -1e-3, 1e-3)
   
   ## Form Output ##
   out <- list(

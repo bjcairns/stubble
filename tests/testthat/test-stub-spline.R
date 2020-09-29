@@ -6,7 +6,7 @@
 
 
 ### ToDo ###
-# - Assess the 'tail_exc' control parameter.
+# - Assess the 'emp_tail_exc' control parameter.
 # - Assess the 'dttm_tz' control parameter.
 
 

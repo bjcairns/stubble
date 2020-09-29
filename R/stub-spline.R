@@ -166,17 +166,17 @@ stub_spline.POSIXlt <- function(col, ctrl){
 stub_spline_ <- function(col, ctrl){
 
   ## Data extraction
-  tail_exc <- ctrl[["tail_exc"]]
+  emp_tail_exc <- ctrl[["emp_tail_exc"]]
 
   ## Checks ##
-  if (!is.numeric(ctrl[["tail_exc"]]))
-    stop("The 'tail_exc' control parameter must be of class numeric.")
-  if (ctrl[["tail_exc"]] < 0 | ctrl[["tail_exc"]] >= 0.5)
-    stop("The 'tail_exc' control parameter must be between 0 and 0.5.")
+  if (!is.numeric(ctrl[["emp_tail_exc"]]))
+    stop("The 'emp_tail_exc' control parameter must be of class numeric.")
+  if (ctrl[["emp_tail_exc"]] < 0 | ctrl[["emp_tail_exc"]] >= 0.5)
+    stop("The 'emp_tail_exc' control parameter must be between 0 and 0.5.")
 
   ## Tail Exclusions ##
   limits <- quantile(
-    col, c(0 + tail_exc, 1 - tail_exc), na.rm = TRUE, names = FALSE
+    col, c(0 + emp_tail_exc, 1 - emp_tail_exc), na.rm = TRUE, names = FALSE
   )
   col <- col[col >= limits[1] & col <= limits[2] & !is.na(col)]
 

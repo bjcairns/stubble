@@ -68,7 +68,7 @@
 #' # Example with species factor levels
 #' syn_penguins_ext_1 <- stubblise(
 #'   penguins_ext,
-#'   fct_lvls = list(levels(penguins_ext$species))
+#'   agn_fct_lvls = list(levels(penguins_ext$species))
 #' )
 #'
 #' # Example producing data more comparable to the real penguins_ext
@@ -82,8 +82,8 @@
 #'   ~ stubblise(
 #'     penguins_ext, rows = .x,
 #'     control = list(
-#'       dbl_min = mins, dbl_max = maxs, dbl_round = 1L,
-#'       fct_lvls = list(lvls), fct_use_lvls = list(.y)
+#'       agn_dbl_min = mins, agn_dbl_max = maxs, agn_dbl_round = 1L,
+#'       agn_fct_lvls = list(lvls), agn_fct_use_lvls = list(.y)
 #'     )
 #'   )
 #' )

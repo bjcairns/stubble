@@ -329,7 +329,7 @@ dtype0.tbl_df <- function(x){
 
 ### sample_chars() ###
 #' @noRd
-sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, chr_sep = ""){
+sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, agn_chr_sep = ""){
   
   ## Character Number Range ##
   nchar_range <- nchar_min:nchar_max
@@ -341,7 +341,7 @@ sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, chr_sep = "")
   char_list <- lapply(X = nchars, FUN = sample, x = x, replace = TRUE)
   
   ## Collapse List of Character Vectors ##
-  char_vec <- vapply(X = char_list, FUN = paste0, FUN.VALUE = character(1), collapse = chr_sep)
+  char_vec <- vapply(X = char_list, FUN = paste0, FUN.VALUE = character(1), collapse = agn_chr_sep)
   
   ## Output ##
   return(char_vec)
