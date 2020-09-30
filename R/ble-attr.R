@@ -39,9 +39,13 @@ ble_attr <- function(x, elements, method, index = 1L, ctrl = list(), ...){
                     spline = ble_spline(x = x, elements = elements, ctrl = ctrl))
   
   ## Impute NA Values ##
-  if (!is.na(ctrl[["p_na"]])) {
+  syn_col <- if (!is.na(ctrl[["p_na"]])) {
     
-    syn_col <- impute_na(syn_col, p_na = ctrl[["p_na"]])
+    impute_na(syn_col, p_na = ctrl[["p_na"]])
+    
+  } else {
+    
+    impute_na(syn_col, p_na = x[["p_na"]])
     
   }
   
