@@ -15,7 +15,7 @@ stubble_ctrl(
   emp_p_exc = 0.05,
   emp_fuzz_samp = TRUE,
   emp_drop_lev = TRUE,
-  unique = FALSE,
+  agn_unique = FALSE,
   agn_int_min = 0L,
   agn_int_max = 100L,
   agn_int_list = NA,
@@ -40,6 +40,8 @@ stubble_ctrl(
   agn_date_max = Sys.Date(),
   agn_dttm_min = date_origin,
   agn_dttm_max = Sys.time(),
+  agn_time_min = "00:00:00",
+  agn_time_max = "23:59:59",
   dttm_tz = "UTC",
   old_ctrl = list(),
   index = NA_integer_,
@@ -64,31 +66,31 @@ will ensure that spline-based methods will always be used. Defaults to 50\%
 (\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
 used.}
 
-\item{emp_tail_exc}{Quantile tail size to be omitted from sampling at each end
-of the empirical cumulative distribution function. Defaults to 2.5\% (\code{0.025})
-at each end (tail) of the distribution.}
+\item{emp_tail_exc}{Quantile tail size to be omitted from sampling at each
+end of the empirical cumulative distribution function. Defaults to 2.5\%
+(\code{0.025}) at each end (tail) of the distribution.}
 
 \item{emp_fuzz_spl}{Should the values sampled from the ECDF by \code{ble_spline}
 be 'fuzzed' through the addition of random normal noise? Defaults to \code{TRUE}.}
 
 \item{emp_fuzz_spl_sca}{The scaling factor for the standard deviation of the
-random noise applied when \code{emp_fuzz_spl} is set to \code{TRUE}. Defaults to \code{0.05},
-i.e. 5\% of the standard deviation of the source data.}
+random noise applied when \code{emp_fuzz_spl} is set to \code{TRUE}. Defaults to
+\code{0.05}, i.e. 5\% of the standard deviation of the source data.}
 
-\item{emp_n_exc}{Observation prevalence below which values will be excluded from
-simulations. Defaults to 10.}
+\item{emp_n_exc}{Observation prevalence below which values will be excluded
+from simulations. Defaults to 10.}
 
-\item{emp_p_exc}{Observation prevalence below which values will be excluded from
-simulations. Defaults to 1\% (\code{0.01})}
+\item{emp_p_exc}{Observation prevalence below which values will be excluded
+from simulations. Defaults to 1\% (\code{0.01}).}
 
-\item{emp_fuzz_samp}{Should the probability weights sampled from the distribution
-of values by \code{stub_sample} be 'fuzzed' through the addition of random normal
-noise? Defaults to \code{TRUE}.}
+\item{emp_fuzz_samp}{Should the probability weights sampled from the
+distribution of values by \code{stub_sample} be 'fuzzed' through the addition of
+random normal noise? Defaults to \code{TRUE}.}
 
-\item{emp_drop_lev}{Parameter indicating whether empty factor levels should be
-dropped from simlated factors and ordered factors. Defauls to \code{TRUE}}
+\item{emp_drop_lev}{Parameter indicating whether empty factor levels should
+be dropped from simlated factors and ordered factors. Defauls to \code{TRUE}.}
 
-\item{unique}{Single logical value or logical vector indicating whether
+\item{agn_unique}{Single logical value or logical vector indicating whether
 synthetic values should be unique within the column. When a vector, the
 relevant element is chosen by the \code{index} argument to \code{ble_agnostic}.}
 
@@ -96,13 +98,13 @@ relevant element is chosen by the \code{index} argument to \code{ble_agnostic}.}
 
 \item{agn_int_max}{Maximum values for integer generation.}
 
-\item{agn_int_list}{An integer vector of allowed values for integer generation.
-If \code{NA} (the default), this is ignored. If non-\code{NA}, \code{agn_int_list}
-overrides \code{agn_int_min}/\code{agn_int_max}.}
+\item{agn_int_list}{An integer vector of allowed values for integer
+generation. If \code{NA} (the default), this is ignored. If non-\code{NA},
+\code{agn_int_list} overrides \code{agn_int_min}/\code{agn_int_max}.}
 
-\item{agn_dbl_min}{Minimum values for real/numeric/double generation}
+\item{agn_dbl_min}{Minimum values for real/numeric/double generation.}
 
-\item{agn_dbl_max}{Maximum values for real/numeric/double generation}
+\item{agn_dbl_max}{Maximum values for real/numeric/double generation.}
 
 \item{agn_dbl_round}{Number of decimal places to round to. \code{\link[=round]{round()}} and then
 \code{\link[=signif]{signif()}} are applied in sequence (see \code{agn_dbl_signif}, below). If \code{NA}
@@ -116,52 +118,68 @@ then \code{\link[=signif]{signif()}} are applied in sequence (see \code{agn_dbl_
 
 \item{agn_chr_max}{The maximum number of characters in a generated string.}
 
-\item{agn_chr_sym}{A character vector of allowed symbols for generated strings.}
+\item{agn_chr_sym}{A character vector of allowed symbols for generated
+strings.}
 
 \item{agn_chr_sep}{A separator for symbols in generated strings; defaults to
 \code{""} (an empty string).}
 
-\item{agn_chr_try_unique}{Logical value indicating whether, after a failure to
-generate a unique synthetic character vector, the algorithm should attempt
-to regenerate duplicates. If \code{TRUE}, there will be \code{agn_chr_try_unique_attempts}
-attempts.}
+\item{agn_chr_try_unique}{Logical value indicating whether, after a failure
+to generate a unique synthetic character vector, the algorithm should attempt
+to regenerate duplicates. If \code{TRUE}, there will be
+\code{agn_chr_try_unique_attempts} attempts.}
 
 \item{agn_chr_try_unique_attempts}{Number of attempts to make to generate a
 unique synthetic character vector.}
 
-\item{agn_chr_duplicated_nmax}{Value (greater than one) for the \code{nmax} parameter
-of \code{\link[=duplicated]{duplicated()}} when enforcing uniqueness. Defaults to \code{NA}, the default
-for \code{duplicated()}.}
+\item{agn_chr_duplicated_nmax}{Value (greater than one) for the \code{nmax}
+parameter of \code{\link[=duplicated]{duplicated()}} when enforcing uniqueness. Defaults to \code{NA}, the
+default for \code{duplicated()}.}
 
-\item{agn_fct_lvls}{Levels attribute for synthetic factors. Should always be a
-list with character vectors as elements.}
+\item{agn_fct_lvls}{Levels attribute for synthetic factors. Should always be
+a list with character vectors as elements.}
 
-\item{agn_fct_use_lvls}{Allowed levels for synthetic factor data. Should always
-be a list with character vectors as elements. Each element of \code{agn_fct_use_lvls}
-should be a subset of the corresponding element of \code{agn_fct_lvls}.}
+\item{agn_fct_use_lvls}{Allowed levels for synthetic factor data. Should
+always be a list with character vectors as elements. Each element of
+\code{agn_fct_use_lvls} should be a subset of the corresponding element of
+\code{agn_fct_lvls}.}
 
 \item{agn_fct_force_unique}{Force \code{gen_col()} to attempt to return a factor
 vector with unique elements. Will return an error unless
-\code{length(agn_fct_use_lvls)} is greater than or equal to the \code{elements} argument
-of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
+\code{length(agn_fct_use_lvls)} is greater than or equal to the \code{elements}
+argument of \code{gen_col()} (equivalently, the \code{nrows} argument of
+\code{stubblise()}).}
 
 \item{agn_lgl_force_unique}{Force \code{gen_col()} to attempt to return a logical
-vector with unique elements. Will return an error unless \code{length(lgl_lvls)}
-(usually equal to 2) is greater than or equal to the \code{elements} argument
-of \code{gen_col()} (equivalently, the \code{nrows} argument of \code{stubblise()}).}
+vector with unique elements. Will return an error unless
+\code{length(agn_lgl_lvls)} (usually equal to 2) is greater than or equal to the
+\code{elements} argument of \code{gen_col()} (equivalently, the \code{nrows} argument of
+\code{stubblise()}).}
 
-\item{date_origin}{The reference date for generated dates and times.}
+\item{date_origin}{The reference date for generated dates and times (\code{Date},
+\code{IDate} and \code{POSIXt} class variables).}
 
-\item{agn_date_min}{Min value for generated dates.}
+\item{agn_date_min}{Minimum value for generated dates (\code{Date} and \code{IDate}
+class variables).}
 
-\item{agn_date_max}{Max value for generated dates.}
+\item{agn_date_max}{Maximum value for generated dates (\code{Date} and \code{IDate}
+class variables).}
 
-\item{agn_dttm_min}{Min value for generated dates.}
+\item{agn_dttm_min}{Minimum value for generated date-times (\code{POSIXt} class
+variables).}
 
-\item{agn_dttm_max}{Max value for generated date-times.}
+\item{agn_dttm_max}{Maximum value for generated date-times (\code{POSIXt} class
+variables).}
 
-\item{dttm_tz}{Timezone for generated date-times. Defaults to \code{"UTC"}, but
-\code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some users.}
+\item{agn_time_min}{Minimum value for generated times (\code{ITime} class
+variables).}
+
+\item{agn_time_max}{Maximum value for generated times (\code{ITime} class
+variables).}
+
+\item{dttm_tz}{Timezone for generated date-times (\code{POSIXt} class variables).
+Defaults to \code{"UTC"}, but \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some
+users.}
 
 \item{old_ctrl}{A set of control parameters to inherit unless explicitly
 overwritten in the current call.}

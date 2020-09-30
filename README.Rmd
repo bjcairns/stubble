@@ -29,8 +29,8 @@ The original intended use of stubble is to generate simple test data for analysi
 You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("bjcairns/stubble")
+# install.packages("remotes")
+remotes::install_github("bjcairns/stubble")
 ```
 ## Example
 

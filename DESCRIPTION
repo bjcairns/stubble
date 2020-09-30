@@ -1,7 +1,7 @@
 Package: stubble
 Title: Simple synthetic data from data frames, tibbles, and data.tables
 Version: 0.3.0
-Date: 2020-09-24
+Date: 2020-09-30
 Authors@R: c(
       person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"),
         email = "ben.cairns@ndph.ox.ac.uk",

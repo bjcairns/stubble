@@ -59,27 +59,27 @@ test_that("gen_col generates unique integer and numeric columns as required", {
   # integer columns must have a range large enough to select uniquely from
   int1 <- gen_col(
     integer(), elements = 100L,
-    agn_int_max = 100, unique = TRUE
+    agn_int_max = 100, agn_unique = TRUE
   )
   expect_equal(anyDuplicated(int1), 0)
 
   expect_error(
     int2 <- gen_col(
       integer(), elements = 100L,
-      agn_int_max = 10, unique = TRUE
+      agn_int_max = 10, agn_unique = TRUE
     )
   )
 
   # numerics should be unique (before rounding) whenever RNGkind is
   # "Wichmann-Hill"
-  num1 <- gen_col(numeric(), elements = 500000L, unique = TRUE)
+  num1 <- gen_col(numeric(), elements = 500000L, agn_unique = TRUE)
   expect_equal(anyDuplicated(num1), 0)
 
   expect_error(
     num2 <- gen_col(
       numeric(),
       elements = 500000L,
-      unique = TRUE,
+      agn_unique = TRUE,
       dbl_rng_kind = "Mersenne-Twister"
     )
   )
@@ -88,7 +88,7 @@ test_that("gen_col generates unique integer and numeric columns as required", {
     gen_col(
       numeric(),
       elements = 500000L,
-      unique = FALSE,
+      agn_unique = FALSE,
       dbl_rng_kind = "Mersenne-Twister"
     )
   )
@@ -105,7 +105,7 @@ test_that("gen_col allows an integer list", {
         integer(),
         elements = 100L,
         agn_int_list = list(agn_int_list),
-        unique = TRUE
+        agn_unique = TRUE
       ) %in%
         agn_int_list
     )
@@ -119,7 +119,7 @@ test_that("gen_col generates unique character columns as required", {
   chr1 <- gen_col(
     character(),
     elements = 10L,
-    unique = TRUE,
+    agn_unique = TRUE,
     agn_chr_min = 5L, agn_chr_max = 10L,
     agn_chr_try_unique = TRUE
   )
@@ -130,7 +130,7 @@ test_that("gen_col generates unique character columns as required", {
     gen_col(
       character(),
       elements = 10L,
-      unique = TRUE,
+      agn_unique = TRUE,
       agn_chr_min = 1L, agn_chr_max = 2L,
       agn_chr_sym = list(LETTERS[1:2])
     )
@@ -142,7 +142,7 @@ test_that("gen_col generates unique character columns as required", {
     gen_col(
       character(),
       elements = 10L,
-      unique = TRUE,
+      agn_unique = TRUE,
       agn_chr_min = 1L, agn_chr_max = 3L,
       agn_chr_sym = list(LETTERS[1:2]),
       agn_chr_try_unique = TRUE,
@@ -156,7 +156,7 @@ test_that("gen_col generates unique character columns as required", {
     gen_col(
       character(),
       elements = 10L,
-      unique = TRUE,
+      agn_unique = TRUE,
       agn_chr_min = 1L, agn_chr_max = 3L,
       agn_chr_sym = list(LETTERS[1:2]),
       agn_chr_try_unique = TRUE,
@@ -172,7 +172,7 @@ test_that("gen_col correctly includes separators in character columns", {
   no_sep <- gen_col(
     character(),
     elements = 50L,
-    unique = FALSE,
+    agn_unique = FALSE,
     agn_chr_min = 1L, agn_chr_max = 10L,
     agn_chr_sym = list(LETTERS[1:2]),
     agn_chr_sep = ""
@@ -183,7 +183,7 @@ test_that("gen_col correctly includes separators in character columns", {
   comma_sep <- gen_col(
     character(),
     elements = 50L,
-    unique = FALSE,
+    agn_unique = FALSE,
     agn_chr_min = 1L, agn_chr_max = 10L,
     agn_chr_sym = list(LETTERS[1:2]),
     agn_chr_sep = ","
@@ -191,12 +191,12 @@ test_that("gen_col correctly includes separators in character columns", {
   comma_sep_commas <- lengths(regmatches(comma_sep, gregexpr(",", comma_sep)))
   expect_equal(comma_sep_commas, (nchar(comma_sep) - 1)/2)
 
-  # Works also with unique
+  # Works also with agn_unique
   set.seed(use.seed)
   comma_sep_uniq <- gen_col(
     character(),
     elements = 10L,
-    unique = TRUE,
+    agn_unique = TRUE,
     agn_chr_min = 1L, agn_chr_max = 3L,
     agn_chr_sym = list(LETTERS[1:2]),
     agn_chr_sep = ",",

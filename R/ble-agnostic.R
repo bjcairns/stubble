@@ -42,7 +42,7 @@ ble_agnostic.default <- function(dtype, elements, ...){
 ble_agnostic.character <- function(dtype, elements, ctrl){
   
   ## Checks ##
-  uniq <- as.logical(ctrl[["unique"]])
+  uniq <- as.logical(ctrl[["agn_unique"]])
   agn_chr_min <- as.integer(ctrl[["agn_chr_min"]])
   agn_chr_max <- as.integer(ctrl[["agn_chr_max"]])
   agn_chr_sym <- sapply(ctrl[["agn_chr_sym"]], as.character)
@@ -60,7 +60,7 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
-    unique = FALSE,
+    agn_unique = FALSE,
     old_ctrl = lapply(ctrl, list),
     index = 1L
   )
@@ -165,7 +165,7 @@ ble_agnostic.factor <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
-    unique = uniq,
+    agn_unique = uniq,
     agn_chr_min = 1L, agn_chr_max = 1L,
     agn_chr_sym = list(agn_fct_use_lvls),
     agn_chr_try_unique = uniq,
@@ -227,7 +227,7 @@ ble_agnostic.IDate <- function(dtype, elements, ctrl){
 ble_agnostic.integer <- function(dtype, elements, ctrl){
   
   ## Checks ##
-  uniq <- as.logical(ctrl[["unique"]])
+  uniq <- as.logical(ctrl[["agn_unique"]])
   agn_int_list <- as.integer(unlist(ctrl[["agn_int_list"]]))
   agn_int_list <- agn_int_list[!is.na(agn_int_list)]
   
@@ -291,12 +291,26 @@ ble_agnostic.integer64 <- function(dtype, elements, ctrl){
 ble_agnostic.ITime <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
-  ctrl <- stubble_ctrl(
-    agn_int_min = 0L,
-    agn_int_max = 86399L,
-    old_ctrl = lapply(ctrl, list),
-    index = 1L
-  )
+  ctrl <- if (is.installed.package("data.table")) {
+    
+    stubble_ctrl(
+      agn_int_min = as.integer(data.table::as.ITime(ctrl[["agn_time_min"]])),
+      agn_int_max = as.integer(data.table::as.ITime(ctrl[["agn_time_max"]])),
+      old_ctrl = lapply(ctrl, list),
+      index = 1L
+    )
+    
+  } else {
+    
+    stubble_ctrl(
+      agn_int_min = as.integer(as.POSIXct(ctrl[["agn_dttm_min"]], tz = ctrl[["dttm_tz"]])),
+      agn_int_max = as.integer(as.POSIXct(ctrl[["agn_dttm_max"]], tz = ctrl[["dttm_tz"]])),
+      old_ctrl = lapply(ctrl, list),
+      index = 1L
+    )
+    
+  }
+  
   
   ## Use integer Method ##
   syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
@@ -329,7 +343,7 @@ ble_agnostic.logical <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
-    unique = uniq,
+    agn_unique = uniq,
     agn_int_min = 0L, agn_int_max = 1L,
     old_ctrl = lapply(ctrl, list),
     index = 1L

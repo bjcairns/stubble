@@ -20,33 +20,33 @@
 #' will ensure that spline-based methods will always be used. Defaults to 50%
 #' (`0.5`). will always be used. When set to 0 ECDF-based methods will always be
 #' used.
-#' @param emp_tail_exc Quantile tail size to be omitted from sampling at each end
-#' of the empirical cumulative distribution function. Defaults to 2.5% (`0.025`)
-#' at each end (tail) of the distribution.
+#' @param emp_tail_exc Quantile tail size to be omitted from sampling at each
+#' end of the empirical cumulative distribution function. Defaults to 2.5%
+#' (`0.025`) at each end (tail) of the distribution.
 #' @param emp_fuzz_spl Should the values sampled from the ECDF by `ble_spline`
 #' be 'fuzzed' through the addition of random normal noise? Defaults to `TRUE`.
 #' @param emp_fuzz_spl_sca The scaling factor for the standard deviation of the
-#' random noise applied when `emp_fuzz_spl` is set to `TRUE`. Defaults to `0.05`,
-#' i.e. 5% of the standard deviation of the source data.
-#' @param emp_n_exc Observation prevalence below which values will be excluded from
-#' simulations. Defaults to 10.
-#' @param emp_p_exc Observation prevalence below which values will be excluded from
-#' simulations. Defaults to 1% (`0.01`)
-#' @param emp_fuzz_samp Should the probability weights sampled from the distribution
-#' of values by `stub_sample` be 'fuzzed' through the addition of random normal
-#' noise? Defaults to `TRUE`.
-#' @param emp_drop_lev Parameter indicating whether empty factor levels should be
-#' dropped from simlated factors and ordered factors. Defauls to `TRUE`
-#' @param unique Single logical value or logical vector indicating whether
+#' random noise applied when `emp_fuzz_spl` is set to `TRUE`. Defaults to
+#' `0.05`, i.e. 5% of the standard deviation of the source data.
+#' @param emp_n_exc Observation prevalence below which values will be excluded
+#' from simulations. Defaults to 10.
+#' @param emp_p_exc Observation prevalence below which values will be excluded
+#' from simulations. Defaults to 1% (`0.01`).
+#' @param emp_fuzz_samp Should the probability weights sampled from the
+#' distribution of values by `stub_sample` be 'fuzzed' through the addition of
+#' random normal noise? Defaults to `TRUE`.
+#' @param emp_drop_lev Parameter indicating whether empty factor levels should
+#' be dropped from simlated factors and ordered factors. Defauls to `TRUE`.
+#' @param agn_unique Single logical value or logical vector indicating whether
 #' synthetic values should be unique within the column. When a vector, the
 #' relevant element is chosen by the `index` argument to `ble_agnostic`.
 #' @param agn_int_min Minmium values for integer generation.
 #' @param agn_int_max Maximum values for integer generation.
-#' @param agn_int_list An integer vector of allowed values for integer generation.
-#' If `NA` (the default), this is ignored. If non-`NA`, `agn_int_list`
-#' overrides `agn_int_min`/`agn_int_max`.
-#' @param agn_dbl_min Minimum values for real/numeric/double generation
-#' @param agn_dbl_max Maximum values for real/numeric/double generation
+#' @param agn_int_list An integer vector of allowed values for integer
+#' generation. If `NA` (the default), this is ignored. If non-`NA`,
+#' `agn_int_list` overrides `agn_int_min`/`agn_int_max`.
+#' @param agn_dbl_min Minimum values for real/numeric/double generation.
+#' @param agn_dbl_max Maximum values for real/numeric/double generation.
 #' @param agn_dbl_round Number of decimal places to round to. [round()] and then
 #' [signif()] are applied in sequence (see `agn_dbl_signif`, below). If `NA`
 #' (default), no rounding is applied.
@@ -55,38 +55,52 @@
 #' (default), no rounding is applied.
 #' @param agn_chr_min The minimum number of characters in a generated string.
 #' @param agn_chr_max The maximum number of characters in a generated string.
-#' @param agn_chr_sym A character vector of allowed symbols for generated strings.
+#' @param agn_chr_sym A character vector of allowed symbols for generated
+#' strings.
 #' @param agn_chr_sep A separator for symbols in generated strings; defaults to
 #' `""` (an empty string).
-#' @param agn_chr_try_unique Logical value indicating whether, after a failure to
-#' generate a unique synthetic character vector, the algorithm should attempt
-#' to regenerate duplicates. If `TRUE`, there will be `agn_chr_try_unique_attempts`
-#' attempts.
+#' @param agn_chr_try_unique Logical value indicating whether, after a failure
+#' to generate a unique synthetic character vector, the algorithm should attempt
+#' to regenerate duplicates. If `TRUE`, there will be
+#' `agn_chr_try_unique_attempts` attempts.
 #' @param agn_chr_try_unique_attempts Number of attempts to make to generate a
 #' unique synthetic character vector.
-#' @param agn_chr_duplicated_nmax Value (greater than one) for the `nmax` parameter
-#' of [duplicated()] when enforcing uniqueness. Defaults to `NA`, the default
-#' for `duplicated()`.
-#' @param agn_fct_lvls Levels attribute for synthetic factors. Should always be a
-#' list with character vectors as elements.
-#' @param agn_fct_use_lvls Allowed levels for synthetic factor data. Should always
-#' be a list with character vectors as elements. Each element of `agn_fct_use_lvls`
-#' should be a subset of the corresponding element of `agn_fct_lvls`.
+#' @param agn_chr_duplicated_nmax Value (greater than one) for the `nmax`
+#' parameter of [duplicated()] when enforcing uniqueness. Defaults to `NA`, the
+#' default for `duplicated()`.
+#' @param agn_fct_lvls Levels attribute for synthetic factors. Should always be
+#' a list with character vectors as elements.
+#' @param agn_fct_use_lvls Allowed levels for synthetic factor data. Should
+#' always be a list with character vectors as elements. Each element of
+#' `agn_fct_use_lvls` should be a subset of the corresponding element of
+#' `agn_fct_lvls`.
 #' @param agn_fct_force_unique Force `gen_col()` to attempt to return a factor
 #' vector with unique elements. Will return an error unless
-#' `length(agn_fct_use_lvls)` is greater than or equal to the `elements` argument
-#' of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
+#' `length(agn_fct_use_lvls)` is greater than or equal to the `elements`
+#' argument of `gen_col()` (equivalently, the `nrows` argument of
+#' `stubblise()`).
 #' @param agn_lgl_force_unique Force `gen_col()` to attempt to return a logical
-#' vector with unique elements. Will return an error unless `length(lgl_lvls)`
-#' (usually equal to 2) is greater than or equal to the `elements` argument
-#' of `gen_col()` (equivalently, the `nrows` argument of `stubblise()`).
-#' @param date_origin The reference date for generated dates and times.
-#' @param agn_date_min Min value for generated dates.
-#' @param agn_date_max Max value for generated dates.
-#' @param agn_dttm_min Min value for generated dates.
-#' @param agn_dttm_max Max value for generated date-times.
-#' @param dttm_tz Timezone for generated date-times. Defaults to `"UTC"`, but
-#' [Sys.timezone()] may be more appropriate for some users.
+#' vector with unique elements. Will return an error unless
+#' `length(agn_lgl_lvls)` (usually equal to 2) is greater than or equal to the
+#' `elements` argument of `gen_col()` (equivalently, the `nrows` argument of
+#' `stubblise()`).
+#' @param date_origin The reference date for generated dates and times (`Date`,
+#' `IDate` and `POSIXt` class variables).
+#' @param agn_date_min Minimum value for generated dates (`Date` and `IDate`
+#' class variables).
+#' @param agn_date_max Maximum value for generated dates (`Date` and `IDate`
+#' class variables).
+#' @param agn_dttm_min Minimum value for generated date-times (`POSIXt` class
+#' variables).
+#' @param agn_dttm_max Maximum value for generated date-times (`POSIXt` class
+#' variables).
+#' @param agn_time_min Minimum value for generated times (`ITime` class
+#' variables).
+#' @param agn_time_max Maximum value for generated times (`ITime` class
+#' variables).
+#' @param dttm_tz Timezone for generated date-times (`POSIXt` class variables).
+#' Defaults to `"UTC"`, but [Sys.timezone()] may be more appropriate for some
+#' users.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly
 #' overwritten in the current call.
 #' @param index Default `NA`. If not `NA`, the function will return list in
@@ -107,7 +121,7 @@ stubble_ctrl <- function(
   p_na = NA_real_, emp_sw = 0.1,
   emp_tail_exc = 0.025, emp_fuzz_spl = TRUE, emp_fuzz_spl_sca = 0.05,
   emp_n_exc = 10, emp_p_exc = 0.05, emp_fuzz_samp = TRUE, emp_drop_lev = TRUE,
-  unique = FALSE,
+  agn_unique = FALSE,
   agn_int_min = 0L, agn_int_max = 100L, agn_int_list = NA,
   agn_dbl_min = 0, agn_dbl_max = 100, agn_dbl_round = NA, agn_dbl_signif = NA,
   agn_chr_min = 0L, agn_chr_max = 10L,
@@ -121,6 +135,7 @@ stubble_ctrl <- function(
   date_origin = "1970-01-01",
   agn_date_min = date_origin, agn_date_max = Sys.Date(),
   agn_dttm_min = date_origin, agn_dttm_max = Sys.time(),
+  agn_time_min = "00:00:00", agn_time_max = "23:59:59",
   dttm_tz = "UTC",
   old_ctrl = list(),
   index = NA_integer_,
