@@ -20,9 +20,9 @@ knitr::opts_chunk$set(
 
 stubble helps you generate simple synthetic datasets matching the format of a supplied data frame-like object (including base R data frames, tibbles, data.tables, and lists of vectors). 
 
-stubble replicates the column names and types of the original data, but rows contain only random data.
+stubble replicates the column names and types of the original data, but the synthetic data are randomly generated. By default, these values are completely random and contain no information about the original data, but it is also possible to tell stubble to draw synthetic values from the empirical distributions of the original data. 
 
-The original intended use of stubble is to generate simple test data for analysis projects and R package development.
+The original intended use of stubble was to generate simple test data for analysis projects and R package development. It could also be used in teaching, methods research, study design, and any other context where realistic-but-fake data may be useful.
 
 ## Installation
 
@@ -34,7 +34,9 @@ remotes::install_github("bjcairns/stubble")
 ```
 ## Example
 
-Here is a very simple example of using stubble on the `iris` dataset. By default, stubble generates nonsense values which bear no relation to the original values, other than having the same vector type.
+Here is a very simple example of using stubble on the included `penguins_ext` dataset (derived from [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)). 
+
+The default in stubble is to maintain strict data protection. Unless you tell it otherwise, it generates nonsense values which bear no relation to the original values, other than having the same vector type.
 
 ``` {r seed, echo=FALSE}
 set.seed(98723895)
@@ -42,10 +44,25 @@ set.seed(98723895)
 
 ```{r example}
 library(stubble)
-stubblise(iris)
+
+# Example with several data types 
+# (character, factor, double, integer, logical and Date)
+p <- penguins_ext[, c(
+       "id", 
+       "species", 
+       "bill_length_mm", 
+       "body_mass_g", 
+       "clutch_completion", 
+       "date_egg"
+     )]
+head(p)
+
+# stubblise to obtain a dataset with the same structure, but random data
+p_stbl <- stubblise(p)
+head(p_stbl)
 ```
 
-For more advanced use, see the "Using stubble" vignette.
+For more advanced use, such as generating values from the empirical distributions of each variable, see the "Using stubble" vignette.
 
 ## Known issues
 
