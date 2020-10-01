@@ -13,11 +13,11 @@
 impute_na <- function(syn_col, p_na){
   
   ## Simulate Missing Data ##
-  if(p_na == 1){
+  if (p_na == 1) {
     
     syn_col[] <- NA
     
-  } else {
+  } else if (p_na > 0) {
     
     syn_col[rbinom(n = length(syn_col), size = 1L, prob = p_na) == 1L] <- NA
     

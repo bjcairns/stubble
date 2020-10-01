@@ -82,7 +82,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not(is.installed.package("bit64"))
+    skip_if_not_installed("bit64")
     expect_type(
       object = stub_spline(l0[["integer64"]], ctrl = ctrl_def),
       type = "list"
@@ -94,7 +94,7 @@ test_that(
 test_that(
   desc = "0-length vectors [data.table].",
   code = {
-    skip_if_not(is.installed.package("data.table"))
+    skip_if_not_installed("data.table")
     expect_type(
       object = stub_spline(l0[["IDate"]], ctrl = ctrl_def),
       type = "list"
@@ -134,7 +134,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not(is.installed.package("bit64"))
+    skip_if_not_installed("bit64")
     expect_type(
       object = stub_spline(lna[["integer64"]], ctrl = ctrl_def),
       type = "list"
@@ -146,7 +146,7 @@ test_that(
 test_that(
   desc = "0-length vectors [data.table].",
   code = {
-    skip_if_not(is.installed.package("data.table"))
+    skip_if_not_installed("data.table")
     expect_type(
       object = stub_spline(lna[["IDate"]], ctrl = ctrl_def),
       type = "list"

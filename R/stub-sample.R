@@ -50,6 +50,9 @@ stub_sample.character <- function(col, ctrl){
   ## Extract Parameters ##
   sim <- stub_sample_(col = col, ctrl = ctrl)
   
+  ## Coerce to Date ##
+  sim[["values"]] <- as.character(sim[["values"]])
+  
   ## Output ##
   return(sim)
   
@@ -59,9 +62,6 @@ stub_sample.character <- function(col, ctrl){
 ### stub_sample.Date() ###
 #' @export
 stub_sample.Date <- function(col, ctrl){
-  
-  ## Extract Value Labels ##
-  labels <- sort(unique(col))
   
   ## Extract Parameters ##
   sim <- stub_sample_(col = col, ctrl = ctrl)
@@ -160,7 +160,7 @@ stub_sample.integer <- function(col, ctrl){
 stub_sample.integer64 <- function(col, ctrl){
   
   ## Extract Parameters ##
-  sim <- stub_sample.double(col = col, ctrl = ctrl)
+  sim <- stub_sample_(col = col, ctrl = ctrl)
   
   ## Attempt Coercion to integer64 ##
   if (is.installed.package("bit64")) {
@@ -186,7 +186,7 @@ stub_sample.integer64 <- function(col, ctrl){
 stub_sample.ITime <- function(col, ctrl){
   
   ## Extract Parameters ##
-  sim <- stub_sample.integer(col = col, ctrl = ctrl)
+  sim <- stub_sample_(col = col, ctrl = ctrl)
   
   ## Attempt Coercion to ITime ##
   if (is.installed.package("data.table")) {
@@ -200,7 +200,7 @@ stub_sample.ITime <- function(col, ctrl){
     .warning_coercion(col)
     
     # Coerce to POSIXct #
-    sim[["values"]] <- as.POSIXct(sim[["values"]], tz = ctrl[["dttm_tz"]])
+    sim[["values"]] <- as.POSIXct(sim[["values"]], origin = "1970-01-01", tz = ctrl[["dttm_tz"]])
     
   }
   
@@ -265,8 +265,8 @@ stub_sample.POSIXlt <- function(col, ctrl){
   ## Coerce to POSIXct ##
   col <- as.POSIXct(col, tz = ctrl[["dttm_tz"]])
   
-  ## Use POSIXct Method ##
-  sim <- stub_sample.POSIXct(col = col, ctrl = ctrl)
+  ## Extract Parameters ##
+  sim <- stub_sample_(col = col, ctrl = ctrl)
   
   ## Coerce to POSIXlt ##
   sim[["values"]] <- as.POSIXlt(sim[["values"]], tz = ctrl[["dttm_tz"]])

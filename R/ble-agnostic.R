@@ -5,25 +5,35 @@
 #====================#
 
 
-### Notes ###
-# - Should ctrl params exist for agn_dttm_min and agn_date_min?
-# - IDates are currently passed to the integer method, whereas Dates are passed
-#   to the double method. This is correct, but will it confuse people?
-
-
 ### ble_agnostic() ###
 #' @noRd
-ble_agnostic <- function(dtype, ...){
+ble_agnostic <- function(x, elements, ctrl){
   
-  ## Define S3 Method ##
-  UseMethod("ble_agnostic", dtype)
+  ## Extract stub Params ##
+  dtype <- x[["dtype"]]
+  
+  ## Call S3 Internals ##
+  syn_col <- ble_agnostic_(dtype = dtype, elements = elements, ctrl = ctrl)
+  
+  ## Output ##
+  return(syn_col)
   
 }
 
 
-### ble_agnostic.default() ###
+### ble_agnostic_() ###
+#' @noRd
+ble_agnostic_ <- function(dtype, ...){
+  
+  ## Define S3 Method ##
+  UseMethod("ble_agnostic_", dtype)
+  
+}
+
+
+### ble_agnostic_.default() ###
 #' @export
-ble_agnostic.default <- function(dtype, elements, ...){
+ble_agnostic_.default <- function(dtype, elements, ...){
   
   ## Warning ##
   .warning_no_method(dtype)
@@ -37,9 +47,9 @@ ble_agnostic.default <- function(dtype, elements, ...){
 }
 
 
-### ble_agnostic.character() ###
+### ble_agnostic_.character() ###
 #' @export
-ble_agnostic.character <- function(dtype, elements, ctrl){
+ble_agnostic_.character <- function(dtype, elements, ctrl){
   
   ## Checks ##
   uniq <- as.logical(ctrl[["agn_unique"]])
@@ -73,7 +83,7 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
     
     try_attempts <- try_attempts - 1
     
-    syn_col_repl <- ble_agnostic.character(
+    syn_col_repl <- ble_agnostic_.character(
       dtype = dtype,
       elements = ndups,
       ctrl = ctrl
@@ -103,9 +113,9 @@ ble_agnostic.character <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.Date() ###
+### ble_agnostic_.Date() ###
 #' @export
-ble_agnostic.Date <- function(dtype, elements, ctrl){
+ble_agnostic_.Date <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
@@ -116,7 +126,7 @@ ble_agnostic.Date <- function(dtype, elements, ctrl){
   )
   
   ## Use double Method ##
-  syn_col <- ble_agnostic.double(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.double(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -130,9 +140,9 @@ ble_agnostic.Date <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.double() ###
+### ble_agnostic_.double() ###
 #' @export
-ble_agnostic.double <- function(dtype, elements, ctrl){
+ble_agnostic_.double <- function(dtype, elements, ctrl){
   
   ## Draw From Uniform Distribution ##
   syn_col <- runif(elements, ctrl[["agn_dbl_min"]], ctrl[["agn_dbl_max"]])
@@ -149,9 +159,9 @@ ble_agnostic.double <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.factor() ###
+### ble_agnostic_.factor() ###
 #' @export
-ble_agnostic.factor <- function(dtype, elements, ctrl){
+ble_agnostic_.factor <- function(dtype, elements, ctrl){
   
   ## Checks ##
   agn_fct_lvls <- as.character(unlist(ctrl[["agn_fct_lvls"]]))
@@ -174,7 +184,7 @@ ble_agnostic.factor <- function(dtype, elements, ctrl){
   )
   
   ## Use character method ##
-  syn_col <- ble_agnostic.character(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.character(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Coerce to factor ##
   syn_col <- factor(syn_col, levels = agn_fct_lvls)
@@ -185,9 +195,9 @@ ble_agnostic.factor <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.IDate() ###
+### ble_agnostic_.IDate() ###
 #' @export
-ble_agnostic.IDate <- function(dtype, elements, ctrl){
+ble_agnostic_.IDate <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
@@ -198,7 +208,7 @@ ble_agnostic.IDate <- function(dtype, elements, ctrl){
   )
   
   ## Use integer Method ##
-  syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.integer(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Attempt Coercion to IDate ##
   syn_col <- if (is.installed.package("data.table")){
@@ -222,9 +232,9 @@ ble_agnostic.IDate <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.integer() ###
+### ble_agnostic_.integer() ###
 #' @export
-ble_agnostic.integer <- function(dtype, elements, ctrl){
+ble_agnostic_.integer <- function(dtype, elements, ctrl){
   
   ## Checks ##
   uniq <- as.logical(ctrl[["agn_unique"]])
@@ -257,12 +267,12 @@ ble_agnostic.integer <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.integer64() ###
+### ble_agnostic_.integer64() ###
 #' @export
-ble_agnostic.integer64 <- function(dtype, elements, ctrl){
+ble_agnostic_.integer64 <- function(dtype, elements, ctrl){
   
   ## Use double Method ##
-  syn_col <- ble_agnostic.double(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.double(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -286,9 +296,9 @@ ble_agnostic.integer64 <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.ITime() ###
+### ble_agnostic_.ITime() ###
 #' @export
-ble_agnostic.ITime <- function(dtype, elements, ctrl){
+ble_agnostic_.ITime <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- if (is.installed.package("data.table")) {
@@ -313,7 +323,7 @@ ble_agnostic.ITime <- function(dtype, elements, ctrl){
   
   
   ## Use integer Method ##
-  syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.integer(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Attempt Coercion to ITime ##
   syn_col <- if (is.installed.package("data.table")) {
@@ -334,9 +344,9 @@ ble_agnostic.ITime <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.logical() ###
+### ble_agnostic_.logical() ###
 #' @export
-ble_agnostic.logical <- function(dtype, elements, ctrl){
+ble_agnostic_.logical <- function(dtype, elements, ctrl){
   
   ## Checks ##
   uniq <- as.logical(ctrl[["agn_lgl_force_unique"]])
@@ -350,7 +360,7 @@ ble_agnostic.logical <- function(dtype, elements, ctrl){
   )
   
   ## Use integer Method ##
-  syn_col <- ble_agnostic.integer(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.integer(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Coerce to logical ##
   syn_col <- as.logical(syn_col)
@@ -361,9 +371,9 @@ ble_agnostic.logical <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.ordered() ###
+### ble_agnostic_.ordered() ###
 #' @export
-ble_agnostic.ordered <- function(dtype, elements, ctrl){
+ble_agnostic_.ordered <- function(dtype, elements, ctrl){
   
   ## Use factor Method ##
   syn_col <- NextMethod(dtype)
@@ -377,9 +387,9 @@ ble_agnostic.ordered <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.POSIXct() ###
+### ble_agnostic_.POSIXct() ###
 #' @export
-ble_agnostic.POSIXct <- function(dtype, elements, ctrl){
+ble_agnostic_.POSIXct <- function(dtype, elements, ctrl){
   
   ## Redefine Control Parameters ##
   ctrl <- stubble_ctrl(
@@ -390,7 +400,7 @@ ble_agnostic.POSIXct <- function(dtype, elements, ctrl){
   )
   
   ## Use double Method ##
-  syn_col <- ble_agnostic.double(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.double(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Coerce to POSIXct ##
   syn_col <- as.POSIXct(syn_col, origin = ctrl[["date_origin"]], tz = ctrl[["dttm_tz"]])
@@ -401,12 +411,12 @@ ble_agnostic.POSIXct <- function(dtype, elements, ctrl){
 }
 
 
-### ble_agnostic.POSIXlt() ###
+### ble_agnostic_.POSIXlt() ###
 #' @export
-ble_agnostic.POSIXlt <- function(dtype, elements, ctrl){
+ble_agnostic_.POSIXlt <- function(dtype, elements, ctrl){
   
   ## Use POSIXct Method ##
-  syn_col <- ble_agnostic.POSIXct(dtype = dtype, elements = elements, ctrl = ctrl)
+  syn_col <- ble_agnostic_.POSIXct(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Coerce to POSIXlt ##
   syn_col <- as.POSIXlt(syn_col, tz = ctrl[["dttm_tz"]])

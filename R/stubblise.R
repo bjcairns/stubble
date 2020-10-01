@@ -94,7 +94,7 @@
 stubblise <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
   
   ## Checks ##
-  if (!is.list(ctrl)) stop("Argument `control` must be a list")
+  if (!is.list(ctrl)) stop("Argument `ctrl` must be a list")
   
   ## Generate stub Object ##
   s <- stub(x = x, method = method, ctrl = ctrl)

@@ -14,7 +14,8 @@
 
 ### Params ###
 ## Control ##
-ctrl_def <- stubble_ctrl(index = 1L)[-1]
+ctrl_def <- stubble_ctrl(index = 1L)
+ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 
 # ## Vars ##
 # vars_base <- c("character", "Date", "double", "factor", "integer", "logical", "ordered", "POSIXct", "POSIXlt")
@@ -100,7 +101,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not(is.installed.package("bit64"))
+    skip_if_not_installed("bit64")
     expect_type(
       object = stub_sample(l0[["integer64"]], ctrl = ctrl_def),
       type = "list"
@@ -112,9 +113,13 @@ test_that(
 test_that(
   desc = "Zero-length vectors [data.table].",
   code = {
-    skip_if_not(is.installed.package("data.table"))
+    skip_if_not_installed("data.table")
     expect_type(
       object = stub_sample(l0[["IDate"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = stub_sample(l0[["ITime"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -169,7 +174,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [bit64].",
   code = {
-    skip_if_not(is.installed.package("bit64"))
+    skip_if_not_installed("bit64")
     expect_type(
       object = stub_sample(lna[["integer64"]], ctrl = ctrl_def),
       type = "list"
@@ -181,9 +186,13 @@ test_that(
 test_that(
   desc = "Missing data vectors [data.table].",
   code = {
-    skip_if_not(is.installed.package("data.table"))
+    skip_if_not_installed("data.table")
     expect_type(
       object = stub_sample(lna[["IDate"]], ctrl = ctrl_def),
+      type = "list"
+    )
+    expect_type(
+      object = stub_sample(lna[["ITime"]], ctrl = ctrl_def),
       type = "list"
     )
   }
@@ -193,11 +202,10 @@ test_that(
 ### Output Classes ###
 ## base ##
 test_that(
-  desc = "Output Classes (base).",
+  desc = "Output Classes [base].",
   code = {
-    expect_identical(
-      object = class(stub_sample(l1[["character"]], ctrl = ctrl_def)[["values"]]),
-      expected = "character",
+    expect_true(
+      object = is.character(stub_sample(l1[["character"]], ctrl = ctrl_def)[["values"]]),
       label = "character"
     )
     expect_identical(
@@ -229,14 +237,12 @@ test_that(
       expected = c("ordered", "factor"),
       label = "ordered"
     )
-    expect_identical(
-      object = class(stub_sample(l1[["POSIXct"]], ctrl = ctrl_def)[["values"]]),
-      expected = c("POSIXct", "POSIXt"),
+    expect_true(
+      object = "POSIXct" %in% class(stub_sample(l1[["POSIXct"]], ctrl = ctrl_def)[["values"]]),
       label = "POSIXct"
     )
-    expect_identical(
-      object = class(stub_sample(l1[["POSIXlt"]], ctrl = ctrl_def)[["values"]]),
-      expected = c("POSIXlt", "POSIXt"),
+    expect_true(
+      object = "POSIXlt" %in% class(stub_sample(l1[["POSIXlt"]], ctrl = ctrl_def)[["values"]]),
       label = "POSIXlt"
     )
   }
@@ -246,7 +252,7 @@ test_that(
 test_that(
   desc = "Output Classes [bit64].",
   code = {
-    skip_if_not(is.installed.package("bit64"))
+    skip_if_not_installed("bit64")
     expect_identical(
       object = class(stub_sample(l1[["integer64"]], ctrl = ctrl_def)[["values"]]),
       expected = "integer64",
@@ -258,11 +264,15 @@ test_that(
 test_that(
   desc = "Output Classes [data.table].",
   code = {
-    skip_if_not(is.installed.package("data.table"))
-    expect_identical(
-      object = class(stub_sample(l1[["IDate"]], ctrl = ctrl_def)[["values"]]),
-      expected = c("IDate", "Date"),
+    skip_if_not_installed("data.table")
+    expect_true(
+      object = "IDate" %in% class(stub_sample(l1[["IDate"]], ctrl = ctrl_def)[["values"]]),
       label = "IDate"
+    )
+    expect_identical(
+      object = class(stub_sample(l1[["ITime"]], ctrl = ctrl_def)[["values"]]),
+      expected = "ITime",
+      label = "ITime"
     )
   }
 )

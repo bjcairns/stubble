@@ -120,6 +120,18 @@
 }
 
 
+### .warning_zero_sample() ###
+.warning_zero_sample <- function(){
+  
+  ## Generate Warning ##
+  warn <- "Zero-length vectors cannot be sampled"
+  
+  ## Output ##
+  return(warning(warn, call. = FALSE))
+  
+}
+
+
 ### .stop_no_method() ###
 #' @noRd
 .stop_no_method <- function(x){
