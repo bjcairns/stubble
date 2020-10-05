@@ -8,40 +8,6 @@
 #' @importFrom utils installed.packages
 
 
-### impute_na() ###
-#' @noRd
-impute_na <- function(syn_col, p_na){
-  
-  ## Simulate Missing Data ##
-  if (p_na == 1) {
-    
-    syn_col[] <- NA
-    
-  } else if (p_na > 0) {
-    
-    syn_col[rbinom(n = length(syn_col), size = 1L, prob = p_na) == 1L] <- NA
-    
-  }
-  
-  ## Output ##
-  return(syn_col)
-  
-}
-
-
-### is.installed.package() ###
-#' @noRd
-is.installed.package <- function(pkg, ...){
-  
-  ## Assert Package Installation ##
-  status <- pkg %in% rownames(installed.packages(...))
-  
-  ## Output ##
-  return(status)
-  
-}
-
-
 ### dtype0() ###
 #' @noRd
 dtype0 <- function(x, ...){
@@ -323,6 +289,46 @@ dtype0.tbl_df <- function(x){
   
   ## Output ##
   return(d)
+  
+}
+
+
+### impute_na() ###
+#' @noRd
+impute_na <- function(syn_col, p_na){
+  
+  ## Simulate Missing Data ##
+  if (p_na == 1) {
+    
+    syn_col[] <- NA
+    
+  } else if (p_na > 0) {
+    
+    syn_col[rbinom(n = length(syn_col), size = 1L, prob = p_na) == 1L] <- NA
+    
+  }
+  
+  ## Output ##
+  return(syn_col)
+  
+}
+
+
+### is.installed.package() ###
+#' @noRd
+is.installed.package <- function(pkg, ...){
+  
+  ## Non-NA Indices ##
+  ind <- which(!is.na(pkg))
+  
+  ## Empty Results Vector ##
+  status <- rep(NA, length(pkg))
+  
+  ## Assert Package Installation ##
+  status[ind] <- pkg[ind] %in% rownames(installed.packages(...))
+  
+  ## Output ##
+  return(status)
   
 }
 
