@@ -2,7 +2,7 @@
 title: "Using stubblise()"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using stubble}
+  %\VignetteIndexEntry{Using stubblise()}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 The most basic usage of stubble employs `stubblise()` (or, `stubblize()`) to return a synthetic dataset based on the original data provided to the function.
 
-Examples on this page use the `penguins_ext` dataset, which includes measurements of physical characteristics and information on nesting success of penguins of several species on islands in the Palmer Archipelago. These data are derived from the [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) package. For the purpose of these examples, we'll use a slightly cut-down version of the dataset:
+Examples on this page use the `penguins_ext` dataset, which includes measurements of physical characteristics and information on nesting success of penguins of several species on islands in the Palmer Archipelago. These data are derived from the [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) package and stored, for use in examples and vignettes, in the stubble package. For the purpose of these examples, we'll use a slightly cut-down version of the dataset:
 
 ```{r usedata}
 library(stubble)
@@ -35,19 +35,18 @@ head(p)
 
 ## Default operation: `method = "agnostic"`
 
-Because real data are often sensitive and unsuitable for sharing, stubble produces nonsense data unless you tell it not to. With default options, the function `stubblise()` (equivalently, `stubblize()`) will produce a data frame that shares only the column names and types with the source dataset.
+Because real data are often sensitive and unsuitable for sharing, stubble produces nonsense data unless you tell it not to. With default options, the function `stubblise()` (equivalently, `stubblize()`) will produce a data frame that shares only the column names and types with the source dataset. No other information from the original dataset will be included in the stubblised data.
 
-Let's generate a "stubblised" (i.e. synthetic) dataset with 100 rows:
+Let's generate a "stubblised" (i.e. synthetic) dataset with 100 rows. You may first want to set a random number generation seed to ensure your results are repeatable:
 
-``` {r seed, echo=FALSE}
-use_seed <- 98723895
+``` {r seed}
+use_seed <- 34522
 set.seed(use_seed)
 ```
 
+Now call `stubblise()` on the penguins dataset, leaving arguments other than `rows` at their defaults:
+
 ```{r example}
-library(stubble)
-use_seed <- 98723895
-set.seed(use_seed)
 p_agn <- stubblise(p, rows = 100L)
 head(p_agn)
 ```
@@ -62,26 +61,27 @@ If you did want to use the same factor levels, however, you can do so, using the
 
 ```{r factor.levels}
 set.seed(use_seed)
-p_agn_2 <- stubblise(p_agn, agn_fct_lvls = list(levels(p$species)))
+species_lvls <- levels(p$species)
+p_agn_2 <- stubblise(p_agn, agn_fct_lvls = list(species_lvls))
 head(p_agn_2)
 ```
 
 Some control parameters have a prefix `agn_` or `emp_`, which refers to the data generation method: *agn*ostic (that is, generated uniformly at random) or *emp*irical (that is, generated from an approximation to the empirical distribution of each variable).
 
-Going further, control parameters can be specified for each column so as to produce more realistic looking data, even when the .[^2]
+Going further, control parameters can be specified for each column so as to produce more realistic looking data, although there are still no relationships between variables.[^2]
 
-```{r realistic}
+```{r realistic, message=FALSE}
 library(dplyr)
 
-min_numeric <- function(x) if (is.numeric(x)) min(x, na.rm = TRUE) else NA_real_
-max_numeric <- function(x) if (is.numeric(x)) max(x, na.rm = TRUE) else NA_real_
+mins <- summarise(
+  p, across(.fns = ~ if (is.numeric(.x)) min(.x, na.rm = TRUE) else NA_real_)
+)
+maxs <- summarise(
+  p, across(.fns = ~ if (is.numeric(.x)) max(.x, na.rm = TRUE) else NA_real_)
+)
 
-mins <- summarise(p, across(.fns = min_numeric))
-maxs <- summarise(p, across(.fns = max_numeric))
-species_lvls <- levels(p$species)
-species_rows <- count(p, species)$n
+print(species_rows <- count(p, species)$n)
 
-set.seed(use_seed)
 p_agn_3 <- purrr::map2_dfr(
   species_rows, species_lvls,
   ~ stubblise(
@@ -92,14 +92,16 @@ p_agn_3 <- purrr::map2_dfr(
   )
 )
 
+count(p_agn_3, species)$n
+
 head(p_agn_3, 10)
 ```
 
-Note this important feature of the control parameter syntax: elements of vector parameters (like `agn_dble_min`) apply to corresponding columns (first element to first column, second to second, and so on, with recycling). If the parameter for a single column is a vector (like `agn_fct_lvls`), then it should be wrapped in `list()`.
+Note an important feature of the control parameter syntax illustrated above: elements of vector parameters (like `agn_dbl_min`) apply to corresponding columns (first element to first column, second to second, and so on, with recycling). If the parameter for a single column is a vector (like `agn_fct_lvls`), then it should be wrapped in `list()`.
 
 ### More realistic data
 
-Although the result of the previous section looks much more realistic, there are obvious differences. It is easy to see, for example, that the `body_mass_g` column for setosa differs from the original `penguins_ext` dataset. This is because although different species tend to have different petal widths in the original data, in the synthetic version there are no such relationships (**Figure**). 
+Although the result of the previous section looks much more realistic, there are obvious differences. It is easy to see, for example, that the distributions of `body_mass_g` differs for each species from those in the original dataset. This is because although penguins of different species tend to have different body masses in the original data, in the synthetic version there are no such relationships (**Figure**). 
 
 <br />
 
@@ -131,21 +133,34 @@ Note that original column names and types are revealed in stubblised datasets, a
 
 If, despite stubble's intended limitations, you do want to generate associations, it may still be possible. In the `penguins_ext` example, different control parameters for the numeric columns could be passed to `stubblise()` for each species.
 
+
 ## **Very** realistic data: `method = "empirical"`
 
-The control parameters for the `"agnostic"` method may be useful when you wish to generate synethetic data that includes very limited information from the original dataset, or when there are no actual original data, just a "shell" with named and typed columns, but no rows.
+The control parameters for the `"agnostic"` method may be useful when you wish to generate synethetic data that includes very limited information from the original dataset, or when there are no actual original data, just a "shell" with named and typed columns of length zero (yes! stubble can handle these).
 
 Sometimes, however, you may wish to generate data in which each variable looks very much like the original. This is possible in stubble by setting `method = "empirical"`, e.g.
 
 ```{r empirical}
-set.seed(use_seed)
 p_emp <- stubblise(p, rows = 100L, method = "empirical")
 head(p_emp)
 ```
 
+Note the warning following the call to `stubblise()`. The `id` vector identifies penguins which are only measured 1, 2 or 3 times in this dataset, and by default stubble will censor uncommon values. The user can control this behaviour using the `emp_n_exc` (exclude values appearing less than "n" times) and `emp_p_exc` (exclude values with proportion less than "p") control parameters. For more information see `?stubble_ctrl`.
+
+```{r empirical_ctrl}
+set.seed(742247)
+p_emp <- stubblise(
+  p, rows = 100L, method = "empirical", 
+  ctrl = list(emp_n_exc = 0, emp_p_exc = 0)
+)
+head(p_emp)
+```
+
+Note in the above that one of the observations is missing for `body_mass_g`. There are missing values in the original data, and by default stubble will replicate the probability of missingness (although not necessarily the same number of missing values) found in the original data. Missing values are quite rare in the original data; the random seed was chosen to ensure a missing value showed up when the stubblised dataset was displayed with `head()`!
+
 <br />
 
 
-[^1]: Or, as close as possible to uniformly distributions, given that all values are derived from pseudo-random number generators. The exception is character vectors, in which every string length has equal probability, and then conditional on string length `n`, every symbol (upper- and lower-case letters, numbers and selected punctuation) has equal probability of appearing in each of the `n` positions. This does not sample uniformly from all such strings of length up to `n`!
+[^1]: Or, as close as possible to uniformly distributions, given that all values are derived from pseudo-random number generators. The exception is character vectors, in which every string length has equal probability, and then conditional on string length `n`, every symbol (upper- and lower-case letters, numerals and selected punctuation) has equal probability of appearing in each of the `n` positions. This mechanism does not sample with equal probability from all strings of these characters with length up to `n`.
 
-[^2]: The code here extracts minima and maxima and factor levels, finds the number of rows for each species, then calls `stubblise()` for each species (via `purrr::map2_dfr()`) to give the same number of rows per species as in the original `p`. Because the `map2_dfr()` function binds its results into a single data frame, the `s7pecies` columns need to be compatible. This is ensured by giving a `agn_fct_lvls` parameter including all 3 levels, while the `agn_fct_use_lvls` parameter includes only the level for the current species.
+[^2]: The code here extracts minima and maxima and factor levels, finds the number of rows for each species, then calls `stubblise()` for each species (via `purrr::map2_dfr()`) to give the same number of rows per species as in the original `p`. Because the `map2_dfr()` function binds its results into a single data frame, the `species` columns need to be compatible. This is ensured by giving a `agn_fct_lvls` parameter including all 3 levels, while the `agn_fct_use_lvls` parameter includes only the level for the current species.
