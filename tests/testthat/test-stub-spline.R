@@ -12,7 +12,8 @@
 
 ### Params ###
 ## Control ##
-ctrl_def <- stubble_ctrl(index = 1L)[-1]
+ctrl_def <- stubble_ctrl(index = 1L)
+ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 
 # ## Vars ##
 # vars_spl <- c("Date", "double", "integer", "POSIXct", "POSIXlt")
@@ -92,7 +93,7 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "0-length vectors [data.table].",
+  desc = "Zero-length vectors [data.table].",
   code = {
     skip_if_not_installed("data.table")
     expect_type(
@@ -144,7 +145,7 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "0-length vectors [data.table].",
+  desc = "Zero-length vectors [data.table].",
   code = {
     skip_if_not_installed("data.table")
     expect_type(

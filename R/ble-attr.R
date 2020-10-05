@@ -6,7 +6,7 @@
 #' 
 #' @concept empirical
 #' @concept ecdf
-#' @concept resample
+#' @concept sample
 #' @concept simulate
 #' @concept simulated
 #' @concept simulation

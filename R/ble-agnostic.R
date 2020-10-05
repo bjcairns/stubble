@@ -132,7 +132,7 @@ ble_agnostic_.Date <- function(dtype, elements, ctrl){
   syn_col <- round(syn_col)
   
   ## Coerce to Date ##
-  syn_col <- as.Date(syn_col, origin = ctrl[["date_origin"]], tz = ctrl[["dttm_tz"]])
+  syn_col <- as.Date(syn_col, origin = ctrl[["agn_date_origin"]], tz = ctrl[["dttm_tz"]])
   
   ## Output ##
   return(syn_col)
@@ -214,7 +214,7 @@ ble_agnostic_.IDate <- function(dtype, elements, ctrl){
   syn_col <- if (is.installed.package("data.table")){
     
     # Coerce to IDate #
-    data.table::as.IDate(syn_col, origin = ctrl[["date_origin"]])
+    data.table::as.IDate(syn_col, origin = ctrl[["agn_date_origin"]])
     
   } else {
     
@@ -222,7 +222,7 @@ ble_agnostic_.IDate <- function(dtype, elements, ctrl){
     .warning_coercion(dtype)
     
     # Coerce to Date #
-    as.Date(syn_col, origin = ctrl[["date_origin"]])
+    as.Date(syn_col, origin = ctrl[["agn_date_origin"]])
     
   }
   
@@ -334,7 +334,7 @@ ble_agnostic_.ITime <- function(dtype, elements, ctrl){
   } else {
     
     # Coerce to POSIXct #
-    as.POSIXct(syn_col, origin = ctrl[["date_origin"]], tz = ctrl[["dttm_tz"]])
+    as.POSIXct(syn_col, origin = ctrl[["agn_date_origin"]], tz = ctrl[["dttm_tz"]])
     
   }
   
@@ -403,7 +403,7 @@ ble_agnostic_.POSIXct <- function(dtype, elements, ctrl){
   syn_col <- ble_agnostic_.double(dtype = dtype, elements = elements, ctrl = ctrl)
   
   ## Coerce to POSIXct ##
-  syn_col <- as.POSIXct(syn_col, origin = ctrl[["date_origin"]], tz = ctrl[["dttm_tz"]])
+  syn_col <- as.POSIXct(syn_col, origin = ctrl[["agn_date_origin"]], tz = ctrl[["dttm_tz"]])
   
   ## Output ##
   return(syn_col)

@@ -1,12 +1,12 @@
 #' @title
-#' Generate synthetic data using resampling methods
+#' Generate synthetic data using sampling methods
 #' 
 #' @description
-#' Internal function for generating synthetic data using resampling methods.
+#' Internal function for generating synthetic data using sampling methods.
 #' 
 #' @concept empirical
 #' @concept ecdf
-#' @concept resample
+#' @concept sample
 #' @concept simulate
 #' @concept simulated
 #' @concept simulation
@@ -226,7 +226,7 @@ ble_sample_.numeric <- function(val, elements, wt, ctrl){
 #' @noRd
 ble_sample__ <- function(val, elements, wt){
   
-  ## Resample if Possible ##
+  ## Sample if Possible ##
   syn_col <- if (length(val) != 0) {
     
     # Re-Sample #

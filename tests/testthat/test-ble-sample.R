@@ -24,7 +24,7 @@ ctrl_def <- stubble_ctrl(
   emp_sw = 1,
   emp_n_exc = 0,
   emp_p_exc = 0,
-  emp_fuzz_samp = FALSE
+  emp_fuzz_samp = 0
 )
 ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 

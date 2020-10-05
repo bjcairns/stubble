@@ -7,14 +7,6 @@
 stubble_ctrl(
   rng_kind = "Wichmann-Hill",
   p_na = NA_real_,
-  emp_sw = 0.1,
-  emp_tail_exc = 0.025,
-  emp_fuzz_spl = TRUE,
-  emp_fuzz_spl_sca = 0.05,
-  emp_n_exc = 10,
-  emp_p_exc = 0.05,
-  emp_fuzz_samp = TRUE,
-  emp_drop_lev = TRUE,
   agn_unique = FALSE,
   agn_int_min = 0L,
   agn_int_max = 100L,
@@ -35,14 +27,21 @@ stubble_ctrl(
   agn_fct_use_lvls = NULL,
   agn_fct_force_unique = FALSE,
   agn_lgl_force_unique = FALSE,
-  date_origin = "1970-01-01",
-  agn_date_min = date_origin,
+  agn_date_origin = "1970-01-01",
+  agn_date_min = agn_date_origin,
   agn_date_max = Sys.Date(),
-  agn_dttm_min = date_origin,
+  agn_dttm_min = agn_date_origin,
   agn_dttm_max = Sys.time(),
   agn_time_min = "00:00:00",
   agn_time_max = "23:59:59",
   dttm_tz = "UTC",
+  emp_sw = 0.1,
+  emp_tail_exc = 0.025,
+  emp_fuzz_spl = 0.05,
+  emp_n_exc = 10,
+  emp_p_exc = 0.05,
+  emp_fuzz_samp = 0.05,
+  emp_drop_lev = TRUE,
   old_ctrl = list(),
   index = NA_integer_,
   ...
@@ -56,39 +55,6 @@ other generators but is much less likely to produce duplicate values.}
 \item{p_na}{Proportion of values set to \code{NA}; defaults to \code{NA}, meaning that
 the proportions present in any generated data will roughly match those of the
 source data.}
-
-\item{emp_sw}{Value determining whether spline or resampling methods are used
-in the the generation of synthetic data. When the unique fraction of a column
-is above this value spline-based methods will be used. Conversely, when it is
-below this value resampling methods will be used. Hence, setting it to 1 will
-ensure that resampling methods will always be used, while setting it to 0
-will ensure that spline-based methods will always be used. Defaults to 50\%
-(\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
-used.}
-
-\item{emp_tail_exc}{Quantile tail size to be omitted from sampling at each
-end of the empirical cumulative distribution function. Defaults to 2.5\%
-(\code{0.025}) at each end (tail) of the distribution.}
-
-\item{emp_fuzz_spl}{Should the values sampled from the ECDF by \code{ble_spline}
-be 'fuzzed' through the addition of random normal noise? Defaults to \code{TRUE}.}
-
-\item{emp_fuzz_spl_sca}{The scaling factor for the standard deviation of the
-random noise applied when \code{emp_fuzz_spl} is set to \code{TRUE}. Defaults to
-\code{0.05}, i.e. 5\% of the standard deviation of the source data.}
-
-\item{emp_n_exc}{Observation prevalence below which values will be excluded
-from simulations. Defaults to 10.}
-
-\item{emp_p_exc}{Observation prevalence below which values will be excluded
-from simulations. Defaults to 1\% (\code{0.01}).}
-
-\item{emp_fuzz_samp}{Should the probability weights sampled from the
-distribution of values by \code{stub_sample} be 'fuzzed' through the addition of
-random normal noise? Defaults to \code{TRUE}.}
-
-\item{emp_drop_lev}{Parameter indicating whether empty factor levels should
-be dropped from simlated factors and ordered factors. Defauls to \code{TRUE}.}
 
 \item{agn_unique}{Single logical value or logical vector indicating whether
 synthetic values should be unique within the column. When a vector, the
@@ -156,7 +122,7 @@ vector with unique elements. Will return an error unless
 \code{elements} argument of \code{gen_col()} (equivalently, the \code{nrows} argument of
 \code{stubblise()}).}
 
-\item{date_origin}{The reference date for generated dates and times (\code{Date},
+\item{agn_date_origin}{The reference date for generated dates and times (\code{Date},
 \code{IDate} and \code{POSIXt} class variables).}
 
 \item{agn_date_min}{Minimum value for generated dates (\code{Date} and \code{IDate}
@@ -180,6 +146,37 @@ variables).}
 \item{dttm_tz}{Timezone for generated date-times (\code{POSIXt} class variables).
 Defaults to \code{"UTC"}, but \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some
 users.}
+
+\item{emp_sw}{Value determining whether spline or sampling methods are used
+in the the generation of synthetic data. When the unique fraction of a column
+is above this value spline-based methods will be used. Conversely, when it is
+below this value sampling methods will be used. Hence, setting it to 1 will
+ensure that sampling methods will always be used, while setting it to 0 will
+ensure that spline-based methods will always be used. Defaults to 50\%
+(\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
+used.}
+
+\item{emp_tail_exc}{Quantile tail size to be omitted from sampling at each
+end of the empirical cumulative distribution function. Defaults to 2.5\%
+(\code{0.025}) at each end (tail) of the distribution.}
+
+\item{emp_fuzz_spl}{Scaling factor for the standard deviation of the
+random noise applied to continuous variables prior to sampling the ECDF by
+\code{ble_spline}. Defaults to \code{0.05}, i.e. 5\% of the standard deviation of the
+source data.}
+
+\item{emp_n_exc}{Observation prevalence below which values will be excluded
+from simulations. Defaults to 10.}
+
+\item{emp_p_exc}{Observation prevalence below which values will be excluded
+from simulations. Defaults to 1\% (\code{0.01}).}
+
+\item{emp_fuzz_samp}{Scaling factor for the uniform noise added to the
+probability weights sampled from the distribution of values by \code{stub_sample}.
+Defaults to \code{0.05}, i.e. +/- 5\%.}
+
+\item{emp_drop_lev}{Parameter indicating whether empty factor levels should
+be dropped from simulated factors and ordered factors. Defaults to \code{TRUE}.}
 
 \item{old_ctrl}{A set of control parameters to inherit unless explicitly
 overwritten in the current call.}

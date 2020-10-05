@@ -1,12 +1,12 @@
 #' @title
-#' Derive parameters for use in resampling methods
+#' Derive parameters for use in sampling methods
 #' 
 #' @description
-#' Internal function for producing parameters to feed into resampling methods.
+#' Internal function for producing parameters to feed into sampling methods.
 #' 
 #' @concept empirical
 #' @concept ecdf
-#' @concept resample
+#' @concept sample
 #' @concept simulate
 #' @concept simulated
 #' @concept simulation
@@ -34,7 +34,7 @@ stub_sample.default <- function(col, ctrl){
   ## Form Output ##
   sim <- list(
     values = NA_integer_,
-    wt = double(0)
+    wt = 1L
   )
   
   ## Output ##
@@ -282,30 +282,45 @@ stub_sample.POSIXlt <- function(col, ctrl){
 stub_sample_ <- function(col, ctrl){
   
   ## Checks ##
-  if (any(!is.numeric(ctrl[["emp_n_exc"]]), !is.numeric(ctrl[["emp_p_exc"]]))) stop("The 'emp_n_exc' and 'emp_p_exc' control parameters must be of class numeric.")
-  if (ctrl[["emp_n_exc"]] %% 1 != 0 | ctrl[["emp_n_exc"]] < 0) stop("The 'emp_n_exc' control parameter must be a positive whole number.")
-  if (ctrl[["emp_p_exc"]] < 0 | ctrl[["emp_p_exc"]] > 1) stop("The 'emp_p_exc' control parameter must be between 0 and 1.")
-  if (!is.logical(ctrl[["emp_fuzz_samp"]])) stop("The 'emp_fuzz_samp' control parameter must be of class logical.")
+  if (any(!is.numeric(ctrl[["emp_n_exc"]]), !is.numeric(ctrl[["emp_p_exc"]])))
+    stop("The 'emp_n_exc' and 'emp_p_exc' control parameters must be of class numeric.")
+  if (ctrl[["emp_n_exc"]] %% 1 != 0 | ctrl[["emp_n_exc"]] < 0)
+    stop("The 'emp_n_exc' control parameter must be a positive whole number.")
+  if (ctrl[["emp_p_exc"]] < 0 | ctrl[["emp_p_exc"]] > 1)
+    stop("The 'emp_p_exc' control parameter must be between 0 and 1.")
+  if (!is.numeric(ctrl[["emp_fuzz_samp"]]))
+    stop("The 'emp_fuzz_samp' control parameter must be of class numeric.")
+  if (sign(ctrl[["emp_fuzz_samp"]]) == -1)
+    stop("The 'emp_fuzz_samp' control parameter must be a positive value")
   
   ## Tabulate Values ##
   n_obs <- table(col)
   p_obs <- prop.table(n_obs)
   
   ## Omit Low Counts/Prop from Resimulation ##
-  wt <- p_obs[n_obs >= ctrl[["emp_n_exc"]] & p_obs >= ctrl[["emp_p_exc"]]]
+  p_obs <- p_obs[n_obs >= ctrl[["emp_n_exc"]] & p_obs >= ctrl[["emp_p_exc"]]]
   
   ## Extract Params ##
-  values <- names(wt)
-  wt <- as.vector(wt)
+  values <- names(p_obs)
+  wt <- as.vector(p_obs)
   
-  ## Obfuscation ##
-  if (ctrl[["emp_fuzz_samp"]]) wt <- wt + runif(length(wt), -1e-3, 1e-3)
+  ## Fuzz ##
+  if (ctrl[["emp_fuzz_samp"]] > 0) {
+    
+    wt <- wt + runif(n = length(wt), min = -ctrl[["emp_fuzz_samp"]], max = ctrl[["emp_fuzz_samp"]])
+    
+  }
+  
   
   if (length(values) == 0) {
+    
     if (length(col[!is.na(col)]) > 0)
       warning("no values to sample from non-empty data vector; is 'emp_n_exc' or 'emp_p_exc' too large?")
+    
     values <- NA_character_
-    wt <- 1
+    
+    wt <- 1L
+    
   }
   
   ## Form Output ##

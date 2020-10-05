@@ -12,31 +12,6 @@
 #' @param p_na Proportion of values set to `NA`; defaults to `NA`, meaning that
 #' the proportions present in any generated data will roughly match those of the
 #' source data.
-#' @param emp_sw Value determining whether spline or resampling methods are used
-#' in the the generation of synthetic data. When the unique fraction of a column
-#' is above this value spline-based methods will be used. Conversely, when it is
-#' below this value resampling methods will be used. Hence, setting it to 1 will
-#' ensure that resampling methods will always be used, while setting it to 0
-#' will ensure that spline-based methods will always be used. Defaults to 50%
-#' (`0.5`). will always be used. When set to 0 ECDF-based methods will always be
-#' used.
-#' @param emp_tail_exc Quantile tail size to be omitted from sampling at each
-#' end of the empirical cumulative distribution function. Defaults to 2.5%
-#' (`0.025`) at each end (tail) of the distribution.
-#' @param emp_fuzz_spl Should the values sampled from the ECDF by `ble_spline`
-#' be 'fuzzed' through the addition of random normal noise? Defaults to `TRUE`.
-#' @param emp_fuzz_spl_sca The scaling factor for the standard deviation of the
-#' random noise applied when `emp_fuzz_spl` is set to `TRUE`. Defaults to
-#' `0.05`, i.e. 5% of the standard deviation of the source data.
-#' @param emp_n_exc Observation prevalence below which values will be excluded
-#' from simulations. Defaults to 10.
-#' @param emp_p_exc Observation prevalence below which values will be excluded
-#' from simulations. Defaults to 1% (`0.01`).
-#' @param emp_fuzz_samp Should the probability weights sampled from the
-#' distribution of values by `stub_sample` be 'fuzzed' through the addition of
-#' random normal noise? Defaults to `TRUE`.
-#' @param emp_drop_lev Parameter indicating whether empty factor levels should
-#' be dropped from simlated factors and ordered factors. Defauls to `TRUE`.
 #' @param agn_unique Single logical value or logical vector indicating whether
 #' synthetic values should be unique within the column. When a vector, the
 #' relevant element is chosen by the `index` argument to `ble_agnostic`.
@@ -84,7 +59,7 @@
 #' `length(agn_lgl_lvls)` (usually equal to 2) is greater than or equal to the
 #' `elements` argument of `gen_col()` (equivalently, the `nrows` argument of
 #' `stubblise()`).
-#' @param date_origin The reference date for generated dates and times (`Date`,
+#' @param agn_date_origin The reference date for generated dates and times (`Date`,
 #' `IDate` and `POSIXt` class variables).
 #' @param agn_date_min Minimum value for generated dates (`Date` and `IDate`
 #' class variables).
@@ -101,6 +76,30 @@
 #' @param dttm_tz Timezone for generated date-times (`POSIXt` class variables).
 #' Defaults to `"UTC"`, but [Sys.timezone()] may be more appropriate for some
 #' users.
+#' @param emp_sw Value determining whether spline or sampling methods are used
+#' in the the generation of synthetic data. When the unique fraction of a column
+#' is above this value spline-based methods will be used. Conversely, when it is
+#' below this value sampling methods will be used. Hence, setting it to 1 will
+#' ensure that sampling methods will always be used, while setting it to 0 will
+#' ensure that spline-based methods will always be used. Defaults to 50%
+#' (`0.5`). will always be used. When set to 0 ECDF-based methods will always be
+#' used.
+#' @param emp_tail_exc Quantile tail size to be omitted from sampling at each
+#' end of the empirical cumulative distribution function. Defaults to 2.5%
+#' (`0.025`) at each end (tail) of the distribution.
+#' @param emp_fuzz_spl Scaling factor for the standard deviation of the
+#' random noise applied to continuous variables prior to sampling the ECDF by
+#' `ble_spline`. Defaults to `0.05`, i.e. 5% of the standard deviation of the
+#' source data.
+#' @param emp_n_exc Observation prevalence below which values will be excluded
+#' from simulations. Defaults to 10.
+#' @param emp_p_exc Observation prevalence below which values will be excluded
+#' from simulations. Defaults to 1% (`0.01`).
+#' @param emp_fuzz_samp Scaling factor for the uniform noise added to the
+#' probability weights sampled from the distribution of values by `stub_sample`.
+#' Defaults to `0.05`, i.e. +/- 5%.
+#' @param emp_drop_lev Parameter indicating whether empty factor levels should
+#' be dropped from simulated factors and ordered factors. Defaults to `TRUE`.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly
 #' overwritten in the current call.
 #' @param index Default `NA`. If not `NA`, the function will return list in
@@ -118,9 +117,7 @@
 #' @export
 stubble_ctrl <- function(
   rng_kind = "Wichmann-Hill",
-  p_na = NA_real_, emp_sw = 0.1,
-  emp_tail_exc = 0.025, emp_fuzz_spl = TRUE, emp_fuzz_spl_sca = 0.05,
-  emp_n_exc = 10, emp_p_exc = 0.05, emp_fuzz_samp = TRUE, emp_drop_lev = TRUE,
+  p_na = NA_real_,
   agn_unique = FALSE,
   agn_int_min = 0L, agn_int_max = 100L, agn_int_list = NA,
   agn_dbl_min = 0, agn_dbl_max = 100, agn_dbl_round = NA, agn_dbl_signif = NA,
@@ -132,11 +129,14 @@ stubble_ctrl <- function(
   agn_chr_sep = "", agn_chr_try_unique = FALSE, agn_chr_try_unique_attempts = 10L, agn_chr_duplicated_nmax = NA,
   agn_fct_lvls = list(letters[1:4]), agn_fct_use_lvls = NULL, agn_fct_force_unique = FALSE,
   agn_lgl_force_unique = FALSE,
-  date_origin = "1970-01-01",
-  agn_date_min = date_origin, agn_date_max = Sys.Date(),
-  agn_dttm_min = date_origin, agn_dttm_max = Sys.time(),
+  agn_date_origin = "1970-01-01",
+  agn_date_min = agn_date_origin, agn_date_max = Sys.Date(),
+  agn_dttm_min = agn_date_origin, agn_dttm_max = Sys.time(),
   agn_time_min = "00:00:00", agn_time_max = "23:59:59",
   dttm_tz = "UTC",
+  emp_sw = 0.1,
+  emp_tail_exc = 0.025, emp_fuzz_spl = 0.05,
+  emp_n_exc = 10, emp_p_exc = 0.05, emp_fuzz_samp = 0.05, emp_drop_lev = TRUE,
   old_ctrl = list(),
   index = NA_integer_,
   ...

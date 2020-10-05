@@ -8,7 +8,7 @@
 #'
 #' @concept empirical
 #' @concept ecdf
-#' @concept resample
+#' @concept sample
 #' @concept simulate
 #' @concept simulated
 #' @concept simulation
@@ -164,57 +164,65 @@ stub_spline.POSIXlt <- function(col, ctrl){
 ### stub_spline_() ###
 #' @noRd
 stub_spline_ <- function(col, ctrl){
-
-  ## Data extraction
-  emp_tail_exc <- ctrl[["emp_tail_exc"]]
-
+  
   ## Checks ##
   if (!is.numeric(ctrl[["emp_tail_exc"]]))
     stop("The 'emp_tail_exc' control parameter must be of class numeric.")
+  if (!is.numeric(ctrl[["emp_fuzz_spl"]]))
+    stop("The 'emp_fuzz_spl' control parameter must be of class numeric.")
   if (ctrl[["emp_tail_exc"]] < 0 | ctrl[["emp_tail_exc"]] >= 0.5)
     stop("The 'emp_tail_exc' control parameter must be between 0 and 0.5.")
-
-  ## Tail Exclusions ##
-  limits <- quantile(
-    col, c(0 + emp_tail_exc, 1 - emp_tail_exc), na.rm = TRUE, names = FALSE
-  )
-  col <- col[col >= limits[1] & col <= limits[2] & !is.na(col)]
-
+  if (sign(ctrl[["emp_fuzz_spl"]]) == -1)
+    stop("The 'emp_fuzz_spl' control parameter must be a positive value.")
+  
   if (length(col) >= 2){
-
+    
+    ## Fuzz ##
+    if (ctrl[["emp_fuzz_spl"]] > 0){
+      
+      col <- col + rnorm(n = length(col), mean = 0, sd = sd(col, na.rm = TRUE)*ctrl[["emp_fuzz_spl"]])
+      
+    }
+    
+    ## Tail Exclusions ##
+    limits <- quantile(
+      col, c(0 + ctrl[["emp_tail_exc"]], 1 - ctrl[["emp_tail_exc"]]), na.rm = TRUE, names = FALSE
+    )
+    col <- col[col >= limits[1] & col <= limits[2] & !is.na(col)]
+    
     ## Determine Optimal Number of Breaks ##
     nclass <- nclass.FD(col)
     breaks <- seq(
       min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L
     )
-
+    
     ## Histogram Object ##
     h <- hist(x = col, breaks = breaks, plot = FALSE)
-
+    
     ## Cumulative Sum of Densities
     width <- diff(h[["breaks"]])
     area <- width*h[["density"]]
     cdf <- c(0, cumsum(area))
-
+    
     ## Generate a Spline Function ##
     f <- approxfun(x = cdf, y = breaks, rule = 1, ties = list("ordered", min))
-
+    
   } else {
-
+    
     f <- function(v){rep(NA_integer_, v)}
-
+    
   }
-
+  
   ## Standard Deviation ##
   sd <- sd(col, na.rm = TRUE)
-
+  
   ## Form Output ##
   out <- list(
     fun = f,
     sd = sd
   )
-
+  
   ## Output ##
   return(out)
-
+  
 }

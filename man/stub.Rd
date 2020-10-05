@@ -57,7 +57,7 @@ stub(penguins_ext, rows = 10)
 }
 \concept{ecdf}
 \concept{empirical}
-\concept{resample}
+\concept{sample}
 \concept{simulate}
 \concept{simulated}
 \concept{simulation}

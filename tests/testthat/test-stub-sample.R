@@ -203,7 +203,7 @@ test_that(
 
 ## control parameters
 ctrl_def_output <- ctrl_def
-ctrl_def_output$emp_n_exc <- 0
+ctrl_def_output[["emp_n_exc"]] <- 0
 
 ## base ##
 test_that(

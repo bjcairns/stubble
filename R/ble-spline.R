@@ -7,7 +7,7 @@
 #'
 #' @concept empirical
 #' @concept ecdf
-#' @concept resample
+#' @concept sample
 #' @concept simulate
 #' @concept simulated
 #' @concept simulation
@@ -36,15 +36,6 @@ ble_spline <- function(x, elements, ctrl){
   
   ## Coerce Output ##
   syn_col <- ble_spline_(dtype = dtype, syn_col = syn_col, ctrl = ctrl)
-  
-  ## Fuzz ##
-  if (ctrl[["emp_fuzz_spl"]]){
-    
-    syn_col <- fuzz(
-      syn_col = syn_col, col_sd = col_sd, elements = elements, ctrl = ctrl
-    )
-    
-  }
   
   ## Output ##
   return(syn_col)
@@ -235,21 +226,5 @@ ble_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
   
   ## Output ##
   return(syn_col)
-  
-}
-
-
-### fuzz() ###
-#' @noRd
-fuzz <- function(syn_col, col_sd, elements, ctrl){
-  
-  ## Calculate Fuzz SD ##
-  fuzz_sd <- col_sd*ctrl[["emp_fuzz_spl_sca"]]
-  
-  ## Apply Fuzzing ##
-  fuzz_col <- syn_col + rnorm(n = elements, mean = 0, sd = fuzz_sd)
-  
-  ## Output ##
-  return(fuzz_col)
   
 }
