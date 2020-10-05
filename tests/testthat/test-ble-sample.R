@@ -66,63 +66,63 @@ test_that(
         ble_sample(stub_l0[["character"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.character(rep(NA, n)),
-      info = "character"
+      label = "character"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["Date"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.Date(rep(NA, n)),
-      info = "Date"
+      label = "Date"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["double"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.double(rep(NA, n)),
-      info = "double"
+      label = "double"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["factor"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.factor(rep(NA, n)),
-      info = "factor"
+      label = "factor"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["integer"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.integer(rep(NA, n)),
-      info = "integer"
+      label = "integer"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["logical"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.logical(rep(NA, n)),
-      info = "logical"
+      label = "logical"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["ordered"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.ordered(rep(NA, n)),
-      info = "ordered"
+      label = "ordered"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["POSIXct"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.POSIXct(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
-      info = "POSIXct"
+      label = "POSIXct"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["POSIXlt"]], elements = n, ctrl = ctrl_def)
       ),
       expected = as.POSIXlt(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
-      info = "POSIXlt"
+      label = "POSIXlt"
     )
   }
 )
@@ -137,7 +137,7 @@ test_that(
         ble_sample(stub_l0[["integer64"]], elements = n, ctrl = ctrl_def)
       ),
       expected = bit64::as.integer64(rep(NA, n)),
-      info = "integer64"
+      label = "integer64"
     )
   }
 )
@@ -152,14 +152,14 @@ test_that(
         ble_sample(stub_l0[["IDate"]], elements = n, ctrl = ctrl_def)
       ),
       expected = data.table::as.IDate(rep(NA_character_, n)),
-      info = "IDate"
+      label = "IDate"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["ITime"]], elements = n, ctrl = ctrl_def)
       ),
       expected = data.table::as.ITime(rep(NA_character_, n)),
-      info = "ITime"
+      label = "ITime"
     )
   }
 ); rm(stub_l0)
