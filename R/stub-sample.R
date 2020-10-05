@@ -301,6 +301,13 @@ stub_sample_ <- function(col, ctrl){
   ## Obfuscation ##
   if (ctrl[["emp_fuzz_samp"]]) wt <- wt + runif(length(wt), -1e-3, 1e-3)
   
+  if (length(values) == 0) {
+    if (length(col[!is.na(col)]) > 0)
+      warning("no values to sample from non-empty data vector; is 'emp_n_exc' or 'emp_p_exc' too large?")
+    values <- NA_character_
+    wt <- 1
+  }
+  
   ## Form Output ##
   out <- list(
     values = values,

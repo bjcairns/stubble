@@ -31,6 +31,7 @@ ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 
 ## Vars ##
 vars_base <- c("character", "Date", "double", "factor", "integer", "logical", "ordered", "POSIXct", "POSIXlt")
+vars_bit64 <- c("integer64")
 vars_dt <- c("IDate", "ITime")
 
 
@@ -64,63 +65,63 @@ test_that(
       object = suppressWarnings(
         ble_sample(stub_l0[["character"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = character(0),
+      expected = as.character(rep(NA, n)),
       info = "character"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["Date"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = as.Date(character(0)),
+      expected = as.Date(rep(NA, n)),
       info = "Date"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["double"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = double(0),
+      expected = as.double(rep(NA, n)),
       info = "double"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["factor"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = as.factor(character(0)),
+      expected = as.factor(rep(NA, n)),
       info = "factor"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["integer"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = integer(0),
+      expected = as.integer(rep(NA, n)),
       info = "integer"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["logical"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = logical(0),
+      expected = as.logical(rep(NA, n)),
       info = "logical"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["ordered"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = as.ordered(character(0)),
+      expected = as.ordered(rep(NA, n)),
       info = "ordered"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["POSIXct"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = as.POSIXct(character(0), tz = ctrl_def[["dttm_tz"]]),
+      expected = as.POSIXct(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
       info = "POSIXct"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["POSIXlt"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = as.POSIXlt(character(0), tz = ctrl_def[["dttm_tz"]]),
+      expected = as.POSIXlt(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
       info = "POSIXlt"
     )
   }
@@ -135,7 +136,7 @@ test_that(
       object = suppressWarnings(
         ble_sample(stub_l0[["integer64"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = bit64::as.integer64(integer(0)),
+      expected = bit64::as.integer64(rep(NA, n)),
       info = "integer64"
     )
   }
@@ -150,14 +151,14 @@ test_that(
       object = suppressWarnings(
         ble_sample(stub_l0[["IDate"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = data.table::as.IDate(character(0)),
+      expected = data.table::as.IDate(rep(NA_character_, n)),
       info = "IDate"
     )
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["ITime"]], elements = n, ctrl = ctrl_def)
       ),
-      expected = data.table::as.ITime(character(0)),
+      expected = data.table::as.ITime(rep(NA_character_, n)),
       info = "ITime"
     )
   }
@@ -324,6 +325,60 @@ test_that(
       expected = seq_len(n),
       label = "ITime"
     )
+  }
+); rm(stub_luniq)
+
+
+### 'elements' Parameter ###
+## Data ##
+ctrl_def_uniq <- ctrl_def
+ctrl_def_uniq$emp_p_exc <- 0.06
+stub_luniq <- suppressWarnings(stub(luniq, rows = n, method = "empirical", ctrl = ctrl_def_uniq)[["vars"]])
+
+## base ##
+test_that(
+  desc = "'elements' Parameter [base]",
+  code = {
+    for (col_type in vars_base) {
+      syn_cols <- lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[[col_type]], ctrl = ctrl_def_uniq)
+      expect_identical(
+        object = lengths(syn_cols),
+        expected = seq_len(n),
+        label = col_type
+      )
+    }
+  }
+)
+
+## bit64 ##
+test_that(
+  desc = "'elements' Parameter [bit64]",
+  code = {
+    skip_if_not_installed("bit64")
+    for (col_type in vars_bit64) {
+      syn_cols <- lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[[col_type]], ctrl = ctrl_def_uniq)
+      expect_identical(
+        object = lengths(syn_cols),
+        expected = seq_len(n),
+        label = col_type
+      )
+    }
+  }
+)
+
+## data.table ##
+test_that(
+  desc = "'elements' Parameter [data.table]",
+  code = {
+    skip_if_not_installed("data.table")
+    for (col_type in vars_dt) {
+      syn_cols <- lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[[col_type]], ctrl = ctrl_def_uniq)
+      expect_identical(
+        object = lengths(syn_cols),
+        expected = seq_len(n),
+        label = col_type
+      )
+    }
   }
 ); rm(stub_luniq)
 
