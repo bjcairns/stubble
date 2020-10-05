@@ -200,49 +200,54 @@ test_that(
 
 
 ### Output Classes ###
+
+## control parameters
+ctrl_def_output <- ctrl_def
+ctrl_def_output$emp_n_exc <- 0
+
 ## base ##
 test_that(
   desc = "Output Classes [base].",
   code = {
     expect_true(
-      object = is.character(stub_sample(l1[["character"]], ctrl = ctrl_def)[["values"]]),
+      object = is.character(stub_sample(l1[["character"]], ctrl = ctrl_def_output)[["values"]]),
       label = "character"
     )
     expect_identical(
-      object = class(stub_sample(l1[["Date"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["Date"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "Date",
       label = "Date"
     )
     expect_type(
-      object = stub_sample(l1[["double"]], ctrl = ctrl_def)[["values"]],
+      object = stub_sample(l1[["double"]], ctrl = ctrl_def_output)[["values"]],
       type = "double"
     )
     expect_identical(
-      object = class(stub_sample(l1[["factor"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["factor"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "factor",
       label = "factor"
     )
     expect_identical(
-      object = class(stub_sample(l1[["integer"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["integer"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "integer",
       label = "integer"
     )
     expect_identical(
-      object = class(stub_sample(l1[["logical"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["logical"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "logical",
       label = "logical"
     )
     expect_identical(
-      object = class(stub_sample(l1[["ordered"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["ordered"]], ctrl = ctrl_def_output)[["values"]]),
       expected = c("ordered", "factor"),
       label = "ordered"
     )
     expect_true(
-      object = "POSIXct" %in% class(stub_sample(l1[["POSIXct"]], ctrl = ctrl_def)[["values"]]),
+      object = "POSIXct" %in% class(stub_sample(l1[["POSIXct"]], ctrl = ctrl_def_output)[["values"]]),
       label = "POSIXct"
     )
     expect_true(
-      object = "POSIXlt" %in% class(stub_sample(l1[["POSIXlt"]], ctrl = ctrl_def)[["values"]]),
+      object = "POSIXlt" %in% class(stub_sample(l1[["POSIXlt"]], ctrl = ctrl_def_output)[["values"]]),
       label = "POSIXlt"
     )
   }
@@ -254,7 +259,7 @@ test_that(
   code = {
     skip_if_not_installed("bit64")
     expect_identical(
-      object = class(stub_sample(l1[["integer64"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["integer64"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "integer64",
       label = "integer64")
   }
@@ -266,11 +271,11 @@ test_that(
   code = {
     skip_if_not_installed("data.table")
     expect_true(
-      object = "IDate" %in% class(stub_sample(l1[["IDate"]], ctrl = ctrl_def)[["values"]]),
+      object = "IDate" %in% class(stub_sample(l1[["IDate"]], ctrl = ctrl_def_output)[["values"]]),
       label = "IDate"
     )
     expect_identical(
-      object = class(stub_sample(l1[["ITime"]], ctrl = ctrl_def)[["values"]]),
+      object = class(stub_sample(l1[["ITime"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "ITime",
       label = "ITime"
     )

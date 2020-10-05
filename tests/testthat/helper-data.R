@@ -62,7 +62,7 @@ luniq <- list(
   integer = 1:1e2,
   integer64 = if (stubble:::is.installed.package("bit64")) bit64::as.integer64(1:1e2) else NULL,
   ITime = if (stubble:::is.installed.package("data.table")) data.table::as.ITime(1:1e2) else NULL,
-  logical = c(F, T),
+  logical = c(FALSE, TRUE),
   ordered = ordered(letters),
   POSIXct = as.POSIXct(1:1e2, origin = "1970-01-01", tz = "UTC"),
   POSIXlt = as.POSIXlt(1:1e2, origin = "1970-01-01", tz = "UTC")
