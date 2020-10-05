@@ -27,9 +27,10 @@
 ### stub_spline() ###
 #' @noRd
 stub_spline <- function(col, ...){
-
+  
+  ## Define S3 Method ##
   UseMethod("stub_spline", col)
-
+  
 }
 
 
@@ -45,8 +46,7 @@ stub_spline.default <- function(col, ...){
 
   ## Form Output ##
   out <- list(
-    fun = f,
-    sd = NA_real_
+    fun = f
   )
 
   ## Output ##
@@ -175,25 +175,32 @@ stub_spline_ <- function(col, ctrl){
   if (sign(ctrl[["emp_fuzz_spl"]]) == -1)
     stop("The 'emp_fuzz_spl' control parameter must be a positive value.")
   
+  ## Omit NA Values ##
+  col <- col[!is.na(col)]
+  
   if (length(col) >= 2){
     
     ## Fuzz ##
     if (ctrl[["emp_fuzz_spl"]] > 0){
       
-      col <- col + rnorm(n = length(col), mean = 0, sd = sd(col, na.rm = TRUE)*ctrl[["emp_fuzz_spl"]])
+      col <- col + rnorm(n = length(col), mean = 0, sd = sd(col)*ctrl[["emp_fuzz_spl"]])
       
     }
     
     ## Tail Exclusions ##
     limits <- quantile(
-      col, c(0 + ctrl[["emp_tail_exc"]], 1 - ctrl[["emp_tail_exc"]]), na.rm = TRUE, names = FALSE
+      x = col,
+      probs = c(0 + ctrl[["emp_tail_exc"]], 1 - ctrl[["emp_tail_exc"]]),
+      names = FALSE
     )
-    col <- col[col >= limits[1] & col <= limits[2] & !is.na(col)]
+    col <- col[col >= limits[1] & col <= limits[2]]
     
     ## Determine Optimal Number of Breaks ##
     nclass <- nclass.FD(col)
     breaks <- seq(
-      min(col, na.rm = TRUE), max(col, na.rm = TRUE), length.out = nclass + 1L
+      from = min(col),
+      to = max(col),
+      length.out = nclass + 1L
     )
     
     ## Histogram Object ##
@@ -209,17 +216,17 @@ stub_spline_ <- function(col, ctrl){
     
   } else {
     
+    ## Warning ##
+    warning("Insufficient values to estimate the ECDF.")
+    
+    ## Fallback Function ##
     f <- function(v){rep(NA_integer_, v)}
     
   }
   
-  ## Standard Deviation ##
-  sd <- sd(col, na.rm = TRUE)
-  
   ## Form Output ##
   out <- list(
-    fun = f,
-    sd = sd
+    fun = f
   )
   
   ## Output ##

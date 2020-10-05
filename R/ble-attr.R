@@ -18,9 +18,6 @@
 #' @noRd
 ble_attr <- function(x, elements, method = "agnostic", index = 1L, ctrl = list(), ...){
   
-  ## Checks ##
-  if (!{method %in% c("agnostic", "empirical")}) stop("`method` must be one of 'agnostic' or 'empirical'.")
-  
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)
   

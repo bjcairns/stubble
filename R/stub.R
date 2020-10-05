@@ -64,116 +64,120 @@
 ### stub() ###
 #' @export
 stub <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
-
+  
+  ## Checks ##
+  if (!{method %in% c("agnostic", "empirical")})
+    stop("`method` must be one of 'agnostic' or 'empirical'.")
+  
   ## Data Structure ##
   dtype <- dtype0(x = x)
-
+  
   ## Use S3 Method ##
   vars <- stub_(x = x, rows = rows, method = method, ctrl = ctrl, ...)
-
+  
   ## Form Output ##
   out <- list(
     ctrl = ctrl,
     dtype = dtype,
     vars = vars
   )
-
+  
   ## Assign Class ##
   class(out) <- "stub"
-
+  
   ## Output ##
   return(out)
-
+  
 }
 
 
 ### stub_() ###
 #' @noRd
 stub_ <- function(x, ...){
-
+  
   ## Define S3 Method ##
   UseMethod("stub_", x)
-
+  
 }
 
 
 ### stub_.default() ###
 #' @export
 stub_.default <- function(x, rows, method, ctrl, ...){
-
+  
   ## Attempt List Coercion ##
   l <- tryCatch(expr = as.list(x),
                 error = function(e) stop("Cannot coerce argument 'x' to list."),
                 warning = function(w) warning(w))
-
+  
   ## Use stub_.list Method ##
   vars <- stub_.list(x, rows = rows, method = method, ctrl = ctrl, ...)
-
+  
   ## Output ##
   return(vars)
-
+  
 }
 
 
 ### stub_.data.frame() ###
 #' @export
 stub_.data.frame <- function(x, rows, method, ctrl, ...){
-
+  
   ## Variable Structure ##
   vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl, ...)
-
+  
   ## Output ##
   return(vars)
-
+  
 }
 
 
 ### stub_.data.table() ###
 #' @export
 stub_.data.table <- function(x, rows = rows, method, ctrl, ...){
-
+  
   ## Variable Structure ##
   vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl, ...)
-
+  
   ## Output ##
   return(vars)
-
+  
 }
 
 
 ### stub_.list() ###
 #' @export
 stub_.list <- function(x, rows = rows, method, ctrl, ...){
-
+  
   ## Variable Structure ##
   vars <- to_stub(x = x, rows = rows, method = method, ctrl = ctrl, ...)
-
+  
   ## Output ##
   return(vars)
-
+  
 }
 
 
 ### stub_.tbl_df() ###
 #' @export
 stub_.tbl_df <- function(x, rows = rows, method, ctrl, ...){
-
+  
   ## Variable Structure ##
   vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl, ...)
-
+  
   ## Output ##
   return(vars)
-
+  
 }
 
 
 ### to_stub() ###
 #' @noRd
 to_stub <- function(x, rows, method, ctrl, ...){
-
+  
   ## Create Index ##
   index <- seq_along(x)
-
+  
   ## Apply stub_attr() ##
   vars <- mapply(
     FUN = stub_attr,
@@ -185,8 +189,8 @@ to_stub <- function(x, rows, method, ctrl, ...){
     SIMPLIFY = FALSE,
     USE.NAMES = TRUE
   )
-
+  
   ## Output ##
   return(vars)
-
+  
 }

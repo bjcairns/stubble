@@ -50,12 +50,21 @@
 #' @export
 ble <- function(stub, rows, method, ctrl = list(), ...){
   
-  ### Data Extraction ###
+  ### Checks & Data Extraction ###
   dtype <- stub[["dtype"]]
   vars <- stub[["vars"]]
   old_ctrl <- stub[["ctrl"]]
   if (missing(rows)) rows <- sapply(vars, `[[`, "n")
-  if (missing(method)) method <- sapply(lapply(vars, `[[`, "sim"), `[[`, "method")
+  if (!missing(method)){
+    
+    if (!{method %in% c("agnostic", "empirical")})
+      stop("`method` must be one of 'agnostic' or 'empirical'.")
+    
+  } else {
+    
+    method <- sapply(lapply(vars, `[[`, "sim"), `[[`, "method")
+    
+  }
   
   ## Control Params ## - Got to be a one-liner for this!
   ctrl <- c(

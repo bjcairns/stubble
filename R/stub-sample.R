@@ -34,7 +34,7 @@ stub_sample.default <- function(col, ctrl){
   ## Form Output ##
   sim <- list(
     values = NA_integer_,
-    wt = 1L
+    wt = 1
   )
   
   ## Output ##
@@ -293,6 +293,9 @@ stub_sample_ <- function(col, ctrl){
   if (sign(ctrl[["emp_fuzz_samp"]]) == -1)
     stop("The 'emp_fuzz_samp' control parameter must be a positive value")
   
+  ## Omit NA Values ##
+  col <- col[!is.na(col)]
+  
   ## Tabulate Values ##
   n_obs <- table(col)
   p_obs <- prop.table(n_obs)
@@ -307,19 +310,22 @@ stub_sample_ <- function(col, ctrl){
   ## Fuzz ##
   if (ctrl[["emp_fuzz_samp"]] > 0) {
     
-    wt <- wt + runif(n = length(wt), min = -ctrl[["emp_fuzz_samp"]], max = ctrl[["emp_fuzz_samp"]])
+    wt <- wt + runif(n = length(wt),
+                     min = max(-ctrl[["emp_fuzz_samp"]], 0),
+                     max = min(ctrl[["emp_fuzz_samp"]], 1))
     
   }
   
-  
+  ## Data that Can't be Sampled ##
   if (length(values) == 0) {
     
-    if (length(col[!is.na(col)]) > 0)
-      warning("no values to sample from non-empty data vector; is 'emp_n_exc' or 'emp_p_exc' too large?")
+    # Warning #
+    if (length(col) > 0)
+      warning("No values to sample from non-empty data vector; is 'emp_n_exc' or 'emp_p_exc' too large?")
     
+    # Fallback Params #
     values <- NA_character_
-    
-    wt <- 1L
+    wt <- 1
     
   }
   

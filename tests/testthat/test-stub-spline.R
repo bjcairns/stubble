@@ -38,13 +38,13 @@ test_that(
       object = suppressWarnings(
         stub_spline(NULL, ctrl = ctrl_def)
       ),
-      n = 2L
+      n = 1L
     )
     expect_named(
       object = suppressWarnings(
         stub_spline(NULL, ctrl = ctrl_def)
       ),
-      expected = c("fun", "sd"),
+      expected = "fun",
       label = "Output names"
     )
   }
@@ -57,23 +57,33 @@ test_that(
   desc = "Zero-length vectors [base].",
   code = {
     expect_type(
-      object = stub_spline(l0[["Date"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["Date"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(l0[["double"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["double"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(l0[["integer"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["integer"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(l0[["POSIXct"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["POSIXct"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(l0[["POSIXlt"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["POSIXlt"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
   }
@@ -85,7 +95,9 @@ test_that(
   code = {
     skip_if_not_installed("bit64")
     expect_type(
-      object = stub_spline(l0[["integer64"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["integer64"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
   }
@@ -97,7 +109,9 @@ test_that(
   code = {
     skip_if_not_installed("data.table")
     expect_type(
-      object = stub_spline(l0[["IDate"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(l0[["IDate"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
   }
@@ -109,23 +123,33 @@ test_that(
   desc = "Missing data vectors [base].",
   code = {
     expect_type(
-      object = stub_spline(lna[["Date"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["Date"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(lna[["double"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["double"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(lna[["integer"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["integer"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(lna[["POSIXct"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["POSIXct"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_type(
-      object = stub_spline(lna[["POSIXlt"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["POSIXlt"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
   }
@@ -133,11 +157,13 @@ test_that(
 
 ## bit64 ##
 test_that(
-  desc = "Zero-length vectors [bit64].",
+  desc = "Missing data vectors [bit64].",
   code = {
     skip_if_not_installed("bit64")
     expect_type(
-      object = stub_spline(lna[["integer64"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["integer64"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
   }
@@ -145,11 +171,13 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "Zero-length vectors [data.table].",
+  desc = "Missing data vectors [data.table].",
   code = {
     skip_if_not_installed("data.table")
     expect_type(
-      object = stub_spline(lna[["IDate"]], ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline(lna[["IDate"]], ctrl = ctrl_def)
+      ),
       type = "list"
     )
   }
@@ -166,16 +194,22 @@ test_that(
   desc = "stub_spline_() output (length(col) < 2L).",
   code = {
     expect_type(
-      object = stub_spline_(NULL, ctrl = ctrl_def),
+      object = suppressWarnings(
+        stub_spline_(NULL, ctrl = ctrl_def)
+      ),
       type = "list"
     )
     expect_length(
-      object = stub_spline_(NULL, ctrl = ctrl_def),
-      n = 2L
+      object = suppressWarnings(
+        stub_spline_(NULL, ctrl = ctrl_def)
+      ),
+      n = 1L
     )
     expect_named(
-      object = stub_spline_(NULL, ctrl = ctrl_def),
-      expected = c("fun", "sd"),
+      object = suppressWarnings(
+        stub_spline_(NULL, ctrl = ctrl_def)
+      ),
+      expected = "fun",
       label = "Output names"
     )
   }
@@ -191,11 +225,11 @@ test_that(
     )
     expect_length(
       object = stub_spline_(1:10, ctrl = ctrl_def),
-      n = 2L
+      n = 1L
     )
     expect_named(
       object = stub_spline_(1:10, ctrl = ctrl_def),
-      expected = c("fun", "sd"),
+      expected = "fun",
       label = "Output names"
     )
   }

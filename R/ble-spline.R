@@ -28,7 +28,6 @@ ble_spline <- function(x, elements, ctrl){
   ## Extract stub Params ##
   dtype <- x[["dtype"]]
   f <- x[["sim"]][["fun"]]
-  col_sd <- x[["sim"]][["sd"]]
   
   ## Generate Data ##
   v <- runif(n = elements)
