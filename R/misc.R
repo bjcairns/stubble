@@ -353,3 +353,52 @@ sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, agn_chr_sep =
   return(char_vec)
   
 }
+
+
+### fuzz_binom() ###
+## Add noise to the probability mass function of a discrete distribution, using 
+## a symmetric noise distribution based on a binomial.
+## Uses recursion to improve a first approximation to the requested amount of 
+## noise
+#' @noRd
+fuzz_binom <- function(p, sd_ratio, recurse = TRUE) {
+  
+  ## Preliminaries
+  x <- seq_along(p)
+  n <- length(p) - 1
+  sd_p <- sqrt(sum((x - sum(x * p))^2 * p))
+  MM <- matrix(0, nrow = n+1, ncol = n+1)
+  
+  ## Guess at the appropriate success probability parameter for a binomial
+  cc <- -(sd_p * sd_ratio)^2/n
+  pp <- suppressWarnings((bb - sqrt(1 + 4*cc)) * 0.5)
+  if (is.na(pp)) {
+    if (recurse) 
+      warning("cannot add requested noise; reverting to binomial(n, 0.5)")
+    pp <- 0.5
+  }
+  
+  ## Construct a reflected binomial PMF in order to xconstruct the 
+  ## matrix multiplier
+  dd <- dbinom(x - 1, n, pp)
+  dd <- c(rev(dd), dd[-1]) 
+  
+  ## Construct the matrix multiplier
+  for (i in rev(x)) {
+    MM[,i] <- dd[1:(n+1)]
+    dd <- dd[-1]
+  }
+  
+  ## Normalise columns
+  MM <- MM %*% diag(1/as.vector(matrix(1, nrow = 1, ncol = n+1) %*% MM))
+  
+  ## Correct the SD of the noise
+  if (recurse == TRUE) {
+    sd_obv <- sqrt((sd_disc(MM %*% p))^2 - sd_p^2) / sd_p
+    MM <- fuzz_mult(p, sd_ratio * sd_ratio / sd_obv, recurse = FALSE)
+  }
+  
+  return(MM %*% p)
+  
+}
+
