@@ -355,6 +355,21 @@ sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, agn_chr_sep =
 }
 
 
+### fuzz_dirichlet() ###
+#' @noRd
+fuzz_dirichlet <- function(p, alpha) {
+  
+  ## Generate a draw from the Dirichlet distribution ##
+  draw <- rgamma(length(p), p*alpha)
+  
+  ## Rescale to sum to 1 ##
+  rdir <- draw/sum(draw)
+  
+  return(rdir)
+  
+}
+
+
 ### fuzz_binom() ###
 ## Add noise to the probability mass function of a discrete distribution, using 
 ## a symmetric noise distribution based on a binomial.
@@ -401,4 +416,5 @@ fuzz_binom <- function(p, sd_ratio, recurse = TRUE) {
   return(MM %*% p)
   
 }
+
 
