@@ -22,7 +22,7 @@ n <- 10L
 ctrl_def <- stubble_ctrl(
   index = 1L,
   emp_sw = 1,
-  emp_n_exc = 0,
+  emp_n_exc = 0L,
   emp_p_exc = 0,
   emp_fuzz_samp = 0
 )

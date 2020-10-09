@@ -38,7 +38,7 @@ stubble_ctrl(
   emp_sw = 0.1,
   emp_tail_exc = 0.025,
   emp_fuzz_spl = 0.05,
-  emp_n_exc = 10,
+  emp_n_exc = 10L,
   emp_p_exc = 0.05,
   emp_fuzz_samp = 0.05,
   emp_drop_lev = TRUE,
@@ -150,30 +150,31 @@ users.}
 \item{emp_sw}{Value determining whether spline or sampling methods are used
 in the the generation of synthetic data. When the unique fraction of a column
 is above this value spline-based methods will be used. Conversely, when it is
-below this value sampling methods will be used. Hence, setting it to 1 will
-ensure that sampling methods will always be used, while setting it to 0 will
-ensure that spline-based methods will always be used. Defaults to 50\%
-(\code{0.5}). will always be used. When set to 0 ECDF-based methods will always be
-used.}
+below this value sampling methods will be used. Hence, setting it to \code{1} will
+ensure that sampling methods will always be used, while setting it to \code{0}
+will ensure that spline-based methods will always be used. Defaults to 10\%
+(\code{0.1}).}
 
 \item{emp_tail_exc}{Quantile tail size to be omitted from sampling at each
 end of the empirical cumulative distribution function. Defaults to 2.5\%
-(\code{0.025}) at each end (tail) of the distribution.}
+(\code{0.025}).}
 
 \item{emp_fuzz_spl}{Scaling factor for the standard deviation of the
-random noise applied to continuous variables prior to sampling the ECDF by
-\code{ble_spline}. Defaults to \code{0.05}, i.e. 5\% of the standard deviation of the
-source data.}
+random noise applied to continuous variables prior to sampling the empirical
+cumulative distribution function by \code{stub_spline}. Defaults to \code{0.05}, i.e.
+5\% of the standard deviation of the source data. Setting this value to \code{0}
+switches off obfuscation of the values evaluated by \code{stub_spline}.}
 
 \item{emp_n_exc}{Observation prevalence below which values will be excluded
-from simulations. Defaults to 10.}
+by \code{stub_sample}. Defaults to \code{10}.}
 
 \item{emp_p_exc}{Observation prevalence below which values will be excluded
-from simulations. Defaults to 1\% (\code{0.01}).}
+by \code{stub_sample}. Defaults to 5\% (\code{0.05}).}
 
-\item{emp_fuzz_samp}{Scaling factor for the uniform noise added to the
-probability weights sampled from the distribution of values by \code{stub_sample}.
-Defaults to \code{0.05}, i.e. +/- 5\%.}
+\item{emp_fuzz_samp}{Scaling factor for the obfuscation of the sample
+proportions measured by \code{stub_sample}. Defaults to \code{0.05}. Larger values add
+more noise. Setting this value to \code{0} switches off obfuscation of the sample
+proportions recorded by \code{stub_sample}.}
 
 \item{emp_drop_lev}{Parameter indicating whether empty factor levels should
 be dropped from simulated factors and ordered factors. Defaults to \code{TRUE}.}
@@ -182,8 +183,8 @@ be dropped from simulated factors and ordered factors. Defaults to \code{TRUE}.}
 overwritten in the current call.}
 
 \item{index}{Default \code{NA}. If not \code{NA}, the function will return list in
-which elements apply to a single column (i.e. elements are not necessarily
-lists). Mostly for internal use to handle passing control parameters between
+which elements apply to a single column, i.e. elements are not necessarily
+lists. Mostly for internal use to handle passing control parameters between
 S3 methods.}
 
 \item{...}{Further control parameters permitting extension of the \code{stubble}

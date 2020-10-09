@@ -12,6 +12,8 @@
 #' @concept simulation
 #' 
 #' @keywords datagen
+#' 
+#' @importFrom stats rgamma
 
 
 ### stub_sample() ###
@@ -290,8 +292,7 @@ stub_sample_ <- function(col, ctrl){
     stop("The 'emp_p_exc' control parameter must be between 0 and 1.")
   if (!is.numeric(ctrl[["emp_fuzz_samp"]]))
     stop("The 'emp_fuzz_samp' control parameter must be of class numeric.")
-  if (sign(ctrl[["emp_fuzz_samp"]]) == -1)
-    stop("The 'emp_fuzz_samp' control parameter must be a positive value")
+  if (sign(ctrl[["emp_fuzz_samp"]]) < 0L) stop("The 'emp_fuzz_samp' control paramter must be positive.")
   
   ## Omit NA Values ##
   col <- col[!is.na(col)]
@@ -310,9 +311,14 @@ stub_sample_ <- function(col, ctrl){
   ## Fuzz ##
   if (ctrl[["emp_fuzz_samp"]] > 0) {
     
-    wt <- wt + runif(n = length(wt),
-                     min = max(-ctrl[["emp_fuzz_samp"]], 0),
-                     max = min(ctrl[["emp_fuzz_samp"]], 1))
+    # Scale Variances #
+    wt <- wt/ctrl[["emp_fuzz_samp"]]
+    
+    # Re-Draw Probs From Dirichlet Dist #
+    wt <- rdirichlet(n = 1, alpha = wt)
+    
+    # Sanitize Labels
+    names(wt) <- NULL
     
   }
   
@@ -337,5 +343,45 @@ stub_sample_ <- function(col, ctrl){
   
   ## Output ##
   return(out)
+  
+}
+
+
+### rdirichlet() ###
+#' n = number of observations.
+#' alpha = positive reals.
+#' 
+#' p = proportions of each output category (p_{k}) in relation to the total
+#' (sum(p)).
+#' @noRd
+rdirichlet <- function(n, alpha){
+  
+  ## Number of Categories ##
+  k <- length(alpha)
+  
+  ## Random Gamma Draw ##
+  x <- rgamma(n = k*n, shape = alpha)
+  
+  ## Coerce to Matrix ##
+  x <- matrix(x, ncol = k, byrow = TRUE)
+  
+  ## Scale Matrix Rows by their Sum ##
+  p <- x/rowSums(x)
+  
+  ## Simplify n == 1 Case ##
+  p_names <- round(alpha, 3)
+  if (n == 1) {
+    
+    p <- as.vector(p)
+    names(p) <- p_names
+    
+  } else {
+    
+    dimnames(p) <- list(seq_len(n), p_names)
+    
+  }
+  
+  ## Output ##
+  return(p)
   
 }
