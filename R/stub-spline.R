@@ -42,7 +42,7 @@ stub_spline.default <- function(col, ...){
   .warning_no_method(col)
 
   ## Define Function ##
-  f <- function(v){rep(NA_integer_, v)}
+  f <- function(v){rep(NA_integer_, length(v))}
 
   ## Form Output ##
   out <- list(
@@ -219,8 +219,8 @@ stub_spline_ <- function(col, ctrl){
     ## Warning ##
     warning("Insufficient values to estimate the ECDF.")
     
-    ## Fallback Function ##
-    f <- function(v){rep(NA_integer_, v)}
+    ## NULL Function ##
+    f <- function(v){rep(NA_integer_, length(v))}
     
   }
   

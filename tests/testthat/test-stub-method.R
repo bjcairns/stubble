@@ -10,6 +10,11 @@
 # - emp_sw <- 1 - always "sample"
 
 
+### ToDo ###
+# - Add more emp_sw tests for the new control flow in stub_method_() for emp_sw
+#   equal to 0 or 1.
+
+
 ### Params ###
 ## Control ##
 ctrl_def <- stubble_ctrl(index = 1L)[-1]

@@ -14,6 +14,10 @@
 #' @keywords datagen
 
 
+### ToDo ###
+# - Test the emp_sw override for when emp_sw == 0 or 1.
+
+
 ### Notes ###
 # - stub_method.ordered() may need to change if stub_method_.ordered() is finalised.
 
@@ -212,21 +216,37 @@ stub_method_ <- function(col, ctrl){
   if (ctrl[["emp_sw"]] < 0 | ctrl[["emp_sw"]] > 1)
     stop("The 'emp_sw' control parameter must be between 0 and 1.")
   
-  ## Complete Cases Only ##
-  cc_col <- col[!is.na(col)]
-  
-  ## Only Assess Vectors Containing Non-Missing/Zero-Length Data ##
-  if (length(cc_col) != 0){
+  ## emp_sw Override ##
+  if (ctrl[["emp_sw"]] == 0) {
     
-    ## Uniqueness ##
-    p_uniq <- length(unique(cc_col))/length(cc_col)
+    # Always Sample #
+    method <- "spline"
     
-    ## Method Selection ##
-    method <- if(p_uniq > ctrl[["emp_sw"]]) "spline" else "sample"
+  } else if (ctrl[["emp_sw"]] == 1){
+    
+    # Always Spline #
+    method <- "sample"
     
   } else {
     
-    method <- "sample"
+    # Complete Cases Only #
+    cc_col <- col[!is.na(col)]
+    
+    # Only Assess Vectors Containing Non-Missing/Zero-Length Data #
+    if (length(cc_col) != 0){
+      
+      # Uniqueness #
+      p_uniq <- length(unique(cc_col))/length(cc_col)
+      
+      # Method Selection #
+      method <- if (p_uniq > ctrl[["emp_sw"]]) "spline" else "sample"
+      
+    } else {
+      
+      # Zero Data Fallback #
+      method <- "sample"
+      
+    }
     
   }
   

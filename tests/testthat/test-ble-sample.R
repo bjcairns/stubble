@@ -332,7 +332,7 @@ test_that(
 ### 'elements' Parameter ###
 ## Data ##
 ctrl_def_uniq <- ctrl_def
-ctrl_def_uniq$emp_p_exc <- 0.06
+ctrl_def_uniq[["emp_p_exc"]] <- 0.06
 stub_luniq <- suppressWarnings(stub(luniq, rows = n, method = "empirical", ctrl = ctrl_def_uniq)[["vars"]])
 
 ## base ##

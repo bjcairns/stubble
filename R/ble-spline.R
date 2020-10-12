@@ -17,10 +17,6 @@
 #' @importFrom stats rnorm runif
 
 
-### ToDo ###
-# - Evaluate need for setting the origin when coercing from POSIXct to POSIXlt.
-
-
 ### ble_spline() ###
 #' @noRd
 ble_spline <- function(x, elements, ctrl){
@@ -29,12 +25,13 @@ ble_spline <- function(x, elements, ctrl){
   dtype <- x[["dtype"]]
   f <- x[["sim"]][["fun"]]
   
-  ## Generate Data ##
-  v <- runif(n = elements)
-  syn_col <- f(v = v)
-  
-  ## Coerce Output ##
-  syn_col <- ble_spline_(dtype = dtype, syn_col = syn_col, ctrl = ctrl)
+  ## Call S3 Internals ##
+  syn_col <- ble_spline_(
+    dtype = dtype,
+    f = f,
+    elements = elements,
+    ctrl = ctrl
+  )
   
   ## Output ##
   return(syn_col)
@@ -54,17 +51,26 @@ ble_spline_ <- function(dtype, ...){
 
 ### ble_spline_.default() ###
 #' @export
-ble_spline_.default <- function(dtype, ...){
+ble_spline_.default <- function(dtype, elements, ...){
   
   ## Error ##
-  .stop_no_method(dtype)
+  .warning_no_method(dtype)
+  
+  ## Generate NA Data ##
+  syn_col <- rep(NA_integer_, elements)
+  
+  ## Output ##
+  return(syn_col)
   
 }
 
 
 ### ble_spline_.Date() ###
 #' @export
-ble_spline_.Date <- function(dtype, syn_col, ctrl){
+ble_spline_.Date <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -80,7 +86,10 @@ ble_spline_.Date <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.double() ###
 #' @export
-ble_spline_.double <- function(dtype, syn_col, ctrl){
+ble_spline_.double <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Coerce to double ##
   syn_col <- as.double(syn_col)
@@ -93,7 +102,10 @@ ble_spline_.double <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.IDate() ###
 #' @export
-ble_spline_.IDate <- function(dtype, syn_col, ctrl){
+ble_spline_.IDate <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -122,7 +134,10 @@ ble_spline_.IDate <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.integer() ###
 #' @export
-ble_spline_.integer <- function(dtype, syn_col, ctrl){
+ble_spline_.integer <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -138,7 +153,10 @@ ble_spline_.integer <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.integer64() ###
 #' @export
-ble_spline_.integer64 <- function(dtype, syn_col, ctrl){
+ble_spline_.integer64 <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -167,7 +185,10 @@ ble_spline_.integer64 <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.ITime() ###
 #' @export
-ble_spline_.ITime <- function(dtype, syn_col, ctrl){
+ble_spline_.ITime <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -196,7 +217,10 @@ ble_spline_.ITime <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.POSIXct() ###
 #' @export
-ble_spline_.POSIXct <- function(dtype, syn_col, ctrl){
+ble_spline_.POSIXct <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -212,7 +236,10 @@ ble_spline_.POSIXct <- function(dtype, syn_col, ctrl){
 
 ### ble_spline_.POSIXlt() ###
 #' @export
-ble_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
+ble_spline_.POSIXlt <- function(dtype, f, elements, ctrl){
+  
+  ## Call Internals ##
+  syn_col <- ble_spline__(dtype = dtype, f = f, elements = elements)
   
   ## Round ##
   syn_col <- round(syn_col)
@@ -222,6 +249,22 @@ ble_spline_.POSIXlt <- function(dtype, syn_col, ctrl){
   
   ## Coerce to POSIXlt ##
   syn_col <- as.POSIXlt(syn_col, tz = ctrl[["dttm_tz"]])
+  
+  ## Output ##
+  return(syn_col)
+  
+}
+
+
+### ble_spline__() ###
+#' @noRd
+ble_spline__ <- function(dtype, f, elements){
+  
+  ## Spline Function Inputs ##
+  v <- runif(n = elements)
+  
+  ## Generate Data ##
+  syn_col <- f(v = v)
   
   ## Output ##
   return(syn_col)
