@@ -355,9 +355,17 @@ sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, agn_chr_sep =
 }
 
 
+### sd_disc() ###
+#' @noRd
+sd_disc <- function(p, x) {
+  if (missing(x)) x <- seq_along(p)
+  sqrt(sum((x - sum(x * p))^2 * p))
+}
+
+
 ### fuzz_dirichlet() ###
 #' @noRd
-fuzz_dirichlet <- function(p, alpha) {
+fuzz_dirichlet <- function(p, alpha, recurse = TRUE) {
   
   ## Generate a draw from the Dirichlet distribution ##
   draw <- rgamma(length(p), p*alpha)
@@ -365,7 +373,42 @@ fuzz_dirichlet <- function(p, alpha) {
   ## Rescale to sum to 1 ##
   rdir <- draw/sum(draw)
   
+  if (recurse = TRUE) {
+    sd_rdir <- sd_disc(rdir)
+    
+  }
+  
   return(rdir)
+  
+}
+
+
+### matrix_norm_columns() ###
+#' @noRd
+matrix_norm_columns <- function(M) {
+  M %*% diag(1/as.vector(matrix(1, nrow = 1, ncol = dim(M)[1]) %*% M))
+}
+
+
+### fuzz_nominal() ###
+#' @noRd
+fuzz_nominal <- function(p, alpha_inv, recurse = 10) {
+  
+  sd_p <- sd_disc(p)
+  
+  MM <- matrix(1, nrow = length(p), ncol = length(p))
+  diag(MM) <- 0
+  MM <- matrix_norm_columns(MM)
+  
+  pdir <- fuzz_dirichlet(p, 1/alpha_inv^2.75) # This is a fudge
+  diff_pdir <- pdir - p
+  pdir <- p + MM %*% diff_pdir
+  
+  if (sd_disc(pdir)^2 <= sd_p^2 & recurse > 0) {
+    pdir <- fuzz_nominal(p, alpha_inv, recurse = recurse - 1)
+  }
+  
+  return(as.vector(pdir))
   
 }
 
@@ -376,20 +419,19 @@ fuzz_dirichlet <- function(p, alpha) {
 ## Uses recursion to improve a first approximation to the requested amount of 
 ## noise
 #' @noRd
-fuzz_binom <- function(p, sd_ratio, recurse = TRUE) {
+fuzz_binom <- function(p, sd_ratio, recurse = 10) {
   
   ## Preliminaries
   x <- seq_along(p)
   n <- length(p) - 1
-  sd_p <- sqrt(sum((x - sum(x * p))^2 * p))
+  sd_p <- sd_disc(p)
   MM <- matrix(0, nrow = n+1, ncol = n+1)
   
   ## Guess at the appropriate success probability parameter for a binomial
   cc <- -(sd_p * sd_ratio)^2/n
-  pp <- suppressWarnings((bb - sqrt(1 + 4*cc)) * 0.5)
-  if (is.na(pp)) {
-    if (recurse) 
-      warning("cannot add requested noise; reverting to binomial(n, 0.5)")
+  pp <- suppressWarnings((1 - sqrt(1 + 4*cc)) * 0.5)
+  if (is.na(pp)) { 
+    warning("cannot add requested noise; reverting to binomial(n, 0.5)")
     pp <- 0.5
   }
   
@@ -405,16 +447,34 @@ fuzz_binom <- function(p, sd_ratio, recurse = TRUE) {
   }
   
   ## Normalise columns
-  MM <- MM %*% diag(1/as.vector(matrix(1, nrow = 1, ncol = n+1) %*% MM))
+  MM <- matrix_norm_columns(MM)
+  pbin <- MM %*% p
   
   ## Correct the SD of the noise
-  if (recurse == TRUE) {
-    sd_obv <- sqrt((sd_disc(MM %*% p))^2 - sd_p^2) / sd_p
-    MM <- fuzz_mult(p, sd_ratio * sd_ratio / sd_obv, recurse = FALSE)
+  if (sd_disc(pbin)^2 > sd_p^2 & recurse > 0) {
+    sdr_obv <- sqrt((sd_disc(pbin))^2 - sd_p^2) / sd_p
+    pbin <- fuzz_binom(p, sd_ratio * sd_ratio / sdr_obv, recurse = recurse - 1)
   }
   
-  return(MM %*% p)
+  return(pbin)
   
 }
 
 
+### Combine the Dirichlet and psuedo-Binomial fuzzing schemes ###
+#' @noRd
+fuzz_ordinal <- function(p, sd_ratio, recurse = 10) {
+  
+  sd_p <- sd_disc(p)
+  
+  pfuzz <- fuzz_dirichlet(p, 1/sd_ratio^2.75)
+  pfuzz <- fuzz_binom(pfuzz, sd_ratio, recurse = 10)
+  
+  if (sd_disc(pfuzz)^2 > sd_p^2 & recurse > 0) {6
+    sdr_obv <- sqrt((sd_disc(pfuzz))^2 - sd_p^2) / sd_p
+    pfuzz <- fuzz_ordinal(p, sd_ratio^2/sdr_obv, recurse = recurse - 1)
+  }
+  
+  return(as.vector(pfuzz))
+  
+}
