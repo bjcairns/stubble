@@ -64,11 +64,11 @@ test_that(
       object = impute_na(syn_col[1], p_na = 0),
       n = 1
     )
-    code = expect_length(
+    expect_length(
       object = impute_na(syn_col[1], p_na = 0.5),
       n = 1
     )
-    code = expect_length(
+    expect_length(
       object = impute_na(syn_col[1], p_na = 1),
       n = 1
     )
@@ -76,11 +76,11 @@ test_that(
       object = impute_na(syn_col, p_na = 0),
       n = n
     )
-    code = expect_length(
+    expect_length(
       object = impute_na(syn_col, p_na = 0.5),
       n = n
     )
-    code = expect_length(
+    expect_length(
       object = impute_na(syn_col, p_na = 1),
       n = n
     )
