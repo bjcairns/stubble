@@ -131,7 +131,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["integer64"]], elements = n, ctrl = ctrl_def)
@@ -146,7 +146,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_equivalent(
       object = suppressWarnings(
         ble_sample(stub_l0[["IDate"]], elements = n, ctrl = ctrl_def)
@@ -215,7 +215,7 @@ test_that(
 test_that(
   desc = "Output Classes [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = class(ble_sample(stub_l1[["integer64"]], elements = n, ctrl = ctrl_def)),
       expected = "integer64",
@@ -227,7 +227,7 @@ test_that(
 test_that(
   desc = "Output Classes [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_true(
       object = "IDate" %in% class(ble_sample(stub_l1[["IDate"]], elements = n, ctrl = ctrl_def)),
       label = "IDate"
@@ -301,7 +301,7 @@ test_that(
 test_that(
   desc = "'elements' Parameter [bit64]",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = lengths(lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[["integer64"]], ctrl = ctrl_def)),
       expected = seq_len(n),
@@ -314,7 +314,7 @@ test_that(
 test_that(
   desc = "'elements' Parameter [data.table]",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_identical(
       object = lengths(lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[["IDate"]], ctrl = ctrl_def)),
       expected = seq_len(n),
@@ -354,7 +354,7 @@ test_that(
 test_that(
   desc = "'elements' Parameter [bit64]",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     for (col_type in vars_bit64) {
       syn_cols <- lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[[col_type]], ctrl = ctrl_def_uniq)
       expect_identical(
@@ -370,7 +370,7 @@ test_that(
 test_that(
   desc = "'elements' Parameter [data.table]",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     for (col_type in vars_dt) {
       syn_cols <- lapply(X = seq_len(n), FUN = ble_sample, x = stub_luniq[[col_type]], ctrl = ctrl_def_uniq)
       expect_identical(

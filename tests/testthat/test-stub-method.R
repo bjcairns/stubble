@@ -58,7 +58,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = stub_method(l0[["integer64"]], ctrl = ctrl_def),
       expected = "sample"
@@ -70,7 +70,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_equivalent(
       object = sapply(X = l0[vars_dt], FUN = stub_method, ctrl = ctrl_def),
       expected = rep("sample", length(l0[vars_dt]))
@@ -95,7 +95,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = stub_method(lna[["integer64"]], ctrl = ctrl_def),
       expected = "sample"
@@ -107,7 +107,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_equivalent(
       object = sapply(X = lna[vars_dt], FUN = stub_method, ctrl = ctrl_def),
       expected = rep("sample", length(lna[vars_dt]))
@@ -157,7 +157,7 @@ test_that(
 test_that(
   desc = "Empirical switch control parameter (always sample) [bit64]",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = stub_method(luniq[["integer64"]], ctrl = ctrl),
       expected = "sample"
@@ -169,7 +169,7 @@ test_that(
 test_that(
   desc = "Empirical switch control parameter (always sample) [data.table]",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_equivalent(
       object = sapply(X = luniq[vars_dt], FUN = stub_method, ctrl = ctrl),
       expected = rep("sample", length(luniq[vars_dt]))
@@ -203,7 +203,7 @@ test_that(
 test_that(
   desc = "Empirical switch control parameter (always spline) [bit64]",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = stub_method(l1[["integer64"]], ctrl = ctrl),
       expected = "spline"
@@ -215,7 +215,7 @@ test_that(
 test_that(
   desc = "Empirical switch control parameter (always spline) [data.table]",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_equivalent(
       object = sapply(X = l1[vars_dt], FUN = stub_method, ctrl = ctrl),
       expected = rep("spline", length(l1[vars_dt]))

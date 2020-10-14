@@ -101,7 +101,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_type(
       object = stub_sample(l0[["integer64"]], ctrl = ctrl_def),
       type = "list"
@@ -113,7 +113,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_type(
       object = stub_sample(l0[["IDate"]], ctrl = ctrl_def),
       type = "list"
@@ -174,7 +174,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_type(
       object = stub_sample(lna[["integer64"]], ctrl = ctrl_def),
       type = "list"
@@ -186,7 +186,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_type(
       object = stub_sample(lna[["IDate"]], ctrl = ctrl_def),
       type = "list"
@@ -257,7 +257,7 @@ test_that(
 test_that(
   desc = "Output Classes [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = class(stub_sample(l1[["integer64"]], ctrl = ctrl_def_output)[["values"]]),
       expected = "integer64",
@@ -269,7 +269,7 @@ test_that(
 test_that(
   desc = "Output Classes [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_true(
       object = "IDate" %in% class(stub_sample(l1[["IDate"]], ctrl = ctrl_def_output)[["values"]]),
       label = "IDate"

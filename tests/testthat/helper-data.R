@@ -4,6 +4,17 @@
 #                   #
 #===================#
 
+
+### Minimum Package Versions ###
+min_v_bit64 = "4.0.2"
+min_v_dt = "1.9.8"
+min_v_tibble = "1.1"
+
+
+### RNG Seed ###
+use_seed <- 237892342L
+
+
 ### Common Test Objects ###
 ## Zero-Length Vectors ##
 l0 <- list(
@@ -53,6 +64,7 @@ l1 <- list(
   POSIXlt = as.POSIXlt("1970-01-01", tz = "UTC")
 )
 
+## Unique Vectors ##
 luniq <- list(
   character = letters,
   Date = as.Date(1:1e2, origin = "1970-01-01"),
@@ -68,4 +80,5 @@ luniq <- list(
   POSIXlt = as.POSIXlt(1:1e2, origin = "1970-01-01", tz = "UTC")
 )
 
+## Penguin Data Alias ##
 penguins <- penguins_ext

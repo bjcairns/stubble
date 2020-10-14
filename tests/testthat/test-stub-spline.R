@@ -93,7 +93,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_type(
       object = suppressWarnings(
         stub_spline(l0[["integer64"]], ctrl = ctrl_def)
@@ -107,7 +107,7 @@ test_that(
 test_that(
   desc = "Zero-length vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_type(
       object = suppressWarnings(
         stub_spline(l0[["IDate"]], ctrl = ctrl_def)
@@ -159,7 +159,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [bit64].",
   code = {
-    skip_if_not_installed("bit64")
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_type(
       object = suppressWarnings(
         stub_spline(lna[["integer64"]], ctrl = ctrl_def)
@@ -173,7 +173,7 @@ test_that(
 test_that(
   desc = "Missing data vectors [data.table].",
   code = {
-    skip_if_not_installed("data.table")
+    skip_if_not_installed("data.table", min_v_dt)
     expect_type(
       object = suppressWarnings(
         stub_spline(lna[["IDate"]], ctrl = ctrl_def)

@@ -1,7 +1,7 @@
 Package: stubble
 Title: Simple synthetic data from lists, data frames, tibbles, and data.tables
 Version: 0.3.0
-Date: 2020-10-05
+Date: 2020-10-14
 Authors@R: c(
       person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre"),
         email = "ben.cairns@ndph.ox.ac.uk",
@@ -25,7 +25,7 @@ Imports:
 Suggests:
     bit64 (>= 4.0.2),
     cowplot,
-    data.table,
+    data.table (>= 1.9.8),
     dplyr,
     ggplot2,
     knitr,
@@ -33,7 +33,7 @@ Suggests:
     purrr,
     rmarkdown,
     testthat (>= 2.1.0),
-    tibble,
+    tibble (>= 1.1),
     tidyr,
     usethis
 RoxygenNote: 7.1.1
