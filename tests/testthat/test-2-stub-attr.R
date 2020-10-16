@@ -6,7 +6,8 @@
 
 
 ### Params ###
-ctrl_def <- stubble_ctrl(
+## Control ##
+ctrl_def <- list(
   emp_n_exc = 0L,
   emp_p_exc = 0,
   emp_drop_lev = FALSE,
@@ -17,7 +18,7 @@ ctrl_def <- stubble_ctrl(
 ctrl_def <- ctrl_def[!{names(ctrl_def) %in% "index"}]
 
 
-### Vars ###
+## Vars ##
 vars_base <- c("character", "Date", "double", "factor", "integer", "logical", "ordered", "POSIXct", "POSIXlt")
 vars_bit64 <- "integer64"
 vars_dt <- c("IDate", "ITime")
