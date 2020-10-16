@@ -5,12 +5,6 @@
 #=================#
 
 
-### ToDo ###
-# - Test function can run on list objects with different length elements.
-# - Test `rows` argument is encoded.
-# - Test `method` argument is encoded.
-
-
 ### Params ###
 ## Control ##
 ctrl_def <- list(
@@ -26,7 +20,7 @@ ctrl_def <- list(
 ### Data Structure Encoding ###
 ## base ##
 test_that(
-  desc = "Data Structure Encoding [base]",
+  desc = "Data Structure Encoding [base].",
   code = {
     expect_identical(
       object = class(stub(l1, ctrl = ctrl_def)[["dtype"]]),
@@ -43,7 +37,7 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "Data Structure Encoding [data.table]",
+  desc = "Data Structure Encoding [data.table].",
   code = {
     skip_if_not_installed("data.table", min_v_dt)
     expect_identical(
@@ -56,13 +50,65 @@ test_that(
 
 ## tibble ##
 test_that(
-  desc = "Data Structure Encoding [tibble]",
+  desc = "Data Structure Encoding [tibble].",
   code = {
     skip_if_not_installed("tibble", min_v_tibble)
     expect_identical(
       object = class(stub(tibble::as_tibble(l1), ctrl = ctrl_def)[["dtype"]]),
       expected = c("tbl_df", "tbl", "data.frame"),
       label = "tibble"
+    )
+  }
+)
+
+
+### 'rows' argument ###
+test_that(
+  desc = "'rows' Argument.",
+  code = {
+    expect_identical(
+      object = sapply(X = stub(luniq, ctrl = ctrl_def)[["vars"]], FUN = `[[`, "n"),
+      expected = lengths(luniq),
+      label = "automatic"
+    )
+    expect_equivalent(
+      object = sapply(X = stub(luniq, rows = 10L, ctrl = ctrl_def)[["vars"]], FUN = `[[`, "n"),
+      expected = rep(10L, length(luniq)),
+      label = "manual (single value)"
+    )
+    expect_equivalent(
+      object = sapply(X = stub(luniq, rows = seq_along(luniq), ctrl = ctrl_def)[["vars"]], FUN = `[[`, "n"),
+      expected = seq_along(luniq),
+      label = "manual (multiple values)"
+    )
+  }
+)
+
+
+### 'method' argument ###
+test_that(
+  desc = "'method' argument",
+  code = {
+    expect_equivalent(
+      object = sapply(
+        X = lapply(
+          X = stub(luniq, method = "agnostic", ctrl = ctrl_def)[["vars"]],
+          FUN = `[[`, "sim"
+        ),
+        FUN = `[[`, "method"
+      ),
+      expected = rep("agnostic", length(luniq)),
+      label = "agnostic"
+    )
+    expect_true(
+      object = all(sapply(
+        X = lapply(
+          X = stub(luniq, method = "empirical", ctrl = ctrl_def)[["vars"]],
+          FUN = `[[`, "sim"
+        ),
+        FUN = `[[`, "method"
+      ) %in% c("sample", "spline")),
+      label = "empirical"
     )
   }
 )
