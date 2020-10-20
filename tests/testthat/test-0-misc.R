@@ -22,7 +22,7 @@ syn_col <- rep(1L, n)
 
 ## p_na ##
 test_that(
-  desc = "p_na",
+  desc = "p_na (impute_na()).",
   code = {
     expect_true(
       object = all(!is.na(impute_na(syn_col = syn_col, p_na = 0))),
@@ -38,7 +38,7 @@ test_that(
 
 ### Zero-Length Inputs ###
 test_that(
-  desc = "Zero-Length Inputs",
+  desc = "Zero-Length Inputs (impute_na()).",
   code = {
     expect_length(
       object = impute_na(character(0), p_na = 0),
@@ -58,7 +58,7 @@ test_that(
 
 ### Output Lengths ###
 test_that(
-  desc = "Output Lengths",
+  desc = "Output Lengths (impute_na()).",
   code = {
     expect_length(
       object = impute_na(syn_col[1], p_na = 0),
@@ -91,7 +91,7 @@ test_that(
 ### Output Classes ###
 ## base ##
 test_that(
-  desc = "output classes [base]",
+  desc = "output classes (impute_na()) [base].",
   code = {
     expect_true(
       object = all(
@@ -170,7 +170,7 @@ test_that(
 
 ## bit64 ##
 test_that(
-  desc = "output classes [bit64]",
+  desc = "output classes (impute_na()) [bit64].",
   code = {
     skip_if_not_installed("bit64")
     expect_true(
@@ -186,7 +186,7 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "output classes [data.table]",
+  desc = "output classes (impute_na()) [data.table].",
   code = {
     skip_if_not_installed("data.table")
     expect_true(
@@ -213,13 +213,40 @@ test_that(
 ### is.installed.package() ###
 ##############################
 
+### No Inputs ###
+test_that(
+  desc = "No Inputs (is.installed.package())",
+  code = {
+    expect_error(
+      object = is.installed.package(minimum_version = character(0L)),
+      regexp = "[aA]rgument.+pkg.+[mM]issing",
+      label = "Missing 'pkg' argument"
+    )
+  }
+)
+
+### Different Input Lengths ###
+test_that(
+  desc = "Different Input Lengths (is.installed.package()).",
+  code = {
+    expect_error(
+      object = is.installed.package(pkg = character(1L), minimum_version = character(2L)),
+      regexp = "[iI]nput\\s[lL]engths\\s[dD]iffer"
+    )
+  }
+)
+
 
 ### Zero-Length Inputs ###
 test_that(
-  desc = "Zero-Length Inputs",
+  desc = "Zero-Length Inputs (is.installed.package()).",
   code = {
     expect_length(
-      object = is.installed.package(character(0)),
+      object = is.installed.package(pkg = character(0L)),
+      n = 0L
+    )
+    expect_length(
+      object = is.installed.package(pkg = character(0L), minimum_version = character(0L)),
       n = 0L
     )
   }
@@ -228,12 +255,27 @@ test_that(
 
 ### NA Pass Through ###
 test_that(
-  desc = "NA Pass Through",
+  desc = "NA Pass Through (is.installed.package()).",
   code = {
     expect_identical(
       object = is.installed.package(NA),
       expected = NA,
       label = "NA pass through"
+    )
+    expect_identical(
+      object = is.installed.package(pkg = NA, minimum_version = "1.1.1"),
+      expected = NA,
+      label = "NA pass through (pkg)"
+    )
+    expect_identical(
+      object = is.installed.package(pkg = "base", minimum_version = NA),
+      expected = NA,
+      label = "NA pass through (minimum_version)"
+    )
+    expect_identical(
+      object = is.installed.package(pkg = NA, minimum_version = NA),
+      expected = NA,
+      label = "NA pass through (pkg & minimum_version)"
     )
   }
 )
@@ -241,14 +283,14 @@ test_that(
 
 ### Output Lengths ###
 test_that(
-  desc = "Output Lengths",
+  desc = "Output Lengths (is.installed.package()).",
   code = {
     expect_length(
-      object = is.installed.package(character(1)),
+      object = is.installed.package(pkg = character(1)),
       n = 1
     )
     expect_length(
-      object = is.installed.package(character(2)),
+      object = is.installed.package(pkg = character(2)),
       n = 2
     )
   }
@@ -257,7 +299,7 @@ test_that(
 
 ### Output Class ###
 test_that(
-  desc = "Output Class",
+  desc = "Output Class (is.installed.package()).",
   code = {
     expect_true(
       object = is.logical(is.installed.package("base")),
@@ -269,7 +311,7 @@ test_that(
 
 ### Core Functioning ###
 test_that(
-  desc = "Present Packages",
+  desc = "Present Packages (is.installed.package()).",
   code = {
     expect_true(
       object = is.installed.package("base"),
@@ -300,7 +342,7 @@ test_that(
 
 ### Output Lengths ###
 test_that(
-  desc = "output lengths",
+  desc = "output lengths (dtype0).",
   code = {
     expect_true(
       object = all(lengths(lapply(l0, dtype0)) == 0L),
@@ -325,7 +367,7 @@ test_that(
 ### Output Classes ###
 ## unrecognised ##
 test_that(
-  desc = "output classes [unrecognised]",
+  desc = "output classes (dtype0()) [unrecognised].",
   code = {
     expect_error(
       object = dtype0(NULL),
@@ -337,7 +379,7 @@ test_that(
 
 ## base ##
 test_that(
-  desc = "output classes [base]",
+  desc = "output classes (dtype0()) [base].",
   code = {
     expect_identical(
       object = lapply(l0, dtype0),
@@ -357,7 +399,7 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "output classes [data.table]",
+  desc = "output classes (dtype0()) [data.table].",
   code = {
     skip_if_not_installed("data.table")
     expect_true(
@@ -371,7 +413,7 @@ test_that(
 
 ## tibble ##
 test_that(
-  desc = "output classes [tibble]",
+  desc = "output classes (dtype0()) [tibble].",
   code = {
     skip_if_not_installed("tibble")
     expect_true(
@@ -389,7 +431,7 @@ test_that(
 
 ### Zero-Length Inputs ###
 test_that(
-  desc = "zero-length inputs",
+  desc = "Zero-length inputs (sample_chars()).",
   code = {
     expect_error(
       object = sample_chars(x = character(0), size = 1, nchar_min = 1, nchar_max = 1),
@@ -410,7 +452,7 @@ test_that(
 
 ### Output Lengths ###
 test_that(
-  desc = "output lengths",
+  desc = "Output lengths (sample_chars()).",
   code = {
     expect_length(
       object = sample_chars(x = letters, size = 1),
@@ -426,7 +468,7 @@ test_that(
 
 ### Output Class ###
 test_that(
-  desc = "output class",
+  desc = "Output class (sample_chars()).",
   code = {
     expect_true(
       object = is.character(sample_chars(x = letters, size = 0))
@@ -437,7 +479,7 @@ test_that(
 
 ### Core Functioning ###
 test_that(
-  desc = "core functioning",
+  desc = "Core functioning (sample_chars()).",
   code = {
     expect_true(
       object = all(grepl("^[a-z]+$", sample_chars(x = letters, size = 1e3, nchar_min = 1L))),

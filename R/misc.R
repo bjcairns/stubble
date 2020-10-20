@@ -316,7 +316,7 @@ impute_na <- function(syn_col, p_na){
 
 ### is.installed.package() ###
 #' @noRd
-is.installed.package <- function(pkg, ...){
+is.installed.package <- function(pkg, minimum_version){
   
   ## Non-NA Indices ##
   ind <- which(!is.na(pkg))
@@ -324,8 +324,48 @@ is.installed.package <- function(pkg, ...){
   ## Empty Results Vector ##
   status <- rep(NA, length(pkg))
   
-  ## Assert Package Installation ##
-  status[ind] <- pkg[ind] %in% rownames(installed.packages(...))
+  ## Installed Packages ##
+  instPkgs <- installed.packages()
+  
+  ## Installed Package Names ##
+  pkgs <- instPkgs[, "Package"]
+  
+  ## Assert Package Installation Status ##
+  status[ind] <- pkg[ind] %in% pkgs
+  
+  if (!missing(minimum_version)) {
+    
+    ## Checks ##
+    if (length(pkg) != length(minimum_version))
+      stop("Input lengths differ.", call. = FALSE)
+    
+    ## Non-NA Indices ##
+    v_ind <- which(!is.na(minimum_version[ind]))
+    
+    ## Empty Results Vector ##
+    v_status <- rep(NA, length(minimum_version[ind]))
+    v_status <- as.list(v_status)
+    
+    ## Coerce to package_version ##
+    v_min <- package_version(minimum_version[v_ind])
+    
+    ## Get Current Package Versions ##
+    v <- instPkgs[pkgs %in% pkg[ind][v_ind], "Version"]
+    v <- package_version(v)
+    
+    ## Compare Versions ##
+    v_status[v_ind] <- mapply(
+      FUN = function(v, v_min){v >= v_min},
+      v = v,
+      v_min = v_min,
+      SIMPLIFY = FALSE
+    )
+    v_status <- unlist(v_status)
+    
+    ## Assert Package Version Status ##
+    status[ind] <- v_status
+    
+  }
   
   ## Output ##
   return(status)

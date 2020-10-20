@@ -24,7 +24,8 @@ ctrl_def <- stubble_ctrl(
   emp_sw = 1,
   emp_n_exc = 0L,
   emp_p_exc = 0,
-  emp_fuzz_samp = 0
+  emp_fuzz_samp = 0,
+  emp_drop_lev = FALSE
 )
 ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 
@@ -62,65 +63,47 @@ test_that(
   desc = "Zero-length vectors [base].",
   code = {
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["character"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["character"]], elements = n, ctrl = ctrl_def),
       expected = as.character(rep(NA, n)),
       label = "character"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["Date"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["Date"]], elements = n, ctrl = ctrl_def),
       expected = as.Date(rep(NA, n)),
       label = "Date"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["double"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["double"]], elements = n, ctrl = ctrl_def),
       expected = as.double(rep(NA, n)),
       label = "double"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["factor"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["factor"]], elements = n, ctrl = ctrl_def),
       expected = as.factor(rep(NA, n)),
       label = "factor"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["integer"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["integer"]], elements = n, ctrl = ctrl_def),
       expected = as.integer(rep(NA, n)),
       label = "integer"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["logical"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["logical"]], elements = n, ctrl = ctrl_def),
       expected = as.logical(rep(NA, n)),
       label = "logical"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["ordered"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["ordered"]], elements = n, ctrl = ctrl_def),
       expected = as.ordered(rep(NA, n)),
       label = "ordered"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["POSIXct"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["POSIXct"]], elements = n, ctrl = ctrl_def),
       expected = as.POSIXct(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
       label = "POSIXct"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["POSIXlt"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["POSIXlt"]], elements = n, ctrl = ctrl_def),
       expected = as.POSIXlt(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
       label = "POSIXlt"
     )
@@ -133,9 +116,7 @@ test_that(
   code = {
     skip_if_not_installed("bit64", min_v_bit64)
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["integer64"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["integer64"]], elements = n, ctrl = ctrl_def),
       expected = bit64::as.integer64(rep(NA, n)),
       label = "integer64"
     )
@@ -148,21 +129,105 @@ test_that(
   code = {
     skip_if_not_installed("data.table", min_v_dt)
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["IDate"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["IDate"]], elements = n, ctrl = ctrl_def),
       expected = data.table::as.IDate(rep(NA_character_, n)),
       label = "IDate"
     )
     expect_equivalent(
-      object = suppressWarnings(
-        ble_sample(stub_l0[["ITime"]], elements = n, ctrl = ctrl_def)
-      ),
+      object = ble_sample(stub_l0[["ITime"]], elements = n, ctrl = ctrl_def),
       expected = data.table::as.ITime(rep(NA_character_, n)),
       label = "ITime"
     )
   }
 ); rm(stub_l0)
+
+
+### Missing Values ###
+## Data ##
+stub_lna <- stub(lna, rows = n, method = "empirical", ctrl = ctrl_def)[["vars"]]
+
+## base ##
+test_that(
+  desc = "Zero-length vectors [base].",
+  code = {
+    expect_equivalent(
+      object = ble_sample(stub_lna[["character"]], elements = n, ctrl = ctrl_def),
+      expected = as.character(rep(NA, n)),
+      label = "character"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["Date"]], elements = n, ctrl = ctrl_def),
+      expected = as.Date(rep(NA, n)),
+      label = "Date"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["double"]], elements = n, ctrl = ctrl_def),
+      expected = as.double(rep(NA, n)),
+      label = "double"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["factor"]], elements = n, ctrl = ctrl_def),
+      expected = as.factor(rep(NA, n)),
+      label = "factor"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["integer"]], elements = n, ctrl = ctrl_def),
+      expected = as.integer(rep(NA, n)),
+      label = "integer"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["logical"]], elements = n, ctrl = ctrl_def),
+      expected = as.logical(rep(NA, n)),
+      label = "logical"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["ordered"]], elements = n, ctrl = ctrl_def),
+      expected = as.ordered(rep(NA, n)),
+      label = "ordered"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["POSIXct"]], elements = n, ctrl = ctrl_def),
+      expected = as.POSIXct(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
+      label = "POSIXct"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["POSIXlt"]], elements = n, ctrl = ctrl_def),
+      expected = as.POSIXlt(rep(NA_character_, n), tz = ctrl_def[["dttm_tz"]]),
+      label = "POSIXlt"
+    )
+  }
+)
+
+## bit64 ##
+test_that(
+  desc = "Zero-length vectors [bit64].",
+  code = {
+    skip_if_not_installed("bit64", min_v_bit64)
+    expect_equivalent(
+      object = ble_sample(stub_lna[["integer64"]], elements = n, ctrl = ctrl_def),
+      expected = bit64::as.integer64(rep(NA, n)),
+      label = "integer64"
+    )
+  }
+)
+
+## data.table ##
+test_that(
+  desc = "Zero-length vectors [data.table].",
+  code = {
+    skip_if_not_installed("data.table", min_v_dt)
+    expect_equivalent(
+      object = ble_sample(stub_lna[["IDate"]], elements = n, ctrl = ctrl_def),
+      expected = data.table::as.IDate(rep(NA_character_, n)),
+      label = "IDate"
+    )
+    expect_equivalent(
+      object = ble_sample(stub_lna[["ITime"]], elements = n, ctrl = ctrl_def),
+      expected = data.table::as.ITime(rep(NA_character_, n)),
+      label = "ITime"
+    )
+  }
+); rm(stub_lna)
 
 
 ### Output Classes ###
