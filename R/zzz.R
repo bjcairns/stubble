@@ -20,3 +20,14 @@
   options(stubble_has_tibble = instPkgs[["tibble"]])
   
 }
+
+
+### .onUnload() ###
+.onUnload <- function(libpath){
+  
+  ## Unset Options ##
+  options(stubble_has_bit64 = NULL)
+  options(stubble_has_data.table = NULL)
+  options(stubble_has_tibble = NULL)
+  
+}
