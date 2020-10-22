@@ -12,7 +12,12 @@
 
 ### Params ###
 ## Control ##
-ctrl_def <- stubble_ctrl(index = 1L)
+ctrl_def <- stubble_ctrl(
+  index = 1L,
+  emp_sw = 0L,
+  emp_tail_exc = 0,
+  emp_fuzz_spl = 0
+)
 ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 
 # ## Vars ##

@@ -135,7 +135,7 @@ ble_.data.frame <- function(dtype, l){
 ble_.data.table <- function(dtype, l){
   
   ## Coerce to data.table ##
-  out <- if (is.installed.package("data.table")){
+  out <- if (getOption("stubble_has_data.table")){
     
     data.table::as.data.table(l)
     
@@ -169,7 +169,7 @@ ble_.list <- function(dtype, l){
 ble_.tbl_df <- function(dtype, l){
   
   ## Coerce to tbl_df ##
-  out <- if (is.installed.package("tibble")){
+  out <- if (getOption("stubble_has_tibble")){
     
     tibble::as_tibble(l)
     

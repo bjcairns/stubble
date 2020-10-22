@@ -111,7 +111,7 @@ ble_spline_.IDate <- function(dtype, f, elements, ctrl){
   syn_col <- round(syn_col)
   
   ## Attempt Coercion to IDate ##
-  syn_col <- if (is.installed.package("data.table")) {
+  syn_col <- if (getOption("stubble_has_data.table")) {
     
     # Coerce to IDate #
     data.table::as.IDate(syn_col, origin = "1970-01-01")
@@ -162,7 +162,7 @@ ble_spline_.integer64 <- function(dtype, f, elements, ctrl){
   syn_col <- round(syn_col)
   
   ## Attempt Coercion to integer64 ##
-  syn_col <- if (is.installed.package("bit64")) {
+  syn_col <- if (getOption("stubble_has_bit64")) {
     
     # Coerce to integer64 #
     bit64::as.integer64(syn_col)
@@ -194,7 +194,7 @@ ble_spline_.ITime <- function(dtype, f, elements, ctrl){
   syn_col <- round(syn_col)
   
   ## Attempt Coercion to ITime ##
-  syn_col <- if (is.installed.package("data.table")) {
+  syn_col <- if (getOption("stubble_has_data.table")) {
     
     # Coerce to ITime #
     data.table::as.ITime(syn_col, origin = "1970-01-01")

@@ -4,7 +4,7 @@
 #' @description
 #' Internal functions for various stubble functions.
 #' 
-#' @importFrom stats rbinom
+#' @importFrom stats rbinom rgamma
 #' @importFrom utils installed.packages
 
 
@@ -59,7 +59,7 @@ dtype0.data.frame <- function(x){
 dtype0.data.table <- function(x){
   
   ## Create Object ##
-  d <- if (is.installed.package("data.table")) {
+  d <- if (getOption("stubble_has_data.table")) {
     
     # 0-Row data.table #
     data.table::data.table()
@@ -124,7 +124,7 @@ dtype0.factor <- function(x){
 dtype0.IDate <- function(x){
   
   ## 0-Length Vector ##
-  v <- if (is.installed.package("data.table")) {
+  v <- if (getOption("stubble_has_data.table")) {
     
     data.table::as.IDate(character(length = 0L), tz = "UTC")
     
@@ -158,7 +158,7 @@ dtype0.integer <- function(x){
 dtype0.integer64 <- function(x){
   
   ## Create Object ##
-  v <- if (is.installed.package("bit64")) {
+  v <- if (getOption("stubble_has_bit64")) {
     
     # 0-Length Vector #
     bit64::integer64(length = 0L)
@@ -184,7 +184,7 @@ dtype0.integer64 <- function(x){
 dtype0.ITime <- function(x){
   
   ## Create Object ##
-  v <- if(is.installed.package("data.table")) {
+  v <- if(getOption("stubble_has_data.table")) {
     
     # 0-Length Vector #
     data.table::as.ITime(character(length = 0L))
@@ -220,7 +220,7 @@ dtype0.list <- function(x){
 dtype0.logical <- function(x){
   
   ## 0-Length List ##
-  v <- logical(length = 0)
+  v <- logical(length = 0L)
   
   ## Output ##
   return(v)
@@ -272,7 +272,7 @@ dtype0.POSIXlt <- function(x){
 dtype0.tbl_df <- function(x){
   
   
-  d <- if (is.installed.package("tibble")) {
+  d <- if (getOption("stubble_has_tibble")) {
     
     # 0-Length tibble #
     tibble::tibble()
@@ -338,19 +338,21 @@ is.installed.package <- function(pkg, minimum_version){
     ## Checks ##
     if (length(pkg) != length(minimum_version))
       stop("Input lengths differ.", call. = FALSE)
+    if (any(is.na(pkg) & !is.na(minimum_version)))
+      stop("`pkg` cannot be missing where `version` is specified.", call. = FALSE)
     
     ## Non-NA Indices ##
-    v_ind <- which(!is.na(minimum_version[ind]))
+    v_ind <- ind[!is.na(minimum_version)]
     
     ## Empty Results Vector ##
-    v_status <- rep(NA, length(minimum_version[ind]))
+    v_status <- rep(NA, length(minimum_version[v_ind]))
     v_status <- as.list(v_status)
     
     ## Coerce to package_version ##
     v_min <- package_version(minimum_version[v_ind])
     
     ## Get Current Package Versions ##
-    v <- instPkgs[pkgs %in% pkg[ind][v_ind], "Version"]
+    v <- instPkgs[pkg[v_ind], "Version"]
     v <- package_version(v)
     
     ## Compare Versions ##
@@ -363,12 +365,59 @@ is.installed.package <- function(pkg, minimum_version){
     v_status <- unlist(v_status)
     
     ## Assert Package Version Status ##
-    status[ind] <- v_status
+    status[v_ind] <- v_status
+    
+  }
+  
+  ## Named Output ##
+  names(status) <- pkg[ind]
+  
+  ## Output ##
+  return(status)
+  
+}
+
+
+### rdirichlet() ###
+#' n = number of observations.
+#' alpha = positive reals.
+#' 
+#' p = proportions of each output category (p_{k}) in relation to the total
+#' (sum(p)).
+#' @noRd
+rdirichlet <- function(n, alpha){
+  
+  ## Number of Categories ##
+  k <- length(alpha)
+  
+  ## Random Gamma Draw ##
+  x <- rgamma(n = k*n, shape = alpha)
+  
+  ## Coerce to Matrix ##
+  x <- matrix(x, ncol = k, byrow = TRUE)
+  
+  ## Scale Matrix Rows by their Sum ##
+  p <- x/rowSums(x)
+  
+  ## Named Output ##
+  if (length(alpha) != 0L) {
+    
+    colnames(p) <- round(alpha, 3L)
+    
+    if (length(n) != 0L){
+      
+      if (n != 0L){
+        
+        rownames(p) <- seq_len(n)
+        
+      }
+      
+    }
     
   }
   
   ## Output ##
-  return(status)
+  return(p)
   
 }
 
@@ -387,7 +436,7 @@ sample_chars <- function(x, size, nchar_min = 0L, nchar_max = 10L, agn_chr_sep =
   char_list <- lapply(X = nchars, FUN = sample, x = x, replace = TRUE)
   
   ## Collapse List of Character Vectors ##
-  char_vec <- vapply(X = char_list, FUN = paste0, FUN.VALUE = character(1), collapse = agn_chr_sep)
+  char_vec <- vapply(X = char_list, FUN = paste0, FUN.VALUE = character(1L), collapse = agn_chr_sep)
   
   ## Output ##
   return(char_vec)

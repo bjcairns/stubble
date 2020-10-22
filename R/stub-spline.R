@@ -166,10 +166,6 @@ stub_spline.POSIXlt <- function(col, ctrl){
 stub_spline_ <- function(col, ctrl){
   
   ## Checks ##
-  if (!is.numeric(ctrl[["emp_tail_exc"]]))
-    stop("The 'emp_tail_exc' control parameter must be of class numeric.")
-  if (!is.numeric(ctrl[["emp_fuzz_spl"]]))
-    stop("The 'emp_fuzz_spl' control parameter must be of class numeric.")
   if (ctrl[["emp_tail_exc"]] < 0 | ctrl[["emp_tail_exc"]] >= 0.5)
     stop("The 'emp_tail_exc' control parameter must be between 0 and 0.5.")
   if (sign(ctrl[["emp_fuzz_spl"]]) == -1)

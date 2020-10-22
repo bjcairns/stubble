@@ -132,7 +132,7 @@ stubble_ctrl <- function(
   agn_lgl_force_unique = FALSE,
   agn_date_origin = "1970-01-01",
   agn_date_min = agn_date_origin, agn_date_max = Sys.Date(),
-  agn_dttm_min = agn_date_origin, agn_dttm_max = Sys.time(),
+  agn_dttm_min = agn_date_origin, agn_dttm_max = format(Sys.time(), tz = "UTC"),
   agn_time_min = "00:00:00", agn_time_max = "23:59:59",
   dttm_tz = "UTC",
   emp_sw = 0.1,
@@ -157,12 +157,26 @@ stubble_ctrl <- function(
   all_args <- append(old_ctrl, args[!(names(args) %in% names(old_ctrl))])
   all_args <- append(cargs, all_args[!(names(all_args) %in% names(cargs))])
   
-  # Return control parameters for a single column if required
-  if(!is.na(index)){
+  ## Assert Correct Input Classes ##
+  all_args[CTRL_CLASS[["character"]]] <- lapply(all_args[CTRL_CLASS[["character"]]], function(par){lapply(par, as.character)})
+  all_args[CTRL_CLASS[["Date"]]] <- lapply(all_args[CTRL_CLASS[["Date"]]], function(par){lapply(par, as.Date)})
+  all_args[CTRL_CLASS[["double"]]] <- lapply(all_args[CTRL_CLASS[["double"]]], function(par){lapply(par, as.double)})
+  all_args[CTRL_CLASS[["integer"]]] <- lapply(all_args[CTRL_CLASS[["integer"]]], function(par){lapply(par, as.integer)})
+  if (getOption("stubble_has_data.table")) {
+    all_args[CTRL_CLASS[["ITime"]]] <- lapply(all_args[CTRL_CLASS[["ITime"]]], function(par){lapply(par, data.table::as.ITime)})
+  } else {
+    all_args[CTRL_CLASS[["ITime"]]] <- lapply(all_args[CTRL_CLASS[["ITime"]]], function(par){lapply(par, as.POSIXct, tz = "UTC")})
+  }
+  all_args[CTRL_CLASS[["logical"]]] <- lapply(all_args[CTRL_CLASS[["logical"]]], function(par){lapply(par, as.logical)})
+  all_args[CTRL_CLASS[["POSIXct"]]] <- lapply(all_args[CTRL_CLASS[["POSIXct"]]], function(par){lapply(par, as.POSIXct, tz = "UTC")})
+  
+  ## Return control parameters for a single column if required ##
+  if (!is.na(index)) {
     all_args <- lapply(all_args, get_ctrl_element, index = index)
   }
   
-  return(invisible(all_args))
+  ## Output ##
+  return(all_args)
   
 }
 

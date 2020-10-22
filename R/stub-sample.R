@@ -12,8 +12,6 @@
 #' @concept simulation
 #' 
 #' @keywords datagen
-#' 
-#' @importFrom stats rgamma
 
 
 ### stub_sample() ###
@@ -123,7 +121,7 @@ stub_sample.IDate <- function(col, ctrl){
   sim <- NextMethod(col)
   
   ## Attempt Coercion to IDate ##
-  if (is.installed.package("data.table")) {
+  if (getOption("stubble_has_data.table")) {
     
     # Coerce to IDate #
     sim[["values"]] <- data.table::as.IDate(sim[["values"]])
@@ -165,7 +163,7 @@ stub_sample.integer64 <- function(col, ctrl){
   sim <- stub_sample_(col = col, ctrl = ctrl)
   
   ## Attempt Coercion to integer64 ##
-  if (is.installed.package("bit64")) {
+  if (getOption("stubble_has_bit64")) {
     
     # Coerce to Integer64 #
     sim[["values"]] <- bit64::as.integer64(sim[["values"]])
@@ -191,7 +189,7 @@ stub_sample.ITime <- function(col, ctrl){
   sim <- stub_sample_(col = col, ctrl = ctrl)
   
   ## Attempt Coercion to ITime ##
-  if (is.installed.package("data.table")) {
+  if (getOption("stubble_has_data.table")) {
     
     # Coerce to ITime #
     sim[["values"]] <- data.table::as.ITime(sim[["values"]])
@@ -284,15 +282,12 @@ stub_sample.POSIXlt <- function(col, ctrl){
 stub_sample_ <- function(col, ctrl){
   
   ## Checks ##
-  if (any(!is.numeric(ctrl[["emp_n_exc"]]), !is.numeric(ctrl[["emp_p_exc"]])))
-    stop("The 'emp_n_exc' and 'emp_p_exc' control parameters must be of class numeric.")
   if (ctrl[["emp_n_exc"]] %% 1 != 0 | ctrl[["emp_n_exc"]] < 0)
     stop("The 'emp_n_exc' control parameter must be a positive whole number.")
   if (ctrl[["emp_p_exc"]] < 0 | ctrl[["emp_p_exc"]] > 1)
     stop("The 'emp_p_exc' control parameter must be between 0 and 1.")
-  if (!is.numeric(ctrl[["emp_fuzz_samp"]]))
-    stop("The 'emp_fuzz_samp' control parameter must be of class numeric.")
-  if (sign(ctrl[["emp_fuzz_samp"]]) < 0L) stop("The 'emp_fuzz_samp' control paramter must be positive.")
+  if (sign(ctrl[["emp_fuzz_samp"]]) < 0L)
+    stop("The 'emp_fuzz_samp' control paramter must be positive.")
   
   ## Omit NA Values ##
   col <- col[!is.na(col)]
@@ -315,7 +310,7 @@ stub_sample_ <- function(col, ctrl){
     wt <- wt/ctrl[["emp_fuzz_samp"]]
     
     # Re-Draw Probs From Dirichlet Dist #
-    wt <- rdirichlet(n = 1, alpha = wt)
+    wt <- as.vector(rdirichlet(n = 1, alpha = wt))
     
     # Sanitize Labels
     names(wt) <- NULL
@@ -343,45 +338,5 @@ stub_sample_ <- function(col, ctrl){
   
   ## Output ##
   return(out)
-  
-}
-
-
-### rdirichlet() ###
-#' n = number of observations.
-#' alpha = positive reals.
-#' 
-#' p = proportions of each output category (p_{k}) in relation to the total
-#' (sum(p)).
-#' @noRd
-rdirichlet <- function(n, alpha){
-  
-  ## Number of Categories ##
-  k <- length(alpha)
-  
-  ## Random Gamma Draw ##
-  x <- rgamma(n = k*n, shape = alpha)
-  
-  ## Coerce to Matrix ##
-  x <- matrix(x, ncol = k, byrow = TRUE)
-  
-  ## Scale Matrix Rows by their Sum ##
-  p <- x/rowSums(x)
-  
-  ## Simplify n == 1 Case ##
-  p_names <- round(alpha, 3)
-  if (n == 1) {
-    
-    p <- as.vector(p)
-    names(p) <- p_names
-    
-  } else {
-    
-    dimnames(p) <- list(seq_len(n), p_names)
-    
-  }
-  
-  ## Output ##
-  return(p)
   
 }

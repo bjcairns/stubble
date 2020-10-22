@@ -101,7 +101,7 @@ ble_sample_.factor <- function(val, elements, wt, ctrl){
 ble_sample_.IDate <- function(val, elements, wt, ctrl){
   
   ## Attempt Use of Current Class ##
-  if (is.installed.package("data.table")) {
+  if (getOption("stubble_has_data.table")) {
   
     # Call Internal Function #
     syn_col <- ble_sample__(val = val, elements = elements, wt = wt)
@@ -130,7 +130,7 @@ ble_sample_.IDate <- function(val, elements, wt, ctrl){
 ble_sample_.integer64 <- function(val, elements, wt, ctrl){
   
   ## Attempt Use of Current Class ##
-  if (is.installed.package("bit64")) {
+  if (getOption("stubble_has_bit64")) {
     
     # Call Internal Function #
     syn_col <- ble_sample__(val = val, elements = elements, wt = wt)
@@ -159,7 +159,7 @@ ble_sample_.integer64 <- function(val, elements, wt, ctrl){
 ble_sample_.ITime <- function(val, elements, wt, ctrl){
   
   ## Attempt Use of Current Class ##
-  if (is.installed.package("data.table")) {
+  if (getOption("stubble_has_data.table")) {
     
     # Call Internal Function #
     syn_col <- ble_sample__(val = val, elements = elements, wt = wt)

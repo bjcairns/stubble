@@ -445,8 +445,8 @@ test_that(
       )
     }
   }
-); rm(stub_luniq)
+); rm(ctrl_def_uniq, stub_luniq)
 
 
 ### Tidy Up ###
-rm(n, ctrl_def, vars_base, vars_dt)
+rm(n, ctrl_def, vars_base, vars_bit64, vars_dt)

@@ -14,7 +14,14 @@
 
 ### Params ###
 ## Control ##
-ctrl_def <- stubble_ctrl(index = 1L)
+ctrl_def <- stubble_ctrl(
+  index = 1L,
+  emp_sw = 1L,
+  emp_n_exc = 0L,
+  emp_p_exc = 0,
+  emp_fuzz_samp = 0,
+  emp_drop_lev = FALSE
+)
 ctrl_def <- ctrl_def[names(ctrl_def) != "index"]
 
 # ## Vars ##
@@ -203,7 +210,7 @@ test_that(
 
 ## control parameters
 ctrl_def_output <- ctrl_def
-ctrl_def_output[["emp_n_exc"]] <- 0
+ctrl_def_output[["emp_n_exc"]] <- 0L
 
 ## base ##
 test_that(
@@ -280,7 +287,7 @@ test_that(
       label = "ITime"
     )
   }
-)
+); rm(ctrl_def_output)
 
 
 # ### Category Exclusions ('emp_n_exc' & 'emp_p_exc') ###
@@ -331,6 +338,70 @@ test_that(
       object = stub_sample_(NULL, ctrl = ctrl_def),
       expected = c("values", "wt"),
       label = "Output names"
+    )
+  }
+)
+
+
+### Correct Functioning ###
+test_that(
+  desc = "Correct Functioning.",
+  code = {
+    expect_identical(
+      object = lengths(
+        lapply(
+          X = lapply(
+            X = luniq,
+            FUN = stub_sample,
+            ctrl = ctrl_def
+          ),
+          FUN = `[[`,
+          "values"
+        )
+      ),
+      expected = lengths(lapply(X = luniq, FUN = unique)),
+      label = "Correctly sampled unique values"
+    )
+    expect_equivalent(
+      object = lapply(
+        X = lapply(
+          X = lapply(
+            X = luniq,
+            FUN = stub_sample,
+            ctrl = ctrl_def
+          ),
+          FUN = `[[`,
+          "wt"
+        ),
+        FUN = sum
+      ),
+      expected = rep(1, length(luniq)),
+      label = "Correct calculation of 'wt'"
+    )
+    expect_identical(
+      object = lengths(
+        lapply(
+          X = lapply(
+            X = luniq,
+            FUN = stub_sample,
+            ctrl = ctrl_def
+          ),
+          FUN = `[[`,
+          "values"
+        )
+      ),
+      expected = lengths(
+        lapply(
+          X = lapply(
+            X = luniq,
+            FUN = stub_sample,
+            ctrl = ctrl_def
+          ),
+          FUN = `[[`,
+          "wt"
+        )
+      ),
+      label = "lengths of 'values' & 'wt' match"
     )
   }
 )

@@ -213,6 +213,7 @@ test_that(
 ### is.installed.package() ###
 ##############################
 
+
 ### No Inputs ###
 test_that(
   desc = "No Inputs (is.installed.package())",
@@ -225,6 +226,7 @@ test_that(
   }
 )
 
+
 ### Different Input Lengths ###
 test_that(
   desc = "Different Input Lengths (is.installed.package()).",
@@ -232,6 +234,18 @@ test_that(
     expect_error(
       object = is.installed.package(pkg = character(1L), minimum_version = character(2L)),
       regexp = "[iI]nput\\s[lL]engths\\s[dD]iffer"
+    )
+  }
+)
+
+
+### Package Not Specified When Version Is ###
+test_that(
+  desc = "Package Not Specified When Version Is",
+  code = {
+    expect_error(
+      object = is.installed.package(pkg = NA_character_, minimum_version = character(1L)),
+      regexp = "pkg.+[cC]annot\\s[bB]e\\s[mM]issing.+version"
     )
   }
 )
@@ -257,22 +271,17 @@ test_that(
 test_that(
   desc = "NA Pass Through (is.installed.package()).",
   code = {
-    expect_identical(
+    expect_equivalent(
       object = is.installed.package(NA),
       expected = NA,
       label = "NA pass through"
     )
-    expect_identical(
-      object = is.installed.package(pkg = NA, minimum_version = "1.1.1"),
-      expected = NA,
-      label = "NA pass through (pkg)"
-    )
-    expect_identical(
+    expect_equivalent(
       object = is.installed.package(pkg = "base", minimum_version = NA),
-      expected = NA,
+      expected = TRUE,
       label = "NA pass through (minimum_version)"
     )
-    expect_identical(
+    expect_equivalent(
       object = is.installed.package(pkg = NA, minimum_version = NA),
       expected = NA,
       label = "NA pass through (pkg & minimum_version)"
@@ -321,12 +330,12 @@ test_that(
       object = is.installed.package("_1"),
       label = "non-existent package"
     )
-    expect_identical(
+    expect_equivalent(
       object = is.installed.package(c("base", "_1")),
       expected = c(TRUE, FALSE),
       label = "output order"
     )
-    expect_identical(
+    expect_equivalent(
       object = is.installed.package(c("_1", "base")),
       expected = c(FALSE, TRUE),
       label = "output order"
@@ -424,6 +433,65 @@ test_that(
 )
 
 
+####################
+### rdirichlet() ###
+####################
+
+
+### Zero-Length Inputs ###
+test_that(
+  desc = "Zero-Length Inputs (rdirichlet()).",
+  code = {
+    expect_identical(
+      object = dim(rdirichlet(n = 0L, alpha = double(0L))),
+      expected = c(0L, 0L),
+      label = "Zero-Length 'alpha' (n == 0L)"
+    )
+    expect_identical(
+      object = dim(rdirichlet(n = 1L, alpha = double(0L))),
+      expected = c(0L, 0L),
+      label = "Zero-Length 'alpha' (n == 1L)"
+    )
+  }
+)
+
+### Output Structure ###
+test_that(
+  desc = "Ouput Structure (rdirichlet()).",
+  code = {
+    expect_true(
+      object = is.matrix(rdirichlet(n = 1L, alpha = 1)),
+      label = "Output class"
+    )
+    expect_identical(
+      object = dim(rdirichlet(n = 1L, alpha = c(1, 1))),
+      expected = c(1L, 2L),
+      label = "Output dimensions (alpha)"
+    )
+    expect_identical(
+      object = dim(rdirichlet(n = 2L, alpha = 1)),
+      expected = c(2L, 1L),
+      label = "Output dimensions (n)"
+    )
+    expect_identical(
+      object = rownames(rdirichlet(n = 10L, alpha = 1)),
+      expected = as.character(seq_len(10)),
+      label = "Row names"
+    )
+    expect_identical(
+      object = colnames(rdirichlet(n = 1L, alpha = seq_len(10))),
+      expected = as.character(seq_len(10)),
+      label = "Column names"
+    )
+    expect_identical(
+      object = colnames(rdirichlet(n = 1L, alpha = c(0.1, 0.02, 0.003, 0.0004, 0.00005, 0.000006))),
+      expected = as.character(round(c(0.1, 0.02, 0.003, 0.0004, 0.00005, 0.000006), 3L)),
+      label = "Column names (rounding)"
+    )
+  }
+)
+
+
 ######################
 ### sample_chars() ###
 ######################
@@ -431,7 +499,7 @@ test_that(
 
 ### Zero-Length Inputs ###
 test_that(
-  desc = "Zero-length inputs (sample_chars()).",
+  desc = "Zero-length Inputs (sample_chars()).",
   code = {
     expect_error(
       object = sample_chars(x = character(0), size = 1, nchar_min = 1, nchar_max = 1),

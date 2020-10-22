@@ -17,6 +17,45 @@ ctrl_def <- list(
 )
 
 
+### Output Structure ###
+test_that(
+  desc = "Output structure",
+  code = {
+    expect_identical(
+      object = class(stub(l1, ctrl = ctrl_def)),
+      expected = "stub",
+      label = "Output class"
+    )
+    expect_length(
+      object = stub(l1, ctrl = ctrl_def),
+      n = 3L
+    )
+    expect_identical(
+      object = names(stub(l1, ctrl = ctrl_def)),
+      expected = c("ctrl", "dtype", "vars"),
+      label = "Output names"
+    )
+    expect_length(
+      object = stub(l1, ctrl = ctrl_def)[["ctrl"]],
+      n = length(ctrl_def)
+    )
+    expect_length(
+      object = stub(l1, ctrl = ctrl_def)[["dtype"]],
+      n = 0L
+    )
+    expect_length(
+      object = stub(l1, ctrl = ctrl_def)[["vars"]],
+      n = length(l1)
+    )
+    expect_identical(
+      object = names(stub(l1, ctrl = ctrl_def)[["vars"]]),
+      expected = names(l1),
+      label = "Variable names"
+    )
+  }
+)
+
+
 ### Data Structure Encoding ###
 ## base ##
 test_that(
