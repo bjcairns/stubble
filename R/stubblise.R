@@ -100,7 +100,7 @@ stubblise <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), 
   s <- stub(x = x, method = method, ctrl = ctrl)
   
   ## Use stub Object For Data Genesis ##
-  out <- ble(stub = s, rows = rows, method = method, ctrl = ctrl, ...)
+  out <- ble(stb = s, rows = rows, ctrl = ctrl, ...)
   
   ## Output ##
   return(out)

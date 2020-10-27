@@ -6,9 +6,9 @@
 
 
 ### Minimum Package Versions ###
-min_v_bit64 = "4.0.2"
-min_v_dt = "1.9.8"
-min_v_tibble = "1.1"
+min_v_bit64 = OPT_DEP[["bit64"]]
+min_v_dt = OPT_DEP[["data.table"]]
+min_v_tibble = OPT_DEP[["tibble"]]
   
 
 

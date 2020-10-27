@@ -10,8 +10,8 @@
   
   ## Check Package Versions ##
   instPkgs <- is.installed.package(
-    pkg = c("bit64", "data.table", "tibble"),
-    minimum_version = c("4.0.2", "1.9.8", "1.1")
+    pkg = names(OPT_DEP)#,
+    #minimum_version = unlist(OPT_DEP)
   )
   
   ## Set Options ##

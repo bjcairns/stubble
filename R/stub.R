@@ -65,9 +65,8 @@
 #' @export
 stub <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
   
-  ## Checks ##
-  if (!{method %in% c("agnostic", "empirical")})
-    stop("`method` must be one of 'agnostic' or 'empirical'.")
+  ## Fuzzy Match 'method' Argument ##
+  method <- fuzzy_match(x = c("agnostic", "empirical"), prefix = method)
   
   ## Data Structure ##
   dtype <- dtype0(x = x)

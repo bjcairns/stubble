@@ -7,14 +7,17 @@
 stubble_ctrl(
   rng_kind = "Wichmann-Hill",
   p_na = NA_real_,
+  dttm_tz = "UTC",
   agn_unique = FALSE,
   agn_int_min = 0L,
   agn_int_max = 100L,
-  agn_int_list = NA,
+  agn_int_list = NA_integer_,
+  agn_int64_min = 0L,
+  agn_int64_max = 100L,
   agn_dbl_min = 0,
   agn_dbl_max = 100,
-  agn_dbl_round = NA,
-  agn_dbl_signif = NA,
+  agn_dbl_round = NA_integer_,
+  agn_dbl_signif = NA_integer_,
   agn_chr_min = 0L,
   agn_chr_max = 10L,
   agn_chr_sym = list(c(letters, LETTERS, 0:9,
@@ -22,19 +25,18 @@ stubble_ctrl(
   agn_chr_sep = "",
   agn_chr_try_unique = FALSE,
   agn_chr_try_unique_attempts = 10L,
-  agn_chr_duplicated_nmax = NA,
+  agn_chr_duplicated_nmax = NA_integer_,
   agn_fct_lvls = list(letters[1:4]),
-  agn_fct_use_lvls = NULL,
+  agn_fct_use_lvls = list(),
   agn_fct_force_unique = FALSE,
   agn_lgl_force_unique = FALSE,
   agn_date_origin = "1970-01-01",
   agn_date_min = agn_date_origin,
   agn_date_max = Sys.Date(),
   agn_dttm_min = agn_date_origin,
-  agn_dttm_max = Sys.time(),
+  agn_dttm_max = format(Sys.time(), tz = dttm_tz),
   agn_time_min = "00:00:00",
   agn_time_max = "23:59:59",
-  dttm_tz = "UTC",
   emp_sw = 0.1,
   emp_tail_exc = 0.025,
   emp_fuzz_spl = 0.05,
@@ -43,6 +45,7 @@ stubble_ctrl(
   emp_fuzz_samp = 0.05,
   emp_drop_lev = TRUE,
   old_ctrl = list(),
+  assert_class = TRUE,
   index = NA_integer_,
   ...
 )
@@ -56,6 +59,10 @@ other generators but is much less likely to produce duplicate values.}
 the proportions present in any generated data will roughly match those of the
 source data.}
 
+\item{dttm_tz}{Timezone for generated date-times (\code{POSIXt} class variables).
+Defaults to \code{"UTC"}, but \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some
+users.}
+
 \item{agn_unique}{Single logical value or logical vector indicating whether
 synthetic values should be unique within the column. When a vector, the
 relevant element is chosen by the \code{index} argument to \code{ble_agnostic}.}
@@ -65,7 +72,13 @@ relevant element is chosen by the \code{index} argument to \code{ble_agnostic}.}
 \item{agn_int_max}{Maximum values for integer generation.}
 
 \item{agn_int_list}{An integer vector of allowed values for integer
-generation. If \code{NA} (the default), this is ignored. If non-\code{NA},
+generation. If \code{NA} (the default), this is ignored. If non-\code{NA},}
+
+\item{agn_int64_min}{Minimum values for integer64 generation (requires
+\emph{bit64} package).}
+
+\item{agn_int64_max}{Maximum values for integer64 generation (requires
+\emph{bit64} package).
 \code{agn_int_list} overrides \code{agn_int_min}/\code{agn_int_max}.}
 
 \item{agn_dbl_min}{Minimum values for real/numeric/double generation.}
@@ -143,10 +156,6 @@ variables).}
 \item{agn_time_max}{Maximum value for generated times (\code{ITime} class
 variables).}
 
-\item{dttm_tz}{Timezone for generated date-times (\code{POSIXt} class variables).
-Defaults to \code{"UTC"}, but \code{\link[=Sys.timezone]{Sys.timezone()}} may be more appropriate for some
-users.}
-
 \item{emp_sw}{Value determining whether spline or sampling methods are used
 in the the generation of synthetic data. When the unique fraction of a column
 is above this value spline-based methods will be used. Conversely, when it is
@@ -181,6 +190,10 @@ be dropped from simulated factors and ordered factors. Defaults to \code{TRUE}.}
 
 \item{old_ctrl}{A set of control parameters to inherit unless explicitly
 overwritten in the current call.}
+
+\item{assert_class}{Logical value indicating whether control parameter
+classes should be checked. Mostly intended for internal use. Defaults to
+\code{TRUE}.}
 
 \item{index}{Default \code{NA}. If not \code{NA}, the function will return list in
 which elements apply to a single column, i.e. elements are not necessarily

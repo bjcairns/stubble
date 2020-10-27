@@ -29,13 +29,18 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)
   
-  ## Data Extraction ##
-  p_na <- ctrl[["p_na"]]
-  
   ## Class ##
   dtype <- dtype0(x = col)
   
+  ## Missing Values ##
+  p_na <- switch(
+    EXPR = method,
+    agnostic = if (is.na(ctrl[["p_na"]])) 0 else ctrl[["p_na"]],
+    empirical = if (is.na(ctrl[["p_na"]])) sum(is.na(col))/length(col) else ctrl[["p_na"]]
+  )
+  
   ## Method ##
+  # method[method != "agnostic"] <- vapply(X = col, FUN = stub_method, FUN.VALUE = character(1L), ctr = ctrl)
   if (method != "agnostic") method <- stub_method(col = col, ctrl = ctrl)
   
   ### Generate sim ##
@@ -44,9 +49,6 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
                 spline = stub_spline(col = col, ctrl = ctrl),
                 sample = stub_sample(col = col, ctrl = ctrl))
   sim <- append(list(method = method), sim)
-  
-  ## Missing Values ##
-  p_na <- if (is.na(p_na)) sum(is.na(col))/length(col) else p_na
   
   ## Form Output ##
   out <- list(
@@ -211,8 +213,6 @@ stub_method.POSIXlt <- function(col, ctrl){
 stub_method_ <- function(col, ctrl){
   
   ## Checks ##
-  if (!is.numeric(ctrl[["emp_sw"]]))
-    stop("The 'emp_sw' control parameter must be of class numeric.")
   if (ctrl[["emp_sw"]] < 0 | ctrl[["emp_sw"]] > 1)
     stop("The 'emp_sw' control parameter must be between 0 and 1.")
   

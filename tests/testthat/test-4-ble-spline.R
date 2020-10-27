@@ -5,10 +5,6 @@
 #=======================#
 
 
-### ToDo ###
-# - Everything!
-
-
 ### Params ###
 ## Observations ##
 n <- 10L

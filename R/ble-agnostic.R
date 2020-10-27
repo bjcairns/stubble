@@ -72,6 +72,7 @@ ble_agnostic_.character <- function(dtype, elements, ctrl){
   ctrl <- stubble_ctrl(
     agn_unique = FALSE,
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   
@@ -122,6 +123,7 @@ ble_agnostic_.Date <- function(dtype, elements, ctrl){
     agn_dbl_min = as.double(ctrl[["agn_date_min"]]),
     agn_dbl_max = as.double(ctrl[["agn_date_max"]]),
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   
@@ -180,6 +182,7 @@ ble_agnostic_.factor <- function(dtype, elements, ctrl){
     agn_chr_sym = list(agn_fct_use_lvls),
     agn_chr_try_unique = uniq,
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   
@@ -205,6 +208,7 @@ ble_agnostic_.IDate <- function(dtype, elements, ctrl){
     agn_int_max = as.integer(ctrl[["agn_date_max"]]),
     agn_int_list = NA_integer_,
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   
@@ -273,6 +277,15 @@ ble_agnostic_.integer <- function(dtype, elements, ctrl){
 #' @export
 ble_agnostic_.integer64 <- function(dtype, elements, ctrl){
   
+  ## Redefine Control Parameters ##
+  ctrl <- stubble_ctrl(
+    agn_dbl_min = as.double(ctrl[["agn_int64_min"]]),
+    agn_dbl_max = as.double(ctrl[["agn_int64_max"]]),
+    old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
+    index = 1L
+  )
+  
   ## Use double Method ##
   syn_col <- ble_agnostic_.double(dtype = dtype, elements = elements, ctrl = ctrl)
   
@@ -308,6 +321,7 @@ ble_agnostic_.ITime <- function(dtype, elements, ctrl){
     agn_int_max = as.integer(ctrl[["agn_time_max"]]),
     agn_int_list = NA_integer_,
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   
@@ -344,6 +358,7 @@ ble_agnostic_.logical <- function(dtype, elements, ctrl){
     agn_int_max = 1L,
     agn_int_list = NA_integer_,
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   
@@ -384,6 +399,7 @@ ble_agnostic_.POSIXct <- function(dtype, elements, ctrl){
     agn_dbl_min = as.double(ctrl[["agn_dttm_min"]]),
     agn_dbl_max = as.double(ctrl[["agn_dttm_max"]]),
     old_ctrl = lapply(ctrl, list),
+    assert_class = FALSE,
     index = 1L
   )
   

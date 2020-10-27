@@ -12,6 +12,9 @@
 #' @param p_na Proportion of values set to `NA`; defaults to `NA`, meaning that
 #' the proportions present in any generated data will roughly match those of the
 #' source data.
+#' @param dttm_tz Timezone for generated date-times (`POSIXt` class variables).
+#' Defaults to `"UTC"`, but [Sys.timezone()] may be more appropriate for some
+#' users.
 #' @param agn_unique Single logical value or logical vector indicating whether
 #' synthetic values should be unique within the column. When a vector, the
 #' relevant element is chosen by the `index` argument to `ble_agnostic`.
@@ -19,6 +22,10 @@
 #' @param agn_int_max Maximum values for integer generation.
 #' @param agn_int_list An integer vector of allowed values for integer
 #' generation. If `NA` (the default), this is ignored. If non-`NA`,
+#' @param agn_int64_min Minimum values for integer64 generation (requires
+#' _bit64_ package).
+#' @param agn_int64_max Maximum values for integer64 generation (requires
+#' _bit64_ package).
 #' `agn_int_list` overrides `agn_int_min`/`agn_int_max`.
 #' @param agn_dbl_min Minimum values for real/numeric/double generation.
 #' @param agn_dbl_max Maximum values for real/numeric/double generation.
@@ -73,9 +80,6 @@
 #' variables).
 #' @param agn_time_max Maximum value for generated times (`ITime` class
 #' variables).
-#' @param dttm_tz Timezone for generated date-times (`POSIXt` class variables).
-#' Defaults to `"UTC"`, but [Sys.timezone()] may be more appropriate for some
-#' users.
 #' @param emp_sw Value determining whether spline or sampling methods are used
 #' in the the generation of synthetic data. When the unique fraction of a column
 #' is above this value spline-based methods will be used. Conversely, when it is
@@ -103,6 +107,9 @@
 #' be dropped from simulated factors and ordered factors. Defaults to `TRUE`.
 #' @param old_ctrl A set of control parameters to inherit unless explicitly
 #' overwritten in the current call.
+#' @param assert_class Logical value indicating whether control parameter
+#' classes should be checked. Mostly intended for internal use. Defaults to
+#' `TRUE`.
 #' @param index Default `NA`. If not `NA`, the function will return list in
 #' which elements apply to a single column, i.e. elements are not necessarily
 #' lists. Mostly for internal use to handle passing control parameters between
@@ -119,26 +126,28 @@
 stubble_ctrl <- function(
   rng_kind = "Wichmann-Hill",
   p_na = NA_real_,
+  dttm_tz = "UTC",
   agn_unique = FALSE,
-  agn_int_min = 0L, agn_int_max = 100L, agn_int_list = NA,
-  agn_dbl_min = 0, agn_dbl_max = 100, agn_dbl_round = NA, agn_dbl_signif = NA,
+  agn_int_min = 0L, agn_int_max = 100L, agn_int_list = NA_integer_,
+  agn_int64_min = 0L, agn_int64_max = 100L,
+  agn_dbl_min = 0, agn_dbl_max = 100, agn_dbl_round = NA_integer_, agn_dbl_signif = NA_integer_,
   agn_chr_min = 0L, agn_chr_max = 10L,
   agn_chr_sym = list(c(
     letters, LETTERS, 0:9,
     strsplit("!\"#$%&'()*+, -./:;<=>?@[]^_`{|}~", "")[[1]]
   )),
-  agn_chr_sep = "", agn_chr_try_unique = FALSE, agn_chr_try_unique_attempts = 10L, agn_chr_duplicated_nmax = NA,
-  agn_fct_lvls = list(letters[1:4]), agn_fct_use_lvls = NULL, agn_fct_force_unique = FALSE,
+  agn_chr_sep = "", agn_chr_try_unique = FALSE, agn_chr_try_unique_attempts = 10L, agn_chr_duplicated_nmax = NA_integer_,
+  agn_fct_lvls = list(letters[1:4]), agn_fct_use_lvls = list(), agn_fct_force_unique = FALSE,
   agn_lgl_force_unique = FALSE,
   agn_date_origin = "1970-01-01",
   agn_date_min = agn_date_origin, agn_date_max = Sys.Date(),
-  agn_dttm_min = agn_date_origin, agn_dttm_max = format(Sys.time(), tz = "UTC"),
+  agn_dttm_min = agn_date_origin, agn_dttm_max = format(Sys.time(), tz = dttm_tz),
   agn_time_min = "00:00:00", agn_time_max = "23:59:59",
-  dttm_tz = "UTC",
   emp_sw = 0.1,
   emp_tail_exc = 0.025, emp_fuzz_spl = 0.05,
   emp_n_exc = 10L, emp_p_exc = 0.05, emp_fuzz_samp = 0.05, emp_drop_lev = TRUE,
   old_ctrl = list(),
+  assert_class = TRUE,
   index = NA_integer_,
   ...
 ){
@@ -151,29 +160,22 @@ stubble_ctrl <- function(
   cargs <- lapply(cargs, eval, parent.frame())
   cargs <- lapply(cargs, as.list)
   
-  args[["old_ctrl"]] <- NULL
-  cargs[["old_ctrl"]] <- NULL
+  args[c("old_ctrl", "assert_class")] <- NULL
+  cargs[c("old_ctrl", "assert_class")] <- NULL
   
   all_args <- append(old_ctrl, args[!(names(args) %in% names(old_ctrl))])
   all_args <- append(cargs, all_args[!(names(all_args) %in% names(cargs))])
   
   ## Assert Correct Input Classes ##
-  all_args[CTRL_CLASS[["character"]]] <- lapply(all_args[CTRL_CLASS[["character"]]], function(par){lapply(par, as.character)})
-  all_args[CTRL_CLASS[["Date"]]] <- lapply(all_args[CTRL_CLASS[["Date"]]], function(par){lapply(par, as.Date)})
-  all_args[CTRL_CLASS[["double"]]] <- lapply(all_args[CTRL_CLASS[["double"]]], function(par){lapply(par, as.double)})
-  all_args[CTRL_CLASS[["integer"]]] <- lapply(all_args[CTRL_CLASS[["integer"]]], function(par){lapply(par, as.integer)})
-  if (getOption("stubble_has_data.table")) {
-    all_args[CTRL_CLASS[["ITime"]]] <- lapply(all_args[CTRL_CLASS[["ITime"]]], function(par){lapply(par, data.table::as.ITime)})
-  } else {
-    all_args[CTRL_CLASS[["ITime"]]] <- lapply(all_args[CTRL_CLASS[["ITime"]]], function(par){lapply(par, as.POSIXct, tz = "UTC")})
-  }
-  all_args[CTRL_CLASS[["logical"]]] <- lapply(all_args[CTRL_CLASS[["logical"]]], function(par){lapply(par, as.logical)})
-  all_args[CTRL_CLASS[["POSIXct"]]] <- lapply(all_args[CTRL_CLASS[["POSIXct"]]], function(par){lapply(par, as.POSIXct, tz = "UTC")})
+  if (assert_class) all_args <- assert_ctrl_class(args = all_args, ctrl_classes = CTRL_CLASS)
   
   ## Return control parameters for a single column if required ##
   if (!is.na(index)) {
     all_args <- lapply(all_args, get_ctrl_element, index = index)
   }
+  
+  ## Output Class ##
+  class(all_args) <- "stubbleCtrl"
   
   ## Output ##
   return(all_args)
@@ -189,4 +191,271 @@ get_ctrl_element <- function(item, index){
   item_idx <- ifelse(item_idx == 0, item_base, item_idx)
   elem <- item[[item_idx]]
   return(elem)
+}
+
+
+### assert_ctrl_class() ###
+#' @noRd
+assert_ctrl_class <- function(
+  args, ctrl_classes
+){
+  
+  ## Extract Params ##
+  dttm_tz = unlist(args[["dttm_tz"]])
+  agn_date_origin = unlist(args[["agn_date_origin"]])
+  
+  ## base ##
+  args[ctrl_classes[["character"]]] <- assert_ctrl_class_character(args = args[ctrl_classes[["character"]]])
+  args[ctrl_classes[["Date"]]] <- assert_ctrl_class_Date(args = args[ctrl_classes[["Date"]]])
+  args[ctrl_classes[["double"]]] <- assert_ctrl_class_double(args = args[ctrl_classes[["double"]]])
+  args[ctrl_classes[["integer"]]] <- assert_ctrl_class_integer(args = args[ctrl_classes[["integer"]]])
+  args[ctrl_classes[["logical"]]] <- assert_ctrl_class_logical(args = args[ctrl_classes[["logical"]]])
+  args[ctrl_classes[["POSIXct"]]] <- assert_ctrl_class_POSIXct(args = args[ctrl_classes[["POSIXct"]]], dttm_tz = dttm_tz)
+  
+  ## Optional Deps ##
+  # bit64#
+  args[ctrl_classes[["integer64"]]] <- if (getOption("stubble_has_bit64")) {
+    assert_ctrl_class_integer64(args = args[ctrl_classes[["integer64"]]])
+  } else{
+    assert_ctrl_class_double(args = args[ctrl_classes[["integer64"]]])
+  }
+  # data.table #
+  if (getOption("stubble_has_data.table")) {
+    args[ctrl_classes[["ITime"]]] <- assert_ctrl_class_ITime(args = args[ctrl_classes[["ITime"]]])
+  } else {
+    args[ctrl_classes[["ITime"]]] <- format_ctrl_class_POSIXct(args = args[ctrl_classes[["ITime"]]], agn_date_origin = agn_date_origin)
+    args[ctrl_classes[["ITime"]]] <- assert_ctrl_class_POSIXct(args = args[ctrl_classes[["ITime"]]], dttm_tz = dttm_tz)
+  }
+  
+  ## Output ##
+  return(args)
+  
+}
+
+
+### assert_ctrl_class_character() ###
+#' @noRd
+assert_ctrl_class_character <- function(args){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_character_
+  )
+  
+}
+
+
+### assert_ctrl_class_character_() ###
+#' @noRd
+assert_ctrl_class_character_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = as.character
+  )
+  
+}
+
+
+### assert_ctrl_class_Date() ###
+#' @noRd
+assert_ctrl_class_Date <- function(args){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_Date_
+  )
+  
+}
+
+
+### assert_ctrl_class_Date_() ###
+#' @noRd
+assert_ctrl_class_Date_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = as.Date
+  )
+  
+}
+
+
+### assert_ctrl_class_double() ###
+#' @noRd
+assert_ctrl_class_double <- function(args){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_double_
+  )
+  
+}
+
+
+### assert_ctrl_class_double_() ###
+#' @noRd
+assert_ctrl_class_double_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = as.double
+  )
+  
+}
+
+
+### assert_ctrl_class_integer() ###
+#' @noRd
+assert_ctrl_class_integer <- function(args){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_integer_
+  )
+  
+}
+
+
+### assert_ctrl_class_integer_() ###
+#' @noRd
+assert_ctrl_class_integer_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = as.integer
+  )
+  
+}
+
+
+### assert_ctrl_class_integer64() ###
+#' @noRd
+assert_ctrl_class_integer64 <- function(args){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_integer64_
+  )
+  
+}
+
+
+### assert_ctrl_class_integer64_() ###
+#' @noRd
+assert_ctrl_class_integer64_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = bit64::as.integer64
+  )
+  
+}
+
+
+### assert_ctrl_class_ITime() ###
+#' @noRd
+assert_ctrl_class_ITime <- function(args, agn_date_origin = agn_date_origin, dttm_tz = dttm_tz){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_ITime_
+  )
+  
+}
+
+
+### assert_ctrl_class_ITime_() ###
+#' @noRd
+assert_ctrl_class_ITime_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = data.table::as.ITime
+  )
+  
+}
+
+
+### assert_ctrl_class_logical() ###
+#' @noRd
+assert_ctrl_class_logical <- function(args){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_logical_
+  )
+  
+}
+
+
+### assert_ctrl_class_logical_() ###
+#' @noRd
+assert_ctrl_class_logical_ <- function(arg){
+  
+  lapply(
+    X = arg,
+    FUN = as.logical
+  )
+  
+}
+
+
+### assert_ctrl_class_POSIXct() ###
+#' @noRd
+assert_ctrl_class_POSIXct <- function(args, dttm_tz){
+  
+  lapply(
+    X = args,
+    FUN = assert_ctrl_class_POSIXct_,
+    dttm_tz = dttm_tz
+  )
+  
+}
+
+
+### assert_ctrl_class_POSIXct_() ###
+#' @noRd
+assert_ctrl_class_POSIXct_ <- function(arg, dttm_tz){
+  
+  lapply(
+    X = arg,
+    FUN = as.POSIXct,
+    tz = dttm_tz
+  )
+  
+}
+
+
+### format_ctrl_class_POSIXct() ###
+#' @noRd
+format_ctrl_class_POSIXct <- function(args, agn_date_origin){
+  
+  lapply(
+    X = args,
+    FUN = format_ctrl_class_POSIXct_,
+    agn_date_origin = agn_date_origin
+  )
+  
+}
+
+
+### format_ctrl_class_POSIXct_() ###
+#' @noRd
+format_ctrl_class_POSIXct_ <- function(arg, agn_date_origin){
+  
+  lapply(
+    X = arg,
+    FUN = format_ctrl_class_POSIXct__,
+    agn_date_origin = agn_date_origin
+  )
+  
+}
+
+
+### format_ctrl_class_POSIXct__() ###
+format_ctrl_class_POSIXct__ <- function(arg, agn_date_origin){
+  
+  paste(agn_date_origin, arg)
+  
 }

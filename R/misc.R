@@ -293,6 +293,37 @@ dtype0.tbl_df <- function(x){
 }
 
 
+### fuzzy_match() ###
+#' @noRd
+fuzzy_match <- function(x, prefix){
+  
+  ## Call Function Internals ##
+  f_match <- vapply(
+    X = prefix,
+    FUN = fuzzy_match_,
+    FUN.VALUE = character(1L),
+    x = x,
+    USE.NAMES = FALSE
+  )
+  
+  ## Output ##
+  return(f_match)
+  
+}
+
+
+### fuzzy_match_() ###
+fuzzy_match_ <- function(x, prefix){
+  
+  ## Match Prefix to Value ##
+  f_match <- x[startsWith(x, prefix)]
+  
+  ## Output ##
+  return(f_match)
+  
+}
+
+
 ### impute_na() ###
 #' @noRd
 impute_na <- function(syn_col, p_na){
@@ -325,7 +356,7 @@ is.installed.package <- function(pkg, minimum_version){
   status <- rep(NA, length(pkg))
   
   ## Installed Packages ##
-  instPkgs <- installed.packages()
+  instPkgs <- installed.packages(noCache = TRUE)[, c("Package", "Version")]
   
   ## Installed Package Names ##
   pkgs <- instPkgs[, "Package"]

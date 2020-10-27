@@ -218,3 +218,6 @@ test_that(
     
   }
 )
+
+### Tidy Up ###
+rm(penguins_stbl_df)
