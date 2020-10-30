@@ -11,7 +11,6 @@ min_v_dt = OPT_DEP[["data.table"]]
 min_v_tibble = OPT_DEP[["tibble"]]
   
 
-
 ### RNG Seed ###
 use_seed <- 237892342L
 
@@ -32,6 +31,11 @@ l0 <- list(
   POSIXct = as.POSIXct(character(0), tz = "UTC"),
   POSIXlt = as.POSIXlt(character(0), tz = "UTC")
 )
+dat0 <- as.data.frame(l0)
+suppressWarnings(
+  if (getOption("stubble_has_data.table")) dt0 <- data.table::as.data.table(l0)
+)
+if (getOption("stubble_has_tibble")) df0 <- tibble::as_tibble(l0)
 
 ## Missing Data Vectors ##
 lna <- list(
@@ -48,6 +52,11 @@ lna <- list(
   POSIXct = as.POSIXct(NA_character_, tz = "UTC"),
   POSIXlt = as.POSIXlt(NA_character_, tz = "UTC")
 )
+datna <- as.data.frame(lna)
+suppressWarnings(
+  if (getOption("stubble_has_data.table")) dtna <- data.table::as.data.table(lna)
+)
+if (getOption("stubble_has_tibble")) dfna <- tibble::as_tibble(lna)
 
 ## Non-Zero-Length Vectors ###
 l1 <- list(
@@ -64,6 +73,11 @@ l1 <- list(
   POSIXct = as.POSIXct("1970-01-01", tz = "UTC"),
   POSIXlt = as.POSIXlt("1970-01-01", tz = "UTC")
 )
+dat1 <- as.data.frame(l1)
+suppressWarnings(
+  if (getOption("stubble_has_data.table")) dt1 <- data.table::as.data.table(l1)
+)
+if (getOption("stubble_has_tibble")) df1 <- tibble::as_tibble(l1)
 
 ## Unique Vectors ##
 luniq <- list(

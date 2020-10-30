@@ -20,7 +20,7 @@ CTRL_CLASS <- list(
 
 ### Optional Dependencies ###
 OPT_DEP <- list(
-  bit64 = "4.0.2",
+  bit64 = "4.0.3",
   data.table = "1.9.8",
   tibble = "1.1"
 )

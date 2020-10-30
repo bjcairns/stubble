@@ -5,6 +5,10 @@
 #======================#
 
 
+### ToDo ###
+# - Test the emp_sw override for when emp_sw == 0 or 1.
+
+
 ### Params ###
 ## Control ##
 ctrl_def <- list(

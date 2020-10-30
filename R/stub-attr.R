@@ -40,14 +40,15 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
   )
   
   ## Method ##
-  # method[method != "agnostic"] <- vapply(X = col, FUN = stub_method, FUN.VALUE = character(1L), ctr = ctrl)
   if (method != "agnostic") method <- stub_method(col = col, ctrl = ctrl)
   
   ### Generate sim ##
-  sim <- switch(method,
-                agnostic = c(),
-                spline = stub_spline(col = col, ctrl = ctrl),
-                sample = stub_sample(col = col, ctrl = ctrl))
+  sim <- switch(
+    EXPR = method,
+    agnostic = c(),
+    spline = stub_spline(col = col, ctrl = ctrl),
+    sample = stub_sample(col = col, ctrl = ctrl)
+  )
   sim <- append(list(method = method), sim)
   
   ## Form Output ##
