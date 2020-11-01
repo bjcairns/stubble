@@ -11,6 +11,165 @@
 # - Doesn't matter if nchar_min > nchar_max in sample_chars().
 
 
+################
+### dtype0() ###
+################
+
+
+### Output Lengths ###
+test_that(
+  desc = "output lengths (dtype0).",
+  code = {
+    expect_true(
+      object = all(lengths(lapply(l0, dtype0)) == 0L),
+      label = "l0"
+    )
+    expect_true(
+      object = all(lengths(lapply(l1, dtype0)) == 0L),
+      label = "l1"
+    )
+    expect_true(
+      object = all(lengths(lapply(lna, dtype0)) == 0L),
+      label = "lna"
+    )
+    expect_true(
+      object = all(lengths(lapply(luniq, dtype0)) == 0L),
+      label = "luniq"
+    )
+  }
+)
+
+
+### Output Classes ###
+## unrecognised ##
+test_that(
+  desc = "output classes (dtype0()) [unrecognised].",
+  code = {
+    expect_error(
+      object = dtype0(NULL),
+      regexp = "\\bNo\\smethod\\sexists\\sfor\\sobject\\sof\\sclass\\b",
+      label = "NULL"
+    )
+  }
+)
+
+## base ##
+test_that(
+  desc = "output classes (dtype0()) [base].",
+  code = {
+    expect_identical(
+      object = lapply(l0, dtype0),
+      expected = l0,
+      label = "l0"
+    )
+    expect_true(
+      object = all(is.list(dtype0(l0)), !is.data.frame(l0)),
+      label = "list"
+    )
+    expect_true(
+      object = is.data.frame(dtype0(as.data.frame(l0))),
+      label = "data.frame"
+    )
+  }
+)
+
+## data.table ##
+test_that(
+  desc = "output classes (dtype0()) [data.table].",
+  code = {
+    skip_if_not_installed("data.table")
+    expect_true(
+      object = suppressWarnings(
+        data.table::is.data.table(dtype0(data.table::as.data.table(l0)))
+      ),
+      label = "data.table"
+    )
+  }
+)
+
+## tibble ##
+test_that(
+  desc = "output classes (dtype0()) [tibble].",
+  code = {
+    skip_if_not_installed("tibble")
+    expect_true(
+      object = tibble::is_tibble(dtype0(tibble::as_tibble(l0))),
+      label = "tibble"
+    )
+  }
+)
+
+
+#####################
+### fuzzy_match() ###
+#####################
+
+
+### Data ###
+x <- c("agnostic", "empirical")
+
+
+### Expected Errors ###
+test_that(
+  desc = "Expected Errors.",
+  code = {
+    expect_error(
+      object = fuzzy_match(x = x, prefix = ""),
+      regexp = "result\\s+is\\s+length\\s+2",
+      label = "Multiple matches in 'x'"
+    )
+    expect_error(
+      object = fuzzy_match(x = x, prefix = "z"),
+      regexp = "result\\s+is\\s+length\\s+0",
+      label = "No matches in 'x'"
+    )
+    expect_error(
+      object = fuzzy_match(x = x, prefix = "agnostics"),
+      regexp = "result\\s+is\\s+length\\s+0",
+      label = "No matches in 'x'"
+    )
+  }
+)
+
+
+### Output Values ###
+test_that(
+  desc = "Output Values.",
+  code = {
+    expect_identical(
+      object = fuzzy_match(x = x, prefix = c("e", "em", "emp", "empi", "empir", "empiri", "empiric", "empirica", "empirical")),
+      expected = rep("empirical", nchar("empirical")),
+      label = "'empirical' matches"
+    )
+    expect_identical(
+      object = fuzzy_match(x = x, prefix = c("a", "ag", "agn", "agno", "agnos", "agnost", "agnosti", "agnostic")),
+      expected = rep("agnostic", nchar("agnostic")),
+      label = "'agnostic' matches"
+    )
+  }
+)
+
+
+### Output Length ###
+test_that(
+  desc = "Output Length.",
+  code = {
+    expect_length(
+      object = fuzzy_match(x = x, prefix = "e"),
+      n = 1L
+    )
+    expect_length(
+      object = fuzzy_match(x = x, prefix = c("a", "e", "agn", "emp")),
+      n = 4L
+    )
+  }
+)
+
+
+### Tidy Up ###
+rm(x)
+
+
 ###################
 ### impute_na() ###
 ###################
@@ -339,95 +498,6 @@ test_that(
       object = is.installed.package(c("_1", "base")),
       expected = c(FALSE, TRUE),
       label = "output order"
-    )
-  }
-)
-
-
-################
-### dtype0() ###
-################
-
-
-### Output Lengths ###
-test_that(
-  desc = "output lengths (dtype0).",
-  code = {
-    expect_true(
-      object = all(lengths(lapply(l0, dtype0)) == 0L),
-      label = "l0"
-    )
-    expect_true(
-      object = all(lengths(lapply(l1, dtype0)) == 0L),
-      label = "l1"
-    )
-    expect_true(
-      object = all(lengths(lapply(lna, dtype0)) == 0L),
-      label = "lna"
-    )
-    expect_true(
-      object = all(lengths(lapply(luniq, dtype0)) == 0L),
-      label = "luniq"
-    )
-  }
-)
-
-
-### Output Classes ###
-## unrecognised ##
-test_that(
-  desc = "output classes (dtype0()) [unrecognised].",
-  code = {
-    expect_error(
-      object = dtype0(NULL),
-      regexp = "\\bNo\\smethod\\sexists\\sfor\\sobject\\sof\\sclass\\b",
-      label = "NULL"
-    )
-  }
-)
-
-## base ##
-test_that(
-  desc = "output classes (dtype0()) [base].",
-  code = {
-    expect_identical(
-      object = lapply(l0, dtype0),
-      expected = l0,
-      label = "l0"
-    )
-    expect_true(
-      object = all(is.list(dtype0(l0)), !is.data.frame(l0)),
-      label = "list"
-    )
-    expect_true(
-      object = is.data.frame(dtype0(as.data.frame(l0))),
-      label = "data.frame"
-    )
-  }
-)
-
-## data.table ##
-test_that(
-  desc = "output classes (dtype0()) [data.table].",
-  code = {
-    skip_if_not_installed("data.table")
-    expect_true(
-      object = suppressWarnings(
-        data.table::is.data.table(dtype0(data.table::as.data.table(l0)))
-      ),
-      label = "data.table"
-    )
-  }
-)
-
-## tibble ##
-test_that(
-  desc = "output classes (dtype0()) [tibble].",
-  code = {
-    skip_if_not_installed("tibble")
-    expect_true(
-      object = tibble::is_tibble(dtype0(tibble::as_tibble(l0))),
-      label = "tibble"
     )
   }
 )

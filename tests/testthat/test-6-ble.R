@@ -6,7 +6,7 @@
 
 
 ### ToDo ###
-# - Everything!
+# - Zero-Length outputs.
 
 
 ### Params ###
@@ -27,8 +27,12 @@ n <- 10L
 ### Test Objects ###
 stub_l1 <- stub(x = l1, method = "agnostic", ctrl = ctrl_def)
 stub_dat1 <- stub(x = dat1, method = "agnostic", ctrl = ctrl_def)
-stub_dt1 <- stub(x = dt1, method = "agnostic", ctrl = ctrl_def)
-stub_df1 <- stub(x = df1, method = "agnostic", ctrl = ctrl_def)
+if (getOption("stubble_has_data.table")) {
+  stub_dt1 <- stub(x = dt1, method = "agnostic", ctrl = ctrl_def)
+}
+if (getOption("stubble_has_tibble")) {
+  stub_df1 <- stub(x = df1, method = "agnostic", ctrl = ctrl_def)
+}
 
 
 ### Output Class ###

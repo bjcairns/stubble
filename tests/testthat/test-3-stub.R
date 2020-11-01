@@ -149,6 +149,17 @@ test_that(
       ) %in% c("sample", "spline")),
       label = "empirical"
     )
+    expect_equivalent(
+      object = sapply(
+        X = lapply(
+          X = stub(luniq, method = rep("agnostic", length(luniq)), ctrl = ctrl_def)[["vars"]],
+          FUN = `[[`, "sim"
+        ),
+        FUN = `[[`, "method"
+      ),
+      expected = rep("agnostic", length(luniq)),
+      label = "'method' vector (agnostic)"
+    )
   }
 )
 

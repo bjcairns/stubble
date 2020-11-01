@@ -16,13 +16,14 @@
 
 ### ble_attr() ###
 #' @noRd
-ble_attr <- function(x, elements, method = "agnostic", index = 1L, ctrl = list(), ...){
+ble_attr <- function(x, elements, index = 1L, ctrl = list(), ...){
   
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)
   
   ## Extract Params ##
   elements <- if (missing(elements)) x[["n"]] else elements
+  method <- x[["sim"]][["method"]]
   p_na <- if (is.na(ctrl[["p_na"]])) x[["p_na"]] else ctrl[["p_na"]]
   
   ## Set RNG ##
@@ -30,9 +31,6 @@ ble_attr <- function(x, elements, method = "agnostic", index = 1L, ctrl = list()
   old_kind <- RNGkind()[1]
   on.exit(RNGkind(kind = old_kind))
   RNGkind(kind = rng_kind)
-  
-  ## Method ##
-  if (method != "agnostic") method <- x[["sim"]][["method"]]
   
   ## Generate syn_col ##
   syn_col <- switch(method,

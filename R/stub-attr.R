@@ -36,7 +36,14 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
   p_na <- switch(
     EXPR = method,
     agnostic = if (is.na(ctrl[["p_na"]])) 0 else ctrl[["p_na"]],
-    empirical = if (is.na(ctrl[["p_na"]])) sum(is.na(col))/length(col) else ctrl[["p_na"]]
+    empirical = {
+      if (is.na(ctrl[["p_na"]])) {
+        x <- sum(is.na(col))/length(col)
+        x <- if (is.nan(x)) 0 else x
+      } else {
+        ctrl[["p_na"]]
+      }
+    }
   )
   
   ## Method ##

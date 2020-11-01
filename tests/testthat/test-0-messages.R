@@ -123,18 +123,6 @@ test_that(
 )
 
 
-### Zero Length Sample Error ###
-test_that(
-  desc = "Zero Length Sample Warning",
-  code = {
-    expect_warning(
-      object = .warning_zero_sample(),
-      regexp = "Zero-length\\svectors\\scannot\\sbe\\ssampled"
-    )
-  }
-)
-
-
 ### No Method Errors ###
 test_that(
   desc = "No Method Errors",

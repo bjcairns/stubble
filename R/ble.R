@@ -40,8 +40,6 @@
 
 ### ToDo ###
 # - Pass all ble_() methods through ble_.list() to avoid code replication.
-# - Force the use of `method` = "agnostic", where this is present in the stub
-#   object. Print a warning in such cases.
 
 
 ### ble() ###

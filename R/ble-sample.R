@@ -14,6 +14,13 @@
 #' @keywords datagen
 
 
+### Notes ###
+# - Even when stub() has been called on a 0-row object the output for
+#   stub_sample() will produce a list (x) in which
+#   x[["vars"]][["var"]][["values"]] is equal to NA. Hence, this will never be
+#   of length 0.
+
+
 ### ble_sample() ###
 #' @noRd
 ble_sample <- function(x, elements, ctrl){
@@ -226,21 +233,8 @@ ble_sample_.numeric <- function(val, elements, wt, ctrl){
 #' @noRd
 ble_sample__ <- function(val, elements, wt){
   
-  ## Sample if Possible ##
-  syn_col <- if (length(val) != 0) {
-    
-    # Re-Sample #
-    val[sample.int(n = length(val), size = elements, replace = TRUE, prob = wt)]
-    
-  } else {
-    
-    # Warning #
-    .warning_zero_sample()
-    
-    # Zero-Length Value #
-    val
-    
-  }
+  ## Re-Sample ##
+  syn_col <- val[sample.int(n = length(val), size = elements, replace = TRUE, prob = wt)]
   
   ## Output ##
   return(syn_col)
