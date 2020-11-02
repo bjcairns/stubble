@@ -5,10 +5,6 @@
 #=====================#
 
 
-### ToDo ###
-# - Everything!
-
-
 ### Params ###
 ## Control ##
 ctrl_def <- list(
@@ -49,8 +45,9 @@ test_that(
 
 ## bit64 ##
 test_that(
-  desc = "Ouput Classes [bit64].",
+  desc = "Output Classes [bit64].",
   code = {
+    skip_if_not_installed("bit64", min_v_bit64)
     expect_identical(
       object = sapply(
         X = lapply(
@@ -69,8 +66,9 @@ test_that(
 
 ## data.table ##
 test_that(
-  desc = "Ouput Classes [data.table].",
+  desc = "Output Classes [data.table].",
   code = {
+    skip_if_not_installed("data.table", min_v_dt)
     expect_identical(
       object = sapply(
         X = lapply(
@@ -89,8 +87,9 @@ test_that(
 
 
 ### Unsimulatable Data ###
+## base ##
 test_that(
-  desc = "Unsimulatable data.",
+  desc = "Unsimulatable data [base].",
   code = {
     ## Agnostic ##
 #     ctrl_def_ag0 <- list()
@@ -109,10 +108,10 @@ test_that(
 #       label = "Zero-element source data; n-element output data (agnostic)"
 #     )
     ## Empirical ##
-    stub_l0_vars <- stub(x = l0, method = "empirical", ctrl = ctrl_def)[["vars"]]
+    stub_l0_vars <- stub(x = l0[vars_base], method = "empirical", ctrl = ctrl_def)[["vars"]]
     expect_identical(
       object = lengths(lapply(X = stub_l0_vars, FUN = ble_attr, ctrl = ctrl_def)),
-      expected = lengths(l0),
+      expected = lengths(l0[vars_base]),
       label = "Zero-element source data; zero-element output data (empirical)"
     )
     expect_equivalent(
@@ -120,7 +119,57 @@ test_that(
         X = lapply(X = stub_l0_vars, FUN = ble_attr, elements = 10L, ctrl = ctrl_def),
         FUN = function(var){all(is.na(var))}
       ),
-      expected = rep(TRUE, length(l0)),
+      expected = rep(TRUE, length(l0[vars_base])),
+      label = "Zero-element source data; n-element output data (empirical)"
+    )
+    ## Tidy Up ##
+    rm(stub_l0_vars)
+  }
+)
+
+## bit64 ##
+test_that(
+  desc = "Unsimulatable data [bit64].",
+  code = {
+    skip_if_not_installed("bit64", min_v_bit64)
+    ## Empirical ##
+    stub_l0_vars <- stub(x = l0[vars_bit64], method = "empirical", ctrl = ctrl_def)[["vars"]]
+    expect_identical(
+      object = lengths(lapply(X = stub_l0_vars, FUN = ble_attr, ctrl = ctrl_def)),
+      expected = lengths(l0[vars_bit64]),
+      label = "Zero-element source data; zero-element output data (empirical)"
+    )
+    expect_equivalent(
+      object = sapply(
+        X = lapply(X = stub_l0_vars, FUN = ble_attr, elements = 10L, ctrl = ctrl_def),
+        FUN = function(var){all(is.na(var))}
+      ),
+      expected = rep(TRUE, length(l0[vars_bit64])),
+      label = "Zero-element source data; n-element output data (empirical)"
+    )
+    ## Tidy Up ##
+    rm(stub_l0_vars)
+  }
+)
+
+## data.table ##
+test_that(
+  desc = "Unsimulatable data [data.table].",
+  code = {
+    skip_if_not_installed("data.table", min_v_dt)
+    ## Empirical ##
+    stub_l0_vars <- stub(x = l0[vars_bit64], method = "empirical", ctrl = ctrl_def)[["vars"]]
+    expect_identical(
+      object = lengths(lapply(X = stub_l0_vars, FUN = ble_attr, ctrl = ctrl_def)),
+      expected = lengths(l0[vars_bit64]),
+      label = "Zero-element source data; zero-element output data (empirical)"
+    )
+    expect_equivalent(
+      object = sapply(
+        X = lapply(X = stub_l0_vars, FUN = ble_attr, elements = 10L, ctrl = ctrl_def),
+        FUN = function(var){all(is.na(var))}
+      ),
+      expected = rep(TRUE, length(l0[vars_bit64])),
       label = "Zero-element source data; n-element output data (empirical)"
     )
     ## Tidy Up ##

@@ -5,6 +5,12 @@
 #=================#
 
 
+### ToDo ###
+# - Split tests out into those using only the base package, and those requiring
+#   bit64 or data.table. Currently, tests running on the entire l(0|1|uniq|na)
+#   object should require all three packages!
+
+
 ### Params ###
 ## Control ##
 ctrl_def <- list(

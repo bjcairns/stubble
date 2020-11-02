@@ -10,8 +10,8 @@
   
   ## Check Package Versions ##
   instPkgs <- is.installed.package(
-    pkg = names(OPT_DEP)#,
-    #minimum_version = unlist(OPT_DEP)
+    pkg = names(OPT_DEP),
+    minimum_version = unlist(OPT_DEP) # This line causes devtools::check errors.
   )
   
   ## Set Options ##
