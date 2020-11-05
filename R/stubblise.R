@@ -91,16 +91,16 @@
 
 ### stubblise() ###
 #' @export
-stubblise <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
+stubblise <- function(x, rows = lengths(x), method = "agnostic", ..., ctrl = list()){
   
   ## Checks ##
   if (!is.list(ctrl)) stop("Argument `ctrl` must be a list")
   
   ## Generate stub Object ##
-  s <- stub(x = x, method = method, ctrl = ctrl)
+  s <- stub(x = x, method = method, ..., ctrl = ctrl)
   
   ## Use stub Object For Data Genesis ##
-  out <- ble(stb = s, rows = rows, ctrl = ctrl, ...)
+  out <- ble(stb = s, rows = rows, ..., ctrl = ctrl) # Unset '...' & 'ctrl' once stubble_ctrl() is sorted.
   
   ## Output ##
   return(out)

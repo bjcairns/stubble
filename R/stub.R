@@ -63,7 +63,7 @@
 
 ### stub() ###
 #' @export
-stub <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
+stub <- function(x, rows = lengths(x), method = "agnostic", ..., ctrl = list()){
   
   ## Fuzzy Match 'method' Argument ##
   method <- fuzzy_match(x = c("agnostic", "empirical"), prefix = method)
@@ -71,8 +71,11 @@ stub <- function(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...){
   ## Data Structure ##
   dtype <- dtype0(x = x)
   
+  ## Control Params ##
+  ctrl <- stubble_ctrl(..., old_ctrl = ctrl)
+  
   ## Use S3 Method ##
-  vars <- stub_(x = x, rows = rows, method = method, ctrl = ctrl, ...)
+  vars <- stub_(x = x, rows = rows, method = method, ctrl = ctrl)
   
   ## Form Output ##
   out <- list(
@@ -102,7 +105,7 @@ stub_ <- function(x, ...){
 
 ### stub_.default() ###
 #' @export
-stub_.default <- function(x, rows, method, ctrl, ...){
+stub_.default <- function(x, rows, method, ctrl){
   
   ## Attempt List Coercion ##
   l <- tryCatch(expr = as.list(x),
@@ -110,7 +113,7 @@ stub_.default <- function(x, rows, method, ctrl, ...){
                 warning = function(w) warning(w))
   
   ## Use stub_.list Method ##
-  vars <- stub_.list(x, rows = rows, method = method, ctrl = ctrl, ...)
+  vars <- stub_.list(x, rows = rows, method = method, ctrl = ctrl)
   
   ## Output ##
   return(vars)
@@ -120,10 +123,10 @@ stub_.default <- function(x, rows, method, ctrl, ...){
 
 ### stub_.data.frame() ###
 #' @export
-stub_.data.frame <- function(x, rows, method, ctrl, ...){
+stub_.data.frame <- function(x, rows, method, ctrl){
   
   ## Variable Structure ##
-  vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl, ...)
+  vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl)
   
   ## Output ##
   return(vars)
@@ -133,10 +136,10 @@ stub_.data.frame <- function(x, rows, method, ctrl, ...){
 
 ### stub_.data.table() ###
 #' @export
-stub_.data.table <- function(x, rows = rows, method, ctrl, ...){
+stub_.data.table <- function(x, rows = rows, method, ctrl){
   
   ## Variable Structure ##
-  vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl, ...)
+  vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl)
   
   ## Output ##
   return(vars)
@@ -146,10 +149,10 @@ stub_.data.table <- function(x, rows = rows, method, ctrl, ...){
 
 ### stub_.list() ###
 #' @export
-stub_.list <- function(x, rows = rows, method, ctrl, ...){
+stub_.list <- function(x, rows = rows, method, ctrl){
   
   ## Variable Structure ##
-  vars <- to_stub(x = x, rows = rows, method = method, ctrl = ctrl, ...)
+  vars <- to_stub(x = x, rows = rows, method = method, ctrl = ctrl)
   
   ## Output ##
   return(vars)
@@ -159,10 +162,10 @@ stub_.list <- function(x, rows = rows, method, ctrl, ...){
 
 ### stub_.tbl_df() ###
 #' @export
-stub_.tbl_df <- function(x, rows = rows, method, ctrl, ...){
+stub_.tbl_df <- function(x, rows = rows, method, ctrl){
   
   ## Variable Structure ##
-  vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl, ...)
+  vars <- stub_.list(x = x, rows = rows, method = method, ctrl = ctrl)
   
   ## Output ##
   return(vars)
@@ -172,7 +175,7 @@ stub_.tbl_df <- function(x, rows = rows, method, ctrl, ...){
 
 ### to_stub() ###
 #' @noRd
-to_stub <- function(x, rows, method, ctrl, ...){
+to_stub <- function(x, rows, method, ctrl){
   
   ## Create Index ##
   index <- seq_along(x)
@@ -184,7 +187,7 @@ to_stub <- function(x, rows, method, ctrl, ...){
     elements = rows,
     method = method,
     index = index,
-    MoreArgs = list(ctrl = ctrl, ...),
+    MoreArgs = list(ctrl = ctrl),
     SIMPLIFY = FALSE,
     USE.NAMES = TRUE
   )

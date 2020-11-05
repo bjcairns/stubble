@@ -43,7 +43,7 @@ test_that(
     )
     expect_length(
       object = stub(l1, ctrl = ctrl_def)[["ctrl"]],
-      n = length(ctrl_def)
+      n = 39L
     )
     expect_length(
       object = stub(l1, ctrl = ctrl_def)[["dtype"]],

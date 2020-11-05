@@ -44,7 +44,7 @@
 
 ### ble() ###
 #' @export
-ble <- function(stb, rows, ctrl = list(), ...){
+ble <- function(stb, rows, ..., ctrl = list()){
   
   ### Checks & Data Extraction ###
   dtype <- stb[["dtype"]]
@@ -53,14 +53,9 @@ ble <- function(stb, rows, ctrl = list(), ...){
   if (missing(rows)) rows <- vapply(X = vars, FUN = `[[`, FUN.VALUE = numeric(1L), "n")
   method <- vapply(X = lapply(X = vars, FUN = `[[`, "sim"), FUN = `[[`, FUN.VALUE = character(1L), "method")
   
-  ## Control Params ## - Got to be a one-liner for this!
-  # old_ctrl <- stubble_ctrl(old_ctrl = old_ctrl) # Something like this?
-  # ctrl <- stubble_ctrl(old_ctrl = ctrl)
-  ctrl <- c(
-    ctrl[!{names(ctrl) %in% names(old_ctrl)}],
-    ctrl[names(ctrl) %in% names(old_ctrl)],
-    old_ctrl[!{names(old_ctrl) %in% names(ctrl)}]
-  )
+  ## Control Params ##
+  old_ctrl <- stubble_ctrl(ctrl, old_ctrl = old_ctrl)
+  ctrl <- stubble_ctrl(..., old_ctrl = ctrl)
   
   ## Create Index ##
   index <- seq_along(vars)
@@ -72,7 +67,7 @@ ble <- function(stb, rows, ctrl = list(), ...){
     elements = rows,
     method = method,
     index = index,
-    MoreArgs = list(ctrl = ctrl, ...),
+    MoreArgs = list(ctrl = ctrl),
     SIMPLIFY = FALSE,
     USE.NAMES = TRUE
   )
@@ -98,7 +93,7 @@ ble_ <- function(dtype, ...){
 
 ### ble_.default() ###
 #' @export
-ble_.default <- function(dtype, ...){
+ble_.default <- function(dtype){
   
   ## Error ##
   .stop_no_method(dtype)

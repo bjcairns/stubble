@@ -5,6 +5,24 @@
 #=========================#
 
 
+### Output Structure ###
+test_that(
+  desc = "Ouput Structure",
+  code = {
+    ctrl_def <- stubble_ctrl()
+    expect_true(
+      object = is.list(ctrl_def),
+      label = "list structure"
+    )
+    expect_true(
+      object = all(sapply(ctrl_def, is.list)),
+      label = "nested list structure"
+    )
+    rm(ctrl_def)
+  }
+)
+
+
 ### Old Param Retention ###
 test_that(
   desc = "stubble_ctrl correctly retains old parameters",

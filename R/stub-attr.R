@@ -14,17 +14,13 @@
 #' @keywords datagen
 
 
-### ToDo ###
-# - Test the emp_sw override for when emp_sw == 0 or 1.
-
-
 ### Notes ###
 # - stub_method.ordered() may need to change if stub_method_.ordered() is finalised.
 
 
 ### stub_attr() ###
 #' @noRd
-stub_attr <- function(col, elements = length(col), method = "agnostic", index = 1L, ctrl = list(), ...){
+stub_attr <- function(col, elements = length(col), method = "agnostic", index = 1L, ..., ctrl = list()){
   
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)
@@ -83,7 +79,7 @@ stub_method <- function(col, ...){
 
 ### stub_method.default() ###
 #' @export
-stub_method.default <- function(col, ...){
+stub_method.default <- function(col, ctrl){
   
   ## Warning ##
   .warning_no_method(col)

@@ -11,9 +11,9 @@ simulated) data to match the structure of a given data frame-like object
 (including data.frames, tibbles, data.tables, and lists). See also
 \link{stubble_ctrl} for information on user-modifiable parameters.}
 \usage{
-stubblise(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
+stubblise(x, rows = lengths(x), method = "agnostic", ..., ctrl = list())
 
-stubblize(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
+stubblize(x, rows = lengths(x), method = "agnostic", ..., ctrl = list())
 }
 \arguments{
 \item{x}{the data frame-like object to emulate. Can have 0 rows.}
@@ -23,11 +23,11 @@ stubblize(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
 \item{method}{the method to use in the generation of synthetic data. Must be
 one of \code{"agnostic"} (default) or \code{"empirical"}.}
 
-\item{ctrl}{a named list of control parameters for generating the
-synthetic data. See \link{control}.}
-
 \item{...}{named individual control parameters, which take precedence over
 those in the \code{control} list.}
+
+\item{ctrl}{a named list of control parameters for generating the
+synthetic data. See \link{control}.}
 }
 \value{
 A data frame-like object with the same class as \code{x} (unless \code{x} is a

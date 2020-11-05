@@ -16,7 +16,7 @@
 
 ### ble_attr() ###
 #' @noRd
-ble_attr <- function(x, elements, index = 1L, ctrl = list(), ...){
+ble_attr <- function(x, elements, index = 1L, ..., ctrl = list()){
   
   ## Set Control Parameters ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl, index = index)

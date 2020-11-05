@@ -4,7 +4,7 @@
 \alias{stub}
 \title{Generate a stub object from which synthetic data may be generated}
 \usage{
-stub(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
+stub(x, rows = lengths(x), method = "agnostic", ..., ctrl = list())
 }
 \arguments{
 \item{x}{the vector from which the type of the synthetic data is taken.}
@@ -14,11 +14,11 @@ stub(x, rows = lengths(x), method = "agnostic", ctrl = list(), ...)
 \item{method}{the method to use in the generation of synthetic data. Must be
 one of \code{"agnostic"} (default) or \code{"empirical"}.}
 
-\item{ctrl}{a named list of control parameters for generating the synthetic
-data. See \code{\link{stubble_ctrl}}.}
-
 \item{...}{named individual control parameters, which take precedence over
 those in the \code{ctrl} list.}
+
+\item{ctrl}{a named list of control parameters for generating the synthetic
+data. See \code{\link{stubble_ctrl}}.}
 }
 \value{
 A list containing three elements:

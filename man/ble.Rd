@@ -4,18 +4,18 @@
 \alias{ble}
 \title{Generate a synthetic data from a stub precursor object}
 \usage{
-ble(stb, rows, ctrl = list(), ...)
+ble(stb, rows, ..., ctrl = list())
 }
 \arguments{
 \item{stb}{the stub object which synthetic data is generated.}
 
 \item{rows}{the number of elements to generate.}
 
-\item{ctrl}{a named list of control parameters for generating the synthetic
-data. See \code{\link{stubble_ctrl}}.}
-
 \item{...}{named individual control parameters, which take precedence over
 those in the \code{ctrl} list.}
+
+\item{ctrl}{a named list of control parameters for generating the synthetic
+data. See \code{\link{stubble_ctrl}}.}
 }
 \value{
 An object of the same class used in \code{\link{stub}}.
