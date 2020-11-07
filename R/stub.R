@@ -57,7 +57,7 @@
 # - Add methods for working with Time Series objects.
 # - Add methods for working with groupedData objects. These have the data.frame
 #   class set, but as the last element of the class(x) vector.
-# - Parallelize to_stub() on Unix.
+# - Parallelize stub__() on Unix.
 # - Preserve rownames from data.frames
 
 
@@ -68,20 +68,20 @@ stub <- function(x, rows = lengths(x), method = "agnostic", ..., ctrl = list()){
   ## Fuzzy Match 'method' Argument ##
   method <- fuzzy_match(x = c("agnostic", "empirical"), prefix = method)
   
-  ## Data Structure ##
-  dtype <- dtype0(x = x)
-  
   ## Control Params ##
   ctrl <- stubble_ctrl(..., old_ctrl = ctrl)
   
   ## Use S3 Method ##
   vars <- stub_(x = x, rows = rows, method = method, ctrl = ctrl)
   
+  ## Data Structure ##
+  dtype <- dtype0(x = x)
+  
   ## Form Output ##
   out <- list(
-    ctrl = ctrl,
     dtype = dtype,
-    vars = vars
+    vars = vars,
+    ctrl = ctrl
   )
   
   ## Assign Class ##
@@ -152,7 +152,7 @@ stub_.data.table <- function(x, rows = rows, method, ctrl){
 stub_.list <- function(x, rows = rows, method, ctrl){
   
   ## Variable Structure ##
-  vars <- to_stub(x = x, rows = rows, method = method, ctrl = ctrl)
+  vars <- stub__(x = x, rows = rows, method = method, ctrl = ctrl)
   
   ## Output ##
   return(vars)
@@ -173,9 +173,9 @@ stub_.tbl_df <- function(x, rows = rows, method, ctrl){
 }
 
 
-### to_stub() ###
+### stub__() ###
 #' @noRd
-to_stub <- function(x, rows, method, ctrl){
+stub__ <- function(x, rows, method, ctrl){
   
   ## Create Index ##
   index <- seq_along(x)

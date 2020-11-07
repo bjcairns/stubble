@@ -5,13 +5,17 @@
 #==========#
 
 
+### ToDo ###
+# - Fix CRAN R CMD check problem.
+
+
 ### .onLoad() ###
 .onLoad <- function(libname, pkgname){
   
   ## Check Package Versions ##
   instPkgs <- is.installed.package(
     pkg = names(OPT_DEP),
-    minimum_version = unlist(OPT_DEP) # This line causes devtools::check errors.
+    minimum_version = unlist(OPT_DEP) # This line causes devtools::check(cran = T) errors.
   )
   
   ## Set Options ##

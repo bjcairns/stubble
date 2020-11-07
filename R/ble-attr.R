@@ -33,10 +33,12 @@ ble_attr <- function(x, elements, index = 1L, ..., ctrl = list()){
   RNGkind(kind = rng_kind)
   
   ## Generate syn_col ##
-  syn_col <- switch(method,
-                    agnostic = ble_agnostic(x = x, elements = elements, ctrl = ctrl),
-                    sample = ble_sample(x = x, elements = elements, ctrl = ctrl),
-                    spline = ble_spline(x = x, elements = elements, ctrl = ctrl))
+  syn_col <- switch(
+    EXPR = method,
+    agnostic = ble_agnostic(x = x, elements = elements, ctrl = ctrl),
+    sample = ble_sample(x = x, elements = elements, ctrl = ctrl),
+    spline = ble_spline(x = x, elements = elements, ctrl = ctrl)
+  )
   
   ## Impute NA Values ##
   syn_col <- impute_na(syn_col, p_na = p_na)

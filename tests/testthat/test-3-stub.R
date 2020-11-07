@@ -38,7 +38,7 @@ test_that(
     )
     expect_identical(
       object = names(stub(l1, ctrl = ctrl_def)),
-      expected = c("ctrl", "dtype", "vars"),
+      expected = c("dtype", "vars", "ctrl"),
       label = "Output names"
     )
     expect_length(

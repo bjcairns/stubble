@@ -15,7 +15,7 @@
 
 
 ### Notes ###
-# - stub_method.ordered() may need to change if stub_method_.ordered() is finalised.
+# - stub_attr_.ordered() may need to change if stub_attr_.ordered() is finalised.
 
 
 ### stub_attr() ###
@@ -43,7 +43,7 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
   )
   
   ## Method ##
-  if (method != "agnostic") method <- stub_method(col = col, ctrl = ctrl)
+  if (method != "agnostic") method <- stub_attr_(col = col, ctrl = ctrl)
   
   ### Generate sim ##
   sim <- switch(
@@ -67,34 +67,22 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
   
 }
 
-### stub_method() ###
+### stub_attr_() ###
 #' @noRd
-stub_method <- function(col, ...){
+stub_attr_ <- function(col, ...){
   
   ## Define S3 Method ##
-  UseMethod("stub_method", col)
+  UseMethod("stub_attr_", col)
   
 }
 
 
-### stub_method.default() ###
+### stub_attr_.default() ###
 #' @export
-stub_method.default <- function(col, ctrl){
+stub_attr_.default <- function(col, ctrl){
   
   ## Warning ##
   .warning_no_method(col)
-  
-  method <- "sample"
-  
-  ## Output ##
-  return(method)
-  
-}
-
-
-### stub_method.character() ###
-#' @export
-stub_method.character <- function(col, ctrl){
   
   ## Sample Method ##
   method <- "sample"
@@ -105,12 +93,12 @@ stub_method.character <- function(col, ctrl){
 }
 
 
-### stub_method.Date() ###
+### stub_attr_.character() ###
 #' @export
-stub_method.Date <- function(col, ctrl){
+stub_attr_.character <- function(col, ctrl){
   
-  ## Determine Method ##
-  method <- stub_method_(col = col, ctrl = ctrl)
+  ## Sample Method ##
+  method <- "sample"
   
   ## Output ##
   return(method)
@@ -118,12 +106,25 @@ stub_method.Date <- function(col, ctrl){
 }
 
 
-### stub_method.factor() ###
+### stub_attr_.Date() ###
 #' @export
-stub_method.factor <- function(col, ctrl){
+stub_attr_.Date <- function(col, ctrl){
+  
+  ## Determine Method ##
+  method <- stub_attr__(col = col, ctrl = ctrl)
+  
+  ## Output ##
+  return(method)
+  
+}
+
+
+### stub_attr_.factor() ###
+#' @export
+stub_attr_.factor <- function(col, ctrl){
   
   ## Use character Method ##
-  method <- stub_method.character(col = col, ctrl = ctrl)
+  method <- stub_attr_.character(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -131,12 +132,12 @@ stub_method.factor <- function(col, ctrl){
 }
 
 
-### stub_method.integer64() ###
+### stub_attr_.integer64() ###
 #' @export
-stub_method.integer64 <- function(col, ctrl){
+stub_attr_.integer64 <- function(col, ctrl){
   
   ## Determine Method ##
-  method <- stub_method_(col = col, ctrl = ctrl)
+  method <- stub_attr__(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -144,12 +145,12 @@ stub_method.integer64 <- function(col, ctrl){
 }
 
 
-### stub_method.ITime() ###
+### stub_attr_.ITime() ###
 #' @export
-stub_method.ITime <- function(col, ctrl){
+stub_attr_.ITime <- function(col, ctrl){
   
   ## Determine Method ##
-  method <- stub_method_(col = col, ctrl = ctrl)
+  method <- stub_attr__(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -157,12 +158,12 @@ stub_method.ITime <- function(col, ctrl){
 }
 
 
-### stub_method.logical() ###
+### stub_attr_.logical() ###
 #' @export
-stub_method.logical <- function(col, ctrl){
+stub_attr_.logical <- function(col, ctrl){
   
   ## Use character Method ##
-  method <- stub_method.character(col = col, ctrl = ctrl)
+  method <- stub_attr_.character(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -170,12 +171,12 @@ stub_method.logical <- function(col, ctrl){
 }
 
 
-### stub_method.numeric() ###
+### stub_attr_.numeric() ###
 #' @export
-stub_method.numeric <- function(col, ctrl){
+stub_attr_.numeric <- function(col, ctrl){
   
   ## Determine Method ##
-  method <- stub_method_(col = col, ctrl = ctrl)
+  method <- stub_attr__(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -183,12 +184,12 @@ stub_method.numeric <- function(col, ctrl){
 }
 
 
-### stub_method.POSIXct() ###
+### stub_attr_.POSIXct() ###
 #' @export
-stub_method.POSIXct <- function(col, ctrl){
+stub_attr_.POSIXct <- function(col, ctrl){
   
   ## Determine Method ##
-  method <- stub_method_(col = col, ctrl = ctrl)
+  method <- stub_attr__(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -196,15 +197,15 @@ stub_method.POSIXct <- function(col, ctrl){
 }
 
 
-### stub_method.POSIXlt() ###
+### stub_attr_.POSIXlt() ###
 #' @export
-stub_method.POSIXlt <- function(col, ctrl){
+stub_attr_.POSIXlt <- function(col, ctrl){
   
   ## Coerce to POSIXct ##
   col <- as.POSIXct(col)
   
   ## Use POSIXct Method ##
-  method <- stub_method_(col = col, ctrl = ctrl)
+  method <- stub_attr__(col = col, ctrl = ctrl)
   
   ## Output ##
   return(method)
@@ -212,9 +213,9 @@ stub_method.POSIXlt <- function(col, ctrl){
 }
 
 
-### stub_method_() ###
+### stub_attr__() ###
 #' @noRd
-stub_method_ <- function(col, ctrl){
+stub_attr__ <- function(col, ctrl){
   
   ## Checks ##
   if (ctrl[["emp_sw"]] < 0 | ctrl[["emp_sw"]] > 1)
