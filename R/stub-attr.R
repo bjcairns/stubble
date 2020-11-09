@@ -28,7 +28,7 @@ stub_attr <- function(col, elements = length(col), method = "agnostic", index = 
   ## Class ##
   dtype <- dtype0(x = col)
   
-  ## Missing Values ##
+  ## Missing Values Ctrl Parameter ##
   p_na <- switch(
     EXPR = method,
     agnostic = if (is.na(ctrl[["p_na"]])) 0 else ctrl[["p_na"]],

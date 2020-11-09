@@ -13,7 +13,8 @@ ctrl_def <- list(
   emp_n_exc = 0L,
   emp_p_exc = 0,
   emp_drop_lev = 0,
-  emp_fuzz_samp = 0
+  emp_fuzz_samp = 0,
+  p_na = 0
 )
 
 ## Vars ##
@@ -34,7 +35,8 @@ test_that(
             x = l1[vars_base],
             method = "agnostic",
             ctrl = ctrl_def)[["vars"]],
-          FUN = ble_attr
+          FUN = ble_attr,
+          ctrl = ctrl_def
         ),
         FUN = class
       ),
@@ -55,7 +57,8 @@ test_that(
             x = l1[vars_bit64],
             method = "agnostic",
             ctrl = ctrl_def)[["vars"]],
-          FUN = ble_attr
+          FUN = ble_attr,
+          ctrl = ctrl_def
         ),
         FUN = class
       ),
@@ -76,7 +79,8 @@ test_that(
             x = l1[vars_dt],
             method = "agnostic",
             ctrl = ctrl_def)[["vars"]],
-          FUN = ble_attr
+          FUN = ble_attr,
+          ctrl = ctrl_def
         ),
         FUN = class
       ),

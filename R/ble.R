@@ -54,8 +54,8 @@ ble <- function(stb, rows, ..., ctrl = list()){
   method <- vapply(X = lapply(X = vars, FUN = `[[`, "sim"), FUN = `[[`, FUN.VALUE = character(1L), "method")
   
   ## Control Params ##
-  old_ctrl <- stubble_ctrl(ctrl, old_ctrl = old_ctrl)
-  ctrl <- stubble_ctrl(..., old_ctrl = ctrl)
+  old_ctrl[names(old_ctrl) %in% names(ctrl)] <- ctrl
+  ctrl <- stubble_ctrl(..., old_ctrl = old_ctrl)
   
   ## Create Index ##
   index <- seq_along(vars)

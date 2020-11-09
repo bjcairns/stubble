@@ -24,7 +24,6 @@ ble_attr <- function(x, elements, index = 1L, ..., ctrl = list()){
   ## Extract Params ##
   elements <- if (missing(elements)) x[["n"]] else elements
   method <- x[["sim"]][["method"]]
-  p_na <- if (is.na(ctrl[["p_na"]])) x[["p_na"]] else ctrl[["p_na"]]
   
   ## Set RNG ##
   rng_kind <- ctrl[["rng_kind"]]
@@ -41,7 +40,7 @@ ble_attr <- function(x, elements, index = 1L, ..., ctrl = list()){
   )
   
   ## Impute NA Values ##
-  syn_col <- impute_na(syn_col, p_na = p_na)
+  syn_col <- impute_na(syn_col, p_na = ctrl[["p_na"]])
   
   ## Output ##
   return(syn_col)

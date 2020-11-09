@@ -74,6 +74,12 @@ stub <- function(x, rows = lengths(x), method = "agnostic", ..., ctrl = list()){
   ## Use S3 Method ##
   vars <- stub_(x = x, rows = rows, method = method, ctrl = ctrl)
   
+  ## Missing Values ##
+  p_na <- lapply(X = vars, FUN = `[[`, "p_na")
+  names(p_na) <- NULL
+  ctrl[["p_na"]] <- p_na
+  vars <- lapply(X = vars, FUN = function(x){x[names(x) != "p_na"]})
+  
   ## Data Structure ##
   dtype <- dtype0(x = x)
   
