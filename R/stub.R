@@ -51,6 +51,8 @@
 #' @concept simulation
 #'
 #' @keywords datagen
+#' 
+#' @importFrom utils packageVersion
 
 
 ### ToDo ###
@@ -83,11 +85,19 @@ stub <- function(x, rows = lengths(x), method = "agnostic", ..., ctrl = list()){
   ## Data Structure ##
   dtype <- dtype0(x = x)
   
+  ## Attributes ##
+  meta <- list(
+    stubble_version = package_version(packageVersion("stubble")),
+    r_version = package_version(packageVersion("base")),
+    timestamp = Sys.time()
+  )
+  
   ## Form Output ##
   out <- list(
     dtype = dtype,
     vars = vars,
-    ctrl = ctrl
+    ctrl = ctrl,
+    meta = meta
   )
   
   ## Assign Class ##

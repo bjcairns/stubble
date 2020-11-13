@@ -34,11 +34,11 @@ test_that(
     )
     expect_length(
       object = stub(l1, ctrl = ctrl_def),
-      n = 3L
+      n = 4L
     )
     expect_identical(
       object = names(stub(l1, ctrl = ctrl_def)),
-      expected = c("dtype", "vars", "ctrl"),
+      expected = c("dtype", "vars", "ctrl", "meta"),
       label = "Output names"
     )
     expect_length(
