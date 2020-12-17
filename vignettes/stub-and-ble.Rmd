@@ -57,12 +57,12 @@ All defaults for `stub()` are the same as those for `stubblise()`. To change the
 sp_emp <- stub(
   p, 
   method = "empirical", 
-  emp_p_exc = c(0, rep(0.05, 5)), 
-  emp_n_exc = c(0, rep(10L, 5))
+  emp_p_exc = 0, 
+  emp_n_exc = 0
 )
 ```
 
-Note here that the defaults for `emp_p_exc` and `emp_n_exc` are overridden for the first variable ("id") because this variable is substantially unique, and those control parameters tell `stub()` to exclude values with a proportion or number, respectively, lower than that given by these control parameters. To change a control parameter for only a single variable, it is currently necessary to provide a vector (or list) of control parameters of the same length as the number of variables.
+Note here that the defaults for `emp_p_exc` and `emp_n_exc` are overridden for the first variable ("id") because this variable has only a small number of observations per unique value, and those control parameters tell `stub()` to exclude values with a proportion or count (respectively) that is lower than that given by the parameters. Note that when supplied as a single value, control parameters are recycled across all variables (see the next section for an example of changing control parameters for individual variables).
 
 ## Constructing a synthetic dataset: `ble()`
 
@@ -81,7 +81,7 @@ head(bp_emp)
 ```
 
 Some control parameters can also be supplied to `ble()` in order to modify the generation of the synthetic data, versus what was specified in `stub()`. For example, missing data can be added (missing completely at random with probability 0.2):
-```{r seed, include = FALSE}
+```{r, include = FALSE}
 set.seed(2342342)
 ```
 
@@ -90,3 +90,20 @@ bp_emp_miss <- ble(sp_emp, p_na = 0.2)
 head(bp_emp_miss)
 ```
 
+Control parameters are supplied positionally, so to add missing data to only the second and third variables (`species` and `bill_length`) it is necessary to supply a vector of values. Of course, values can also vary between variables:
+```{r, include = FALSE}
+set.seed(2342342)
+```
+
+```{r ble_ex_emp_missing_2}
+bp_emp_miss <- ble(sp_emp, p_na = c(0, 0.2, 0.1, 0, 0, 0))
+head(bp_emp_miss)
+```
+
+Positional parameters are convenient when it is appropriate to supply the same control parameter to every variable (because it is recycled as necessary), but the developers are still exploring better ways for users to set these values.
+ 
+Note that both the above examples were generated using the same random seed (`set.seed(2342342)`), chosen to provide a good illustration of the methods. But, although the first column of each is identical, other columns are not. Be aware that in general, even small changes in parameters may result in very different values in the synthetic dataset.
+
+## Summary
+
+**stubble** offers two ways to generate synthetic data. First, with the omnibus function `stubblise()` (also, `stubblize()`), which performs the complete process of generating a synthetic version of a dataset. Second, it is possible to construct a generator for synthetic data based on the original dataset using `stub()`, and then to use `ble()` to generate any number of synthetic datasets. This second approach offers more flexiblity in when and how synthetic data are actually generated.
