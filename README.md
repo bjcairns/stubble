@@ -38,10 +38,6 @@ Here is a very simple example of using stubble on the included
 `penguins_ext` dataset (derived from
 [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)).
 
-The default in stubble is to maintain strict data protection. Unless you
-tell it otherwise, it generates nonsense values which bear no relation
-to the original values, other than having the same vector type.
-
 ``` r
 library(stubble)
 
@@ -55,6 +51,7 @@ p <- penguins_ext[, c(
        "clutch_completion", 
        "date_egg"
      )]
+
 head(p)
 #>     id species bill_length_mm body_mass_g clutch_completion   date_egg
 #> 1 N1A1  Adelie           39.1        3750              TRUE 2007-11-11
@@ -63,21 +60,46 @@ head(p)
 #> 4 N2A2  Adelie             NA          NA              TRUE 2007-11-16
 #> 5 N3A1  Adelie           36.7        3450              TRUE 2007-11-16
 #> 6 N3A2  Adelie           39.3        3650              TRUE 2007-11-16
+```
+
+The default in stubble is to maintain strict data protection. Unless you
+tell it otherwise, it generates nonsense values which bear no relation
+to the original values, other than having the same vector type.
+
+``` r
 
 # stubblise to obtain a dataset with the same structure, but random data
 p_stbl <- stubblise(p)
 head(p_stbl)
 #>         id species bill_length_mm body_mass_g clutch_completion   date_egg
-#> 1 *<n b#Ac       b      68.226910          88             FALSE 1984-03-03
-#> 2   5zp3>j       a      93.392560          17             FALSE 1993-02-02
-#> 3      a:#       b       5.276353          51             FALSE 1977-12-26
-#> 4  |!9SQp5       b       3.560817          16              TRUE 1977-03-08
-#> 5 H}&}kY^W       c      12.401692          81              TRUE 1993-05-26
-#> 6        N       d      77.027949          58             FALSE 2018-12-18
+#> 1 *<n b#Ac       b      68.226910          42              TRUE 1972-06-23
+#> 2   5zp3>j       a      93.392560          56             FALSE 2000-08-31
+#> 3      a:#       b       5.276353          56              TRUE 1984-05-02
+#> 4  |!9SQp5       b       3.560817          62             FALSE 1998-04-27
+#> 5 H}&}kY^W       c      12.401692          56             FALSE 2002-06-20
+#> 6        N       d      77.027949          44              TRUE 1991-07-04
 ```
 
-For more advanced use, such as generating values from the empirical
-distributions of each variable, see the “Using stubble” vignette.
+More advanced use is also possible, such as generating values from the
+empirical distributions of each variable.
+
+``` r
+
+# Use method = "empirical" to obtain data with marginal distributions similar 
+# to the original. The emp_p_exc and emp_n_exc control parameters allow that 
+# all values of the id variable have only a small number of observations.
+p_stbl_emp <- stubblise(p, method = "empirical", emp_p_exc = 0, emp_n_exc = 0)
+head(p_stbl_emp)
+#>      id species bill_length_mm body_mass_g clutch_completion   date_egg
+#> 1 N88A2  Gentoo       41.47851        3393              TRUE 2008-02-11
+#> 2  N1A2  Adelie       48.18967        5247              TRUE 2008-07-07
+#> 3 N28A1  Adelie       47.11368        3592              TRUE 2007-12-12
+#> 4 N51A1  Gentoo       42.78341        3363              TRUE 2008-02-17
+#> 5 N58A2  Adelie       45.53278        4202              TRUE 2008-03-02
+#> 6 N27A1  Adelie       49.82995        3780              TRUE 2009-08-12
+```
+
+See the “Using stubble” and "".
 
 ## Known issues
 

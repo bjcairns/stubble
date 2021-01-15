@@ -36,13 +36,7 @@ remotes::install_github("bjcairns/stubble")
 
 Here is a very simple example of using stubble on the included `penguins_ext` dataset (derived from [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)). 
 
-The default in stubble is to maintain strict data protection. Unless you tell it otherwise, it generates nonsense values which bear no relation to the original values, other than having the same vector type.
-
-``` {r seed, echo=FALSE}
-set.seed(98723895)
-```
-
-```{r example}
+```{r data}
 library(stubble)
 
 # Example with several data types 
@@ -55,14 +49,35 @@ p <- penguins_ext[, c(
        "clutch_completion", 
        "date_egg"
      )]
+
 head(p)
+```
+
+The default in stubble is to maintain strict data protection. Unless you tell it otherwise, it generates nonsense values which bear no relation to the original values, other than having the same vector type.
+
+``` {r seed, echo=FALSE}
+set.seed(98723895)
+```
+
+```{r example}
 
 # stubblise to obtain a dataset with the same structure, but random data
 p_stbl <- stubblise(p)
 head(p_stbl)
 ```
 
-For more advanced use, such as generating values from the empirical distributions of each variable, see the "Using stubble" vignette.
+More advanced use is also possible, such as generating values from the empirical distributions of each variable.
+
+```{r example_empirical}
+
+# Use method = "empirical" to obtain data with marginal distributions similar 
+# to the original. The emp_p_exc and emp_n_exc control parameters allow that 
+# all values of the id variable have only a small number of observations.
+p_stbl_emp <- stubblise(p, method = "empirical", emp_p_exc = 0, emp_n_exc = 0)
+head(p_stbl_emp)
+```
+
+See the "Using stubble" and "".
 
 ## Known issues
 
