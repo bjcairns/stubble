@@ -44,7 +44,7 @@ summary(sp)
 
 The `stub` object (assigned above to `sp`) is a list: 
 
-* The *dtype* element is an empty data frame-type object, but may be a list, a data.table, or a tibble, depending on what the user has installed and the class of the original dataset object.
+* The *dtype* element is an empty data frame-type object, but may be a base R data.frame, a list, a data.table, or a tibble, depending on what the user has installed and the class of the original dataset object.
 * The *vars* element contains information about each of the variables from the original dataset, which is abstracted in order to generate synthetic data according to the algorithm.
 * The *ctrl* element contains the parameters which are further used to control the generation of synthetic data.
 * The *meta* element contains information on the **stubble** and R versions used to create the `stub` object, and a timestamp.
@@ -62,7 +62,7 @@ sp_emp <- stub(
 )
 ```
 
-Note here that the defaults for `emp_p_exc` and `emp_n_exc` are overridden for the first variable ("id") because this variable has only a small number of observations per unique value, and those control parameters tell `stub()` to exclude values with a proportion or count (respectively) that is lower than that given by the parameters. Note that when supplied as a single value, control parameters are recycled across all variables (see the next section for an example of changing control parameters for individual variables).
+Note here that the defaults for `emp_p_exc` and `emp_n_exc` are overridden because the first variable ("id") has only a small number of observations per unique value, and those control parameters tell `stub()` to exclude values with a proportion or count (respectively) that is lower than that given by the parameters. Note that when supplied as a single value, control parameters are recycled across all variables (see the next section for an example of changing control parameters for individual variables).
 
 ## Constructing a synthetic dataset: `ble()`
 
@@ -73,7 +73,7 @@ bp <- ble(sp)
 head(bp)
 ```
 
-Since no other arguments were supplied to `stub()` to generate the `sp` object above, in this case data were generated using the default "agnostic" method. Use of the `stub` object created with the "empirical" method can construct more realistic data:
+Since no other arguments were supplied to `stub()` to generate the `sp` object above, in this case data were generated using the default "agnostic" method. Use of the `stub` object created in the previous section with the "empirical" method can generate more realistic data:
 
 ```{r ble_ex_emp}
 bp_emp <- ble(sp_emp)
@@ -102,7 +102,7 @@ head(bp_emp_miss)
 
 Positional parameters are convenient when it is appropriate to supply the same control parameter to every variable (because it is recycled as necessary), but the developers are still exploring better ways for users to set these values.
  
-Note that both the above examples were generated using the same random seed (`set.seed(2342342)`), chosen to provide a good illustration of the methods. But, although the first column of each is identical, other columns are not. Be aware that in general, even small changes in parameters may result in very different values in the synthetic dataset.
+Note that both the above examples were generated using the same random seed (`set.seed(2342342)`), chosen to provide a good illustration of the methods. But, although the first column of each is identical, other columns are not. Be aware that in general, even small changes in parameters may result in different values in the synthetic dataset.
 
 ## Summary
 
