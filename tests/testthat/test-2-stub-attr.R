@@ -264,7 +264,7 @@ test_that(
   code = {
     skip_if_not_installed("data.table", min_v_dt)
     expect_true(
-      object = all(lengths(lapply(X = l0[vars_bit64], FUN = stub_attr, ctrl = ctrl_def)) == 4L),
+      object = all(lengths(lapply(X = l0[vars_dt], FUN = stub_attr, ctrl = ctrl_def)) == 4L),
       label = "output lengths"
     )
     expect_equivalent(
@@ -325,7 +325,7 @@ test_that(
   code = {
     skip_if_not_installed("data.table", min_v_dt)
     expect_true(
-      object = all(lengths(lapply(X = lna[vars_bit64], FUN = stub_attr, ctrl = ctrl_def)) == 4L),
+      object = all(lengths(lapply(X = lna[vars_dt], FUN = stub_attr, ctrl = ctrl_def)) == 4L),
       label = "output lengths"
     )
     expect_equivalent(
