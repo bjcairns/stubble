@@ -162,10 +162,10 @@ test_that(
   code = {
     skip_if_not_installed("data.table", min_v_dt)
     ## Empirical ##
-    stub_l0_vars <- stub(x = l0[vars_bit64], method = "empirical", ctrl = ctrl_def)[["vars"]]
+    stub_l0_vars <- stub(x = l0[vars_dt], method = "empirical", ctrl = ctrl_def)[["vars"]]
     expect_identical(
       object = lengths(lapply(X = stub_l0_vars, FUN = ble_attr, ctrl = ctrl_def)),
-      expected = lengths(l0[vars_bit64]),
+      expected = lengths(l0[vars_dt]),
       label = "Zero-element source data; zero-element output data (empirical)"
     )
     expect_equivalent(
@@ -173,7 +173,7 @@ test_that(
         X = lapply(X = stub_l0_vars, FUN = ble_attr, elements = 10L, ctrl = ctrl_def),
         FUN = function(var){all(is.na(var))}
       ),
-      expected = rep(TRUE, length(l0[vars_bit64])),
+      expected = rep(TRUE, length(l0[vars_dt])),
       label = "Zero-element source data; n-element output data (empirical)"
     )
     ## Tidy Up ##

@@ -456,6 +456,14 @@ format_ctrl_class_POSIXct_ <- function(arg, agn_date_origin){
 ### format_ctrl_class_POSIXct__() ###
 format_ctrl_class_POSIXct__ <- function(arg, agn_date_origin){
   
-  paste(agn_date_origin, arg)
+  if ("POSIXct" %in% class(arg)) {
+    
+    as.character(arg)
+    
+  } else {
+    
+    paste(as.character(agn_date_origin), as.character(arg))
+    
+  }
   
 }
