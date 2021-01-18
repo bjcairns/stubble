@@ -485,9 +485,17 @@ test_that(
       object = is.installed.package("base"),
       label = "base"
     )
+    expect_true(
+      object = is.installed.package("base", "1.0.0"),
+      label = "base with version"
+    )
     expect_false(
       object = is.installed.package("_1"),
       label = "non-existent package"
+    )
+    expect_false(
+      object = is.installed.package("_1", "1.0,0"),
+      label = "non-existent package with version"
     )
     expect_equivalent(
       object = is.installed.package(c("base", "_1")),
@@ -497,7 +505,7 @@ test_that(
     expect_equivalent(
       object = is.installed.package(c("_1", "base")),
       expected = c(FALSE, TRUE),
-      label = "output order"
+      label = "output order opposite"
     )
   }
 )

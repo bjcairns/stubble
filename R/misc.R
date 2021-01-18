@@ -349,11 +349,20 @@ impute_na <- function(syn_col, p_na){
 #' @noRd
 is.installed.package <- function(pkg, minimum_version){
   
-  ## Non-NA Indices ##
-  ind <- which(!is.na(pkg))
+  ## Checks ##
+  if (!missing(minimum_version)) {
+    if (length(pkg) != length(minimum_version))
+      stop("Input lengths differ.", call. = FALSE)
+    if (any(is.na(pkg) & !is.na(minimum_version)))
+      stop("`pkg` cannot be missing where `version` is specified.", call. = FALSE)
+  }
   
   ## Empty Results Vector ##
   status <- rep(NA, length(pkg))
+  
+  ## Non-NA Indices ##
+  ind <- which(!is.na(pkg))
+  if (length(ind) == 0) return(status)
   
   ## Installed Packages ##
   instPkgs <- installed.packages(noCache = TRUE)[, c("Package", "Version")]
@@ -364,43 +373,25 @@ is.installed.package <- function(pkg, minimum_version){
   ## Assert Package Installation Status ##
   status[ind] <- pkg[ind] %in% pkgs
   
-  if (!missing(minimum_version)) {
+  if (!missing(minimum_version) & any(status)) {
     
-    ## Checks ##
-    if (length(pkg) != length(minimum_version))
-      stop("Input lengths differ.", call. = FALSE)
-    if (any(is.na(pkg) & !is.na(minimum_version)))
-      stop("`pkg` cannot be missing where `version` is specified.", call. = FALSE)
-    
-    ## Non-NA Indices ##
-    v_ind <- ind[!is.na(minimum_version)]
-    
-    ## Empty Results Vector ##
-    v_status <- rep(NA, length(minimum_version[v_ind]))
-    v_status <- as.list(v_status)
-    
-    ## Coerce to package_version ##
-    v_min <- package_version(minimum_version[v_ind])
-    
-    ## Get Current Package Versions ##
-    v <- instPkgs[pkg[v_ind], "Version"]
-    v <- package_version(v)
-    
-    ## Compare Versions ##
-    v_status[v_ind] <- mapply(
-      FUN = function(v, v_min){v >= v_min},
-      v = v,
-      v_min = v_min,
-      SIMPLIFY = FALSE
-    )
-    v_status <- unlist(v_status)
-    
-    ## Assert Package Version Status ##
-    status[v_ind] <- v_status
-    
+    for (p_ind in which(status)) {
+      
+      if (!is.na(minimum_version[p_ind])) {
+        
+        v_min <- package_version(minimum_version[p_ind])
+        
+        v <- package_version(
+          instPkgs[pkg[p_ind], "Version"]
+        )
+        
+        status[p_ind] <- (v >= v_min)
+        
+      }
+    }
   }
   
-  ## Named Output ##
+    ## Named Output ##
   names(status) <- pkg[ind]
   
   ## Output ##
