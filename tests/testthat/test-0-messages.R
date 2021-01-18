@@ -89,7 +89,7 @@ test_that(
     )
     expect_warning(
       object = .warning_no_method(l0[["IDate"]]),
-      regexp = "No\\smethod.+IDate"
+      regexp = "No\\smethod"
     )
     expect_warning(
       object = .warning_no_method(l0[["integer"]]),
@@ -97,11 +97,11 @@ test_that(
     )
     expect_warning(
       object = .warning_no_method(l0[["integer64"]]),
-      regexp = "No\\smethod.+integer64"
+      regexp = "No\\smethod"
     )
     expect_warning(
       object = .warning_no_method(l0[["ITime"]]),
-      regexp = "No\\smethod.+ITime"
+      regexp = "No\\smethod"
     )
     expect_warning(
       object = .warning_no_method(l0[["logical"]]),

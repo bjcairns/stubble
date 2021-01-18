@@ -31,6 +31,7 @@ l0 <- list(
   POSIXct = as.POSIXct(character(0), tz = "UTC"),
   POSIXlt = as.POSIXlt(character(0), tz = "UTC")
 )
+l0 <- l0[!vapply(X = l0, FUN = is.null, FUN.VALUE = logical(1L))]
 dat0 <- as.data.frame(l0)
 suppressWarnings(
   if (getOption("stubble_has_data.table")) dt0 <- data.table::as.data.table(l0)
@@ -52,6 +53,7 @@ lna <- list(
   POSIXct = as.POSIXct(NA_character_, tz = "UTC"),
   POSIXlt = as.POSIXlt(NA_character_, tz = "UTC")
 )
+lna <- lna[!vapply(X = lna, FUN = is.null, FUN.VALUE = logical(1L))]
 datna <- as.data.frame(lna)
 suppressWarnings(
   if (getOption("stubble_has_data.table")) dtna <- data.table::as.data.table(lna)
@@ -73,6 +75,7 @@ l1 <- list(
   POSIXct = as.POSIXct("1970-01-01", tz = "UTC"),
   POSIXlt = as.POSIXlt("1970-01-01", tz = "UTC")
 )
+l1 <- l1[!vapply(X = l1, FUN = is.null, FUN.VALUE = logical(1L))]
 dat1 <- as.data.frame(l1)
 suppressWarnings(
   if (getOption("stubble_has_data.table")) dt1 <- data.table::as.data.table(l1)
@@ -94,6 +97,7 @@ luniq <- list(
   POSIXct = as.POSIXct(1:1e2, origin = "1970-01-01", tz = "UTC"),
   POSIXlt = as.POSIXlt(1:1e2, origin = "1970-01-01", tz = "UTC")
 )
+luniq <- luniq[!vapply(X = luniq, FUN = is.null, FUN.VALUE = logical(1L))]
 
 ## Penguin Data Alias ##
 penguins <- penguins_ext
