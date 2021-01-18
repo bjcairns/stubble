@@ -133,4 +133,10 @@ test_that(
 
 
 ### Tidy Up ###
-rm(ctrl_def, vars_base, stub_l1, stub_dat1, stub_dt1, stub_df1)
+rm(ctrl_def, vars_base, stub_l1, stub_dat1)
+if (getOption("stubble_has_data.table")) {
+  rm(stub_dt1)
+}
+if (getOption("stubble_has_tibble")) {
+  rm(stub_df1)
+}
