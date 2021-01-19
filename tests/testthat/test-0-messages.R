@@ -68,8 +68,9 @@ test_that(
 
 
 ### No Method Warnings ###
+## base ##
 test_that(
-  desc = "No Method Warnings",
+  desc = "No Method Warnings [base]",
   code = {
     expect_warning(
       object = .warning_no_method(l0[["character"]]),
@@ -88,20 +89,8 @@ test_that(
       regexp = "No\\smethod.+factor"
     )
     expect_warning(
-      object = .warning_no_method(l0[["IDate"]]),
-      regexp = "No\\smethod"
-    )
-    expect_warning(
       object = .warning_no_method(l0[["integer"]]),
       regexp = "No\\smethod.+integer"
-    )
-    expect_warning(
-      object = .warning_no_method(l0[["integer64"]]),
-      regexp = "No\\smethod"
-    )
-    expect_warning(
-      object = .warning_no_method(l0[["ITime"]]),
-      regexp = "No\\smethod"
     )
     expect_warning(
       object = .warning_no_method(l0[["logical"]]),
@@ -118,6 +107,34 @@ test_that(
     expect_warning(
       object = .warning_no_method(l0[["POSIXlt"]]),
       regexp = "No\\smethod.+POSIXlt"
+    )
+  }
+)
+
+## bit64 ##
+test_that(
+  desc = "No Method Warnings [bit64]",
+  code = {
+    skip_if_not_installed("bit64", min_v_bit64)
+    expect_warning(
+      object = .warning_no_method(l0[["integer64"]]),
+      regexp = "No\\smethod.+integer64"
+    )
+  }
+)
+
+## data.table ##
+test_that(
+  desc = "No Method Warnings [data.table]",
+  code = {
+    skip_if_not_installed("data.table", min_v_dt)
+    expect_warning(
+      object = .warning_no_method(l0[["IDate"]]),
+      regexp = "No\\smethod.+IDate"
+    )
+    expect_warning(
+      object = .warning_no_method(l0[["ITime"]]),
+      regexp = "No\\smethod.+ITime"
     )
   }
 )
