@@ -77,7 +77,7 @@ p_stbl_emp <- stubblise(p, method = "empirical", emp_p_exc = 0, emp_n_exc = 0)
 head(p_stbl_emp)
 ```
 
-See the "Using stubble" and "".
+See the "Using stubblise()" (`vignette("using-stubblise")`) and "stub() and ble()" (`vignette("stub-and-ble")`) vignettes for further examples of usage. (If vignettes are not installed you can repeat the command from the Installation section above with the addition of the argument `build_vignettes = TRUE`.)
 
 ## Known issues
 

@@ -72,12 +72,12 @@ to the original values, other than having the same vector type.
 p_stbl <- stubblise(p)
 head(p_stbl)
 #>         id species bill_length_mm body_mass_g clutch_completion   date_egg
-#> 1 *<n b#Ac       b      68.226910          42              TRUE 1972-06-23
-#> 2   5zp3>j       a      93.392560          56             FALSE 2000-08-31
-#> 3      a:#       b       5.276353          56              TRUE 1984-05-02
-#> 4  |!9SQp5       b       3.560817          62             FALSE 1998-04-27
-#> 5 H}&}kY^W       c      12.401692          56             FALSE 2002-06-20
-#> 6        N       d      77.027949          44              TRUE 1991-07-04
+#> 1 *<n b#Ac       b      68.226910          42              TRUE 1972-06-25
+#> 2   5zp3>j       a      93.392560          56             FALSE 2000-09-24
+#> 3      a:#       b       5.276353          56              TRUE 1984-05-13
+#> 4  |!9SQp5       b       3.560817          62             FALSE 1998-05-19
+#> 5 H}&}kY^W       c      12.401692          56             FALSE 2002-07-15
+#> 6        N       d      77.027949          44              TRUE 1991-07-21
 ```
 
 More advanced use is also possible, such as generating values from the
@@ -99,7 +99,11 @@ head(p_stbl_emp)
 #> 6 N27A1  Adelie       49.82995        3780              TRUE 2009-08-12
 ```
 
-See the “Using stubble” and "".
+See the “Using stubblise()” (`vignette("using-stubblise")`) and “stub()
+and ble()” (`vignette("stub-and-ble")`) vignettes for further examples
+of usage. (If vignettes are not installed you can repeat the command
+from the Installation section above with the addition of the argument
+`build_vignettes = TRUE`.)
 
 ## Known issues
 
