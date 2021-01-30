@@ -2,18 +2,23 @@ year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
 url <- meta$URL
 
-bibentry(bibtype = "Manual",
-         title = "{stubble}: Simple synthetic data from data frames, tibbles, and data.tables",
-         author = person(c("Benjamin", "J."), "Cairns", role = c("aut", "cre")),
-         year = year,
-         note = note,
-         url = url,
-         header = "To cite stubble in publications use:",
-         key = "stubble-package",
-
-         textVersion = paste("Benjamin J. Cairns",
-                             paste0("(", year, ")."),
-                             "stubble: Simple synthetic data from data frames, tibbles, and data.tables.",
-                             paste0(note, ", "),
-                             paste("URL", url))
+bibentry(
+  bibtype = "Manual",
+  title = "{stubble}: Simple synthetic data in {R}",
+  author = c(
+    person(c("Benjamin", "J."), "Cairns"),
+    person(c("Benjamin", "G."), "Feakins")
+  ),
+  year = year,
+  note = note,
+  url = url,
+  header = "To cite stubble in publications use:",
+  key = "stubble-package",
+  textVersion = paste(
+    "Benjamin J. Cairns and Benjamin G. Feakins",
+    paste0("(", year, ")."),
+    "stubble: Simple synthetic data in {R}.",
+    paste0(note, ", "),
+    paste("URL", url)
+  )
 )
