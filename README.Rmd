@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 # stubble
 
 <!-- badges: start -->
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![github-workflow](https://github.com/bjcairns/stubble/workflows/R-CMD-check/badge.svg)](https://github.com/bjcairns/stubble/actions)
 <!-- badges: end -->
 
 stubble helps you generate simple synthetic datasets matching the format of a supplied data frame-like object (including base R data frames, tibbles, data.tables, and lists of vectors). 
