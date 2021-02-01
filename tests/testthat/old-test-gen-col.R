@@ -59,27 +59,27 @@ test_that("gen_col generates unique integer and numeric columns as required", {
   # integer columns must have a range large enough to select uniquely from
   int1 <- gen_col(
     integer(), elements = 100L,
-    int_max = 100, unique = TRUE
+    agn_int_max = 100, agn_unique = TRUE
   )
   expect_equal(anyDuplicated(int1), 0)
 
   expect_error(
     int2 <- gen_col(
       integer(), elements = 100L,
-      int_max = 10, unique = TRUE
+      agn_int_max = 10, agn_unique = TRUE
     )
   )
 
   # numerics should be unique (before rounding) whenever RNGkind is
   # "Wichmann-Hill"
-  num1 <- gen_col(numeric(), elements = 500000L, unique = TRUE)
+  num1 <- gen_col(numeric(), elements = 500000L, agn_unique = TRUE)
   expect_equal(anyDuplicated(num1), 0)
 
   expect_error(
     num2 <- gen_col(
       numeric(),
       elements = 500000L,
-      unique = TRUE,
+      agn_unique = TRUE,
       dbl_rng_kind = "Mersenne-Twister"
     )
   )
@@ -88,7 +88,7 @@ test_that("gen_col generates unique integer and numeric columns as required", {
     gen_col(
       numeric(),
       elements = 500000L,
-      unique = FALSE,
+      agn_unique = FALSE,
       dbl_rng_kind = "Mersenne-Twister"
     )
   )
@@ -97,17 +97,17 @@ test_that("gen_col generates unique integer and numeric columns as required", {
 
 test_that("gen_col allows an integer list", {
 
-  int_list <- sample.int(1000,100)
+  agn_int_list <- sample.int(1000,100)
 
   expect_true(
     all(
       gen_col(
         integer(),
         elements = 100L,
-        int_list = list(int_list),
-        unique = TRUE
+        agn_int_list = list(agn_int_list),
+        agn_unique = TRUE
       ) %in%
-        int_list
+        agn_int_list
     )
   )
 
@@ -119,9 +119,9 @@ test_that("gen_col generates unique character columns as required", {
   chr1 <- gen_col(
     character(),
     elements = 10L,
-    unique = TRUE,
-    chr_min = 5L, chr_max = 10L,
-    chr_try_unique = TRUE
+    agn_unique = TRUE,
+    agn_chr_min = 5L, agn_chr_max = 10L,
+    agn_chr_try_unique = TRUE
   )
   expect_equal(anyDuplicated(chr1), 0)
 
@@ -130,9 +130,9 @@ test_that("gen_col generates unique character columns as required", {
     gen_col(
       character(),
       elements = 10L,
-      unique = TRUE,
-      chr_min = 1L, chr_max = 2L,
-      chr_sym = list(LETTERS[1:2])
+      agn_unique = TRUE,
+      agn_chr_min = 1L, agn_chr_max = 2L,
+      agn_chr_sym = list(LETTERS[1:2])
     )
   )
 
@@ -142,11 +142,11 @@ test_that("gen_col generates unique character columns as required", {
     gen_col(
       character(),
       elements = 10L,
-      unique = TRUE,
-      chr_min = 1L, chr_max = 3L,
-      chr_sym = list(LETTERS[1:2]),
-      chr_try_unique = TRUE,
-      chr_try_unique_attempts = 0L
+      agn_unique = TRUE,
+      agn_chr_min = 1L, agn_chr_max = 3L,
+      agn_chr_sym = list(LETTERS[1:2]),
+      agn_chr_try_unique = TRUE,
+      agn_chr_try_unique_attempts = 0L
     )
   )
 
@@ -156,11 +156,11 @@ test_that("gen_col generates unique character columns as required", {
     gen_col(
       character(),
       elements = 10L,
-      unique = TRUE,
-      chr_min = 1L, chr_max = 3L,
-      chr_sym = list(LETTERS[1:2]),
-      chr_try_unique = TRUE,
-      chr_try_unique_attempts = 10L
+      agn_unique = TRUE,
+      agn_chr_min = 1L, agn_chr_max = 3L,
+      agn_chr_sym = list(LETTERS[1:2]),
+      agn_chr_try_unique = TRUE,
+      agn_chr_try_unique_attempts = 10L
     ),
     NA
   )
@@ -172,10 +172,10 @@ test_that("gen_col correctly includes separators in character columns", {
   no_sep <- gen_col(
     character(),
     elements = 50L,
-    unique = FALSE,
-    chr_min = 1L, chr_max = 10L,
-    chr_sym = list(LETTERS[1:2]),
-    chr_sep = ""
+    agn_unique = FALSE,
+    agn_chr_min = 1L, agn_chr_max = 10L,
+    agn_chr_sym = list(LETTERS[1:2]),
+    agn_chr_sep = ""
   )
   no_sep_commas <- lengths(regmatches(no_sep, gregexpr(",", no_sep)))
   expect_equal(no_sep_commas, rep(0L, 50L))
@@ -183,25 +183,25 @@ test_that("gen_col correctly includes separators in character columns", {
   comma_sep <- gen_col(
     character(),
     elements = 50L,
-    unique = FALSE,
-    chr_min = 1L, chr_max = 10L,
-    chr_sym = list(LETTERS[1:2]),
-    chr_sep = ","
+    agn_unique = FALSE,
+    agn_chr_min = 1L, agn_chr_max = 10L,
+    agn_chr_sym = list(LETTERS[1:2]),
+    agn_chr_sep = ","
   )
   comma_sep_commas <- lengths(regmatches(comma_sep, gregexpr(",", comma_sep)))
   expect_equal(comma_sep_commas, (nchar(comma_sep) - 1)/2)
 
-  # Works also with unique
+  # Works also with agn_unique
   set.seed(use.seed)
   comma_sep_uniq <- gen_col(
     character(),
     elements = 10L,
-    unique = TRUE,
-    chr_min = 1L, chr_max = 3L,
-    chr_sym = list(LETTERS[1:2]),
-    chr_sep = ",",
-    chr_try_unique = TRUE,
-    chr_try_unique_attempts = 10L
+    agn_unique = TRUE,
+    agn_chr_min = 1L, agn_chr_max = 3L,
+    agn_chr_sym = list(LETTERS[1:2]),
+    agn_chr_sep = ",",
+    agn_chr_try_unique = TRUE,
+    agn_chr_try_unique_attempts = 10L
   )
   comma_sep_uniq_commas <-
     lengths(regmatches(comma_sep_uniq, gregexpr(",", comma_sep_uniq)))
@@ -213,22 +213,22 @@ test_that("gen_col handles missingness correctly", {
 
   # p_na is 0 means no missings
   expect_false(
-    any(is.na(gen_col(integer(), elements = 1000L, p_na = 0, int_max = 100)))
+    any(is.na(gen_col(integer(), elements = 1000L, p_na = 0, agn_int_max = 100)))
   )
 
   # p_na == 1 means all missings
   expect_true(
-    all(is.na(gen_col(integer(), elements = 1000L, p_na = 1, int_max = 100)))
+    all(is.na(gen_col(integer(), elements = 1000L, p_na = 1, agn_int_max = 100)))
   )
 
   # Expect warning if p_na > 1, but then all missing
   expect_warning(
-    int1 <- gen_col(integer(), elements = 1000L, p_na = 2, int_max = 100)
+    int1 <- gen_col(integer(), elements = 1000L, p_na = 2, agn_int_max = 100)
   )
   expect_true(all(is.na(int1)))
 
   # Expect SOME missing if p_na < 1 and p_na > 0
-  int2 <- gen_col(integer(), elements = 1000L, p_na = 0.5, int_max = 100)
+  int2 <- gen_col(integer(), elements = 1000L, p_na = 0.5, agn_int_max = 100)
   expect_true(any(is.na(int2)) & !all(is.na(int2)))
 
 })
@@ -256,20 +256,20 @@ test_that("gen_col correctly handles control lists", {
   set.seed(349866)
   syn_col_1 <- gen_col(
     factor(),
-    fct_lvls = list(levels(iris$Species))
+    agn_fct_lvls = list(levels(iris$Species))
   )
 
   set.seed(349866)
   syn_col_2 <- gen_col(
     factor(),
-    control = list(fct_lvls = list(levels(iris$Species)))
+    control = list(agn_fct_lvls = list(levels(iris$Species)))
   )
 
   set.seed(349866)
   syn_col_3 <- gen_col(
     factor(),
-    control = list(fct_lvls = list(letters[1:3])),
-    fct_lvls = list(levels(iris$Species))
+    control = list(agn_fct_lvls = list(letters[1:3])),
+    agn_fct_lvls = list(levels(iris$Species))
   )
 
   expect_identical(syn_col_1, syn_col_2)

@@ -1,0 +1,109 @@
+---
+title: "Separating the data generator from the synthetic dataset: stub() and ble()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Separating the data generator from the synthetic dataset: stub() and ble()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+It may often be sufficient to create a single synthetic dataset using `stubblise()`, but in other cases it will be helpful to be able to generating multiple synthetic datasets from a single source of original data. **stubble** makes this possible by separating the construction of a "generator" from the original data, and the use of that generator to create an actual synthetic dataset.
+
+In this vignette, we will examine how to construct synthetic data generators and synthetic datasets, using the built in dataset on Palmer Archipelago penguins:
+
+```{r setup}
+library(stubble)
+p <- penguins_ext[, c(
+       "id", 
+       "species", 
+       "bill_length_mm", 
+       "body_mass_g", 
+       "clutch_completion", 
+       "date_egg"
+     )]
+head(p)
+```
+
+## Constructing the synthetic data generator: `stub()`
+
+The function `stub()` will return a `stub` object, which can be used subsequently to generate a synthetic dataset. The omnibus function `stubblise()` uses `stub()` internally, but discards the `stub` object after the synthetic data is generated. When generated directly with `stub()`, the `stub` object can be saved and re-used to create multiple synthetic datasets on demand.
+
+The name, "stub", comes from the idea that the generator contains important, foundational information needed to create synthetic data, it is not itself a synthetic dataset.
+
+```{r stub_ex}
+sp <- stub(p)
+summary(sp)
+```
+
+The `stub` object (assigned above to `sp`) is a list: 
+
+* The *dtype* element is an empty data frame-type object, but may be a base R data.frame, a list, a data.table, or a tibble, depending on what the user has installed and the class of the original dataset object.
+* The *vars* element contains information about each of the variables from the original dataset, which is abstracted in order to generate synthetic data according to the algorithm.
+* The *ctrl* element contains the parameters which are further used to control the generation of synthetic data.
+* The *meta* element contains information on the **stubble** and R versions used to create the `stub` object, and a timestamp.
+
+`stub()` takes the same arguments as `stubblise()`, specifying the (default) number of rows, the generation method ("agnostic" or "empirical"), individual control parameters or a list of control parameters (see `?stubble_ctrl`).
+
+All defaults for `stub()` are the same as those for `stubblise()`. To change the defaults, control parameters can also be used in the same way as for `stubblise()`:
+
+```{r stub_ex_emp, results = "hide"}
+sp_emp <- stub(
+  p, 
+  method = "empirical", 
+  emp_p_exc = 0, 
+  emp_n_exc = 0
+)
+```
+
+Note here that the defaults for `emp_p_exc` and `emp_n_exc` are overridden because the first variable ("id") has only a small number of observations per unique value, and those control parameters tell `stub()` to exclude values with a proportion or count (respectively) that is lower than that given by the parameters. Note that when supplied as a single value, control parameters are recycled across all variables (see the next section for an example of changing control parameters for individual variables).
+
+## Constructing a synthetic dataset: `ble()`
+
+Once a `stub` object is constructed, it can be used to generate synthetic data using the `ble()` function (the name, "ble" is onomatopoetic).
+
+```{r ble_ex}
+bp <- ble(sp)
+head(bp)
+```
+
+Since no other arguments were supplied to `stub()` to generate the `sp` object above, in this case data were generated using the default "agnostic" method. Use of the `stub` object created in the previous section with the "empirical" method can generate more realistic data:
+
+```{r ble_ex_emp}
+bp_emp <- ble(sp_emp)
+head(bp_emp)
+```
+
+Some control parameters can also be supplied to `ble()` in order to modify the generation of the synthetic data, versus what was specified in `stub()`. For example, missing data can be added (missing completely at random with probability 0.2):
+```{r, include = FALSE}
+set.seed(2342342)
+```
+
+```{r ble_ex_emp_missing}
+bp_emp_miss <- ble(sp_emp, p_na = 0.2)
+head(bp_emp_miss)
+```
+
+Control parameters are supplied positionally, so to add missing data to only the second and third variables (`species` and `bill_length`) it is necessary to supply a vector of values. Of course, values can also vary between variables:
+```{r, include = FALSE}
+set.seed(2342342)
+```
+
+```{r ble_ex_emp_missing_2}
+bp_emp_miss <- ble(sp_emp, p_na = c(0, 0.2, 0.1, 0, 0, 0))
+head(bp_emp_miss)
+```
+
+Positional parameters are convenient when it is appropriate to supply the same control parameter to every variable (because it is recycled as necessary), but the developers are still exploring better ways for users to set these values.
+ 
+Note that both the above examples were generated using the same random seed (`set.seed(2342342)`), chosen to provide a good illustration of the methods. But, although the first column of each is identical, other columns are not. Be aware that in general, even small changes in parameters may result in different values in the synthetic dataset.
+
+## Summary
+
+**stubble** offers two ways to generate synthetic data. First, with the omnibus function `stubblise()` (also, `stubblize()`), which performs the complete process of generating a synthetic version of a dataset. Second, it is possible to construct a generator for synthetic data based on the original dataset using `stub()`, and then to use `ble()` to generate any number of synthetic datasets. This second approach offers more flexiblity in when and how synthetic data are actually generated.
