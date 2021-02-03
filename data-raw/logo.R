@@ -15,11 +15,11 @@ tryCatch(
 showtext_auto()
 
 ## Colours
-  bar_colour <- "#cca929" # "#ffca0a" # "#612e07"
-pkg_name_colour <- "#444d3c" # "#006391" # "#524640"
-sticker_bg_colour <- "#d6f2bd" # "#ead61c" # "#efe0b1"
-sticker_border_colour <- "#403200" # "#261203"
-stub_motif_colour <- "#4d3f0f" # sticker_border_colour
+bar_colour <- "#cca929"
+pkg_name_colour <- "#444d3c"
+sticker_bg_colour <- "#d6f2bd"
+sticker_border_colour <- "#403200"
+stub_motif_colour <- "#4d3f0f"
 
 ## Font
 google_font <- "Roboto"
