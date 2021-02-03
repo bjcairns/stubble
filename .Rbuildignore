@@ -3,4 +3,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^README\.md$
+^man/figures$
 ^data-raw$

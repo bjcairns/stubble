@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# stubble
+# stubble <img src="man/figures/stubble_hex.png" align="right" width="120" />
 
 <!-- badges: start -->
 
@@ -69,34 +69,36 @@ tell it otherwise, it generates nonsense values which bear no relation
 to the original values, other than having the same vector type.
 
 ``` r
+
 # stubblise to obtain a dataset with the same structure, but random data
 p_stbl <- stubblise(p)
 head(p_stbl)
 #>         id species bill_length_mm body_mass_g clutch_completion   date_egg
-#> 1 *<n b#Ac       b   68.226909981          42              TRUE 1972-06-25
-#> 2   5zp3>j       a   93.392560451          56             FALSE 2000-09-26
-#> 3      a:#       b    5.276353188          56              TRUE 1984-05-14
-#> 4  |!9SQp5       b    3.560817493          62             FALSE 1998-05-22
-#> 5 H}&}kY^W       c   12.401691695          56             FALSE 2002-07-18
-#> 6        N       d   77.027949371          44              TRUE 1991-07-23
+#> 1 *<n b#Ac       b      68.226910          42              TRUE 1972-06-25
+#> 2   5zp3>j       a      93.392560          56             FALSE 2000-09-28
+#> 3      a:#       b       5.276353          56              TRUE 1984-05-15
+#> 4  |!9SQp5       b       3.560817          62             FALSE 1998-05-23
+#> 5 H}&}kY^W       c      12.401692          56             FALSE 2002-07-20
+#> 6        N       d      77.027949          44              TRUE 1991-07-24
 ```
 
 More advanced use is also possible, such as generating values from the
 empirical distributions of each variable.
 
 ``` r
+
 # Use method = "empirical" to obtain data with marginal distributions similar 
 # to the original. The emp_p_exc and emp_n_exc control parameters allow that 
 # all values of the id variable have only a small number of observations.
 p_stbl_emp <- stubblise(p, method = "empirical", emp_p_exc = 0, emp_n_exc = 0)
 head(p_stbl_emp)
 #>      id species bill_length_mm body_mass_g clutch_completion   date_egg
-#> 1 N88A2  Gentoo    41.47851321        3393              TRUE 2008-02-11
-#> 2  N1A2  Adelie    48.18967018        5247              TRUE 2008-07-07
-#> 3 N28A1  Adelie    47.11367577        3592              TRUE 2007-12-12
-#> 4 N51A1  Gentoo    42.78340799        3363              TRUE 2008-02-17
-#> 5 N58A2  Adelie    45.53277529        4202              TRUE 2008-03-02
-#> 6 N27A1  Adelie    49.82995351        3780              TRUE 2009-08-12
+#> 1 N88A2  Gentoo       41.47851        3393              TRUE 2008-02-11
+#> 2  N1A2  Adelie       48.18967        5247              TRUE 2008-07-07
+#> 3 N28A1  Adelie       47.11368        3592              TRUE 2007-12-12
+#> 4 N51A1  Gentoo       42.78341        3363              TRUE 2008-02-17
+#> 5 N58A2  Adelie       45.53278        4202              TRUE 2008-03-02
+#> 6 N27A1  Adelie       49.82995        3780              TRUE 2009-08-12
 ```
 
 See the “Using stubblise()” (`vignette("using-stubblise")`) and “stub()
@@ -107,5 +109,5 @@ from the Installation section above with the addition of the argument
 
 ## Known issues
 
--   See [Issues](https://github.com/bjcairns/stubble/issues) on the
+  - See [Issues](https://github.com/bjcairns/stubble/issues) on the
     stubble GitHub repository.
