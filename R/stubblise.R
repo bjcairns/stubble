@@ -1,6 +1,7 @@
 #' @title
 #' Create simple synthetic data from a data frame-like objects
-#'
+#' 
+#' @description
 #' `stubblise()` (equivalently, `stubblize()`) generates synthetic (i.e.
 #' simulated) data to match the structure of a given data frame-like object
 #' (including data.frames, tibbles, data.tables, and lists). See also
